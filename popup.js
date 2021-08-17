@@ -23,12 +23,19 @@ function gotRatings(item) {
     ratings = item.ratings;
     set_state();
 }
+function gotAnalyse(item) {
+    if (item.analyse === undefined) {
+        return;
+    }
+    document.getElementById("analyse").checked = item.analyse;
+}
 
 
 function new_values() {
     let report = document.getElementById("report").checked;
     let duell = document.getElementById("duell").checked;
-    browser.storage.local.set({report, duell});
+    let analyse = document.getElementById("analyse").checked;
+    browser.storage.local.set({report, duell, analyse});
 }
 function set_state(){
     let button = document.getElementById("ratings");
@@ -63,9 +70,11 @@ function start() {
     document.getElementById("ratings").addEventListener("click", clicked, false);
     document.getElementById("duell").addEventListener("click", new_values, false);
     document.getElementById("report").addEventListener("click", new_values, false);
+    document.getElementById("analyse").addEventListener("click", new_values, false);
     browser.storage.local.get("report").then(gotReport, error);
     browser.storage.local.get("duell").then(gotDuell, error);
     browser.storage.local.get("ratings").then(gotRatings, error);
+    browser.storage.local.get("analyse").then(gotAnalyse, error);
 }
 
 document.addEventListener("DOMContentLoaded", start, false);
