@@ -1,5 +1,6 @@
 ﻿let report = true;
 let duell = true;
+let analyse = true;
 let ratings = 0;
 
 function show_all() {
@@ -165,9 +166,18 @@ function gotDuell(item) {
     console.log("Duell: ", duell);
 }
 
+function gotAnalyse(item) {
+    if (item.analyse === undefined) {
+        return;
+    }
+    analyse = item.analyse;
+    console.log("Analyse: ", analyse);
+}
+
 
 browser.storage.local.get("ratings").then(gotRatings, error);
 browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
+browser.storage.local.get("analyse").then(gotAnalyse, error);
 
 // TODO: Analyse anschalten
