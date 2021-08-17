@@ -23,7 +23,8 @@
             width: 75%;
             border-radius: 5px;
         }
-        .change-button1{
+
+        .change-button1 {
             background-color: #c25367;
         }
 
@@ -34,7 +35,8 @@
         .change-button1:active {
             background-color: #e31d41;
         }
-        .change-button2{
+
+        .change-button2 {
             background-color: #b9872d;
         }
 
@@ -45,7 +47,8 @@
         .change-button2:active {
             background-color: #815405;
         }
-        .change-button3{
+
+        .change-button3 {
             background-color: #53c257;
         }
 
@@ -94,15 +97,15 @@
             transition: .2s;
         }
 
-        input:checked + .slider {
+        .checkbox:checked + .slider {
             background-color: #2196f3;
         }
 
-        input:focus + .slider {
+        .checkbox:focus + .slider {
             box-shadow: 0 0 1px #2196f3;
         }
 
-        input:checked + .slider:before {
+        .checkbox:checked + .slider:before {
             -webkit-transform: translateX(13px);
             -ms-transform: translateX(13px);
             transform: translateX(13px);
@@ -115,24 +118,38 @@
         .slider.round:before {
             border-radius: 50%;
         }
-        text{
+
+        text {
             color: #ffffff;
-            display:block;
+            display: block;
             text-align: center;
         }
-        .small{
+
+        .small {
             content: "";
             display: block;
             margin: -5px;
+        }
+        #reload{
+            color:white;
+            position:absolute;
+            top:15px;
+            right:20px;
         }
     </style>
     <title></title>
 </head>
 
 <body style="background-color:black;">
+
+<div>
+    <input alt="This image could not be loaded. The ressource-files might be damaged" type="image"
+           src="/ressources/reload.jpg" id="reload" height="30">
+</div>
+<br>
 <div>
     <label class="switch">
-        <input type="checkbox" id="report" checked>
+        <input class="checkbox" type="checkbox" id="report" checked>
         <span class="slider round"></span>
     </label>
     <label for="report">Benutzer melden</label>
@@ -141,7 +158,7 @@
 </div>
 <div>
     <label class="switch">
-        <input type="checkbox" id="analyse" checked>
+        <input class="checkbox" type="checkbox" id="analyse" checked>
         <span class="slider round"></span>
     </label>
     <label for="analyse">Analyse automatisch aktivieren</label>
@@ -150,7 +167,7 @@
 </div>
 <div>
     <label class="switch">
-        <input type="checkbox" id="duell">
+        <input class="checkbox" type="checkbox" id="duell">
         <span class="slider round"></span>
     </label>
     <label for="duell">Puzzle-Duell-Automatik</label>
