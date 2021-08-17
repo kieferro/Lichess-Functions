@@ -171,4 +171,3 @@ browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
 
 // TODO: Analyse anschalten
-// TODO: In der Analyse Ratings ausblenden
