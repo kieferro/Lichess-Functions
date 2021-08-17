@@ -13,6 +13,32 @@ function show_all() {
     }
 }
 
+let last_status = null;
+
+function activateAnalysis() {
+    setTimeout(activateAnalysis, 500);
+
+    if (!analyse){
+        return;
+    }
+    let toggle = document.getElementById("analyse-toggle-ceval");
+
+    if (toggle == null) {
+        last_status = null;
+        return;
+    }
+    if (last_status != null) {
+        return;
+    }
+    if (!toggle.checked) {
+        toggle.parentNode.childNodes[1].click();
+    }
+    last_status = toggle.checked;
+}
+
+setTimeout(activateAnalysis, 500);
+
+
 function start() {
     setTimeout(start, 10);
     let status_now = 0;
