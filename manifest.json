@@ -1,0 +1,34 @@
+{
+
+  "manifest_version": 2,
+  "name": "Lichess-Extension",
+  "version": "0.1",
+  "description": "-",
+  "icons": {
+    "48": "ressources/icon-48.jpg",
+    "96": "ressources/icon-96.jpg"
+  },
+
+  "content_scripts": [
+    {
+      "run_at": "document_idle",
+      "matches": [ "*://*.lichess.org/*" ],
+      "js": [ "main.js" ]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "ressources/lichess-icon.jpg",
+    "default_title": "Lichess+",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": []
+  },
+  "permissions": [
+    "tabs",
+    "<all_urls>",
+    "storage",
+    "webNavigation",
+    "*://*/*"
+  ]
+}
