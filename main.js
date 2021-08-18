@@ -208,5 +208,3 @@ browser.storage.local.get("ratings").then(gotRatings, error);
 browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
 browser.storage.local.get("analyse").then(gotAnalyse, error);
-
-// TODO: Analyse anschalten
