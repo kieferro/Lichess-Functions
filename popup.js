@@ -74,7 +74,8 @@ function sendMessage(tabs) {
 }
 
 function reload() {
-    browser.tabs.query({currentWindow: true, active: true}, function(tabs){
+    browser.tabs.query({currentWindow: true, active: true},
+        function(tabs){
         browser.tabs.sendMessage(tabs[0].id, "test")});
 }
 

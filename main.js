@@ -204,7 +204,6 @@ function gotAnalyse(item) {
     console.log("Analyse: ", analyse);
 }
 
-
 browser.storage.local.get("ratings").then(gotRatings, error);
 browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
