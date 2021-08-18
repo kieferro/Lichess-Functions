@@ -3,6 +3,10 @@ let duell = true;
 let analyse = true;
 let ratings = 0;
 
+browser.runtime.onMessage.addListener(function (request) {
+    location.reload();
+});
+
 function show_all() {
     if (document.getElementsByClassName("status").length > 0) {
         const l = document.getElementsByTagName("rating");
@@ -18,7 +22,7 @@ let last_status = null;
 function activateAnalysis() {
     setTimeout(activateAnalysis, 500);
 
-    if (!analyse){
+    if (!analyse) {
         return;
     }
     let toggle = document.getElementById("analyse-toggle-ceval");

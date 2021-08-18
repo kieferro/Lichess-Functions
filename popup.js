@@ -16,6 +16,7 @@ function gotDuell(item) {
     }
     document.getElementById("duell").checked = item.duell;
 }
+
 function gotRatings(item) {
     if (item.ratings === undefined) {
         return;
@@ -23,6 +24,7 @@ function gotRatings(item) {
     ratings = item.ratings;
     set_state();
 }
+
 function gotAnalyse(item) {
     if (item.analyse === undefined) {
         return;
@@ -37,20 +39,19 @@ function new_values() {
     let analyse = document.getElementById("analyse").checked;
     browser.storage.local.set({report, duell, analyse});
 }
-function set_state(){
+
+function set_state() {
     let button = document.getElementById("ratings");
 
-    if (ratings === 0){
+    if (ratings === 0) {
         button.textContent = "Deaktiviert";
         button.className = "change-button1";
         // button.style.backgroundColor = "#c25367";
-    }
-    else if (ratings === 1){
+    } else if (ratings === 1) {
         button.textContent = "Beim Spielen";
         button.className = "change-button2";
         // button.style.backgroundColor = "#b9872d";
-    }
-    else {
+    } else {
         button.textContent = "Immer"
         button.className = "change-button3";
         // button.style.backgroundColor = "#53c257";
@@ -65,12 +66,25 @@ function clicked() {
     browser.storage.local.set({ratings});
 }
 
+function sendMessage(tabs) {
+    for (let tab of tabs) {
+        browser.tabs.sendMessage(tab.id, {code: 1});
+        console.log(tab.id);
+    }
+}
+
+function reload() {
+    browser.tabs.query({currentWindow: true, active: true}, function(tabs){
+        browser.tabs.sendMessage(tabs[0].id, "test")});
+}
+
 function start() {
     set_state();
     document.getElementById("ratings").addEventListener("click", clicked, false);
     document.getElementById("duell").addEventListener("click", new_values, false);
     document.getElementById("report").addEventListener("click", new_values, false);
     document.getElementById("analyse").addEventListener("click", new_values, false);
+    document.getElementById("reload").addEventListener("click", reload, false);
     browser.storage.local.get("report").then(gotReport, error);
     browser.storage.local.get("duell").then(gotDuell, error);
     browser.storage.local.get("ratings").then(gotRatings, error);
