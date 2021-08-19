@@ -178,7 +178,7 @@ function get_pgn() {
             output += " " + l[i * 2 + 1].innerHTML + " ";
         }
     }
-    console.log(output);
+    console.log(output)
     setTimeout(get_pgn, 2000);
 }
 
