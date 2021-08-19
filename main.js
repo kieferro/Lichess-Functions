@@ -167,6 +167,23 @@ function push_button() {
 
 setTimeout(push_button, 100);
 
+function get_pgn() {
+    var l = document.getElementsByTagName("u8t");
+    var output = "";
+
+    for (var i = 0; i < l.length / 2; i++) {
+        output += (i + 1).toString() + "." + l[i * 2].innerHTML;
+
+        if (i * 2 + 1 < l.length) {
+            output += " " + l[i * 2 + 1].innerHTML + " ";
+        }
+    }
+    console.log(output);
+    setTimeout(get_pgn, 2000);
+}
+
+setTimeout(get_pgn, 2000);
+
 function error(error) {
     console.log("Es ist ein Fehler aufgetreten.");
     console.log(error);
