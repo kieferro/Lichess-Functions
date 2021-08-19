@@ -46,15 +46,12 @@ function set_state() {
     if (ratings === 0) {
         button.textContent = "Deaktiviert";
         button.className = "change-button1";
-        // button.style.backgroundColor = "#c25367";
     } else if (ratings === 1) {
         button.textContent = "Beim Spielen";
         button.className = "change-button2";
-        // button.style.backgroundColor = "#b9872d";
     } else {
         button.textContent = "Immer"
         button.className = "change-button3";
-        // button.style.backgroundColor = "#53c257";
     }
 }
 
@@ -75,8 +72,9 @@ function sendMessage(tabs) {
 
 function reload() {
     browser.tabs.query({currentWindow: true, active: true},
-        function(tabs){
-        browser.tabs.sendMessage(tabs[0].id, "test")});
+        function (tabs) {
+            browser.tabs.sendMessage(tabs[0].id, "test")
+        });
 }
 
 function start() {
