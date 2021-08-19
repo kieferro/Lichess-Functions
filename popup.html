@@ -130,14 +130,31 @@
             display: block;
             margin: -5px;
         }
+        #open-analysis{
+            color:white;
+            background-color: white;
+            position:absolute;
+            top:15px;
+            left:15px;
+            height: 30px;
+        }
+        #open-analysis:hover{
+            background-color: #cbcbcb;
+        }
+        #live-analysis-label{
+            color:white;
+            position:absolute;
+            top:22px;
+            left:50px;
+            height: 30px;
+            border-radius: 5px;
+        }
         #reload{
             color:white;
             position:absolute;
             top:15px;
             right:20px;
             height: 30px;
-        }
-        #reload{
             background-color: white;
         }
         #reload:hover {
@@ -153,6 +170,14 @@
     <img alt="This image could not be loaded. The ressource-files might be damaged"
            src="/ressources/reload.png" id="reload">
 </div>
+<div>
+    <img alt="This image could not be loaded. The ressource-files might be damaged"
+         src="/ressources/analysis.png" id="open-analysis">
+    <label id="live-analysis-label" for="open-analysis">Live-Analyse</label>
+</div>
+<br>
+<br>
+<br>
 <br>
 <div>
     <label class="switch">
