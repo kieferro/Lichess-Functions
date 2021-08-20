@@ -4,7 +4,15 @@ let analyse = true;
 let ratings = 0;
 
 browser.runtime.onMessage.addListener(function (request) {
-    location.reload();
+    if (request.code === 0) {
+        location.reload();
+    } else if (request.code === 1) {
+        get_pgn();
+    }
+    else if (request.code === 2){
+        document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
+        document.getElementsByClassName("button button-thin action text")[0].click();
+    }
 });
 
 function show_all() {
@@ -178,11 +186,8 @@ function get_pgn() {
             output += " " + l[i * 2 + 1].innerHTML + " ";
         }
     }
-    console.log(output)
-    setTimeout(get_pgn, 2000);
+    browser.runtime.sendMessage({code: 0, pgn: output});
 }
-
-setTimeout(get_pgn, 2000);
 
 function error(error) {
     console.log("Es ist ein Fehler aufgetreten.");
