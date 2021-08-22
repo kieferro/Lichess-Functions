@@ -186,7 +186,7 @@ function get_pgn() {
             output += " " + l[i * 2 + 1].innerHTML + " ";
         }
     }
-    browser.runtime.sendMessage({code: 0, pgn: output});
+    browser.runtime.sendMessage({code: 1, pgn: output});
 }
 
 function error(error) {

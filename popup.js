@@ -78,10 +78,7 @@ function reload() {
 }
 
 function open_analysis() {
-    browser.tabs.query({currentWindow: true, active: true},
-        function (tabs) {
-            browser.tabs.sendMessage(tabs[0].id, {code: 1});
-        });
+    browser.runtime.sendMessage({code: 0});
 }
 
 function start() {
