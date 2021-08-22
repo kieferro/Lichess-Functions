@@ -8,8 +8,14 @@ browser.runtime.onMessage.addListener(function (request) {
         location.reload();
     } else if (request.code === 1) {
         get_pgn();
-    }
-    else if (request.code === 2){
+    } else if (request.code === 2) {
+        let all = document.getElementsByTagName("move");
+
+        if (all.length > 0) {
+            if (all[all.length - 1].classList[0] !== "active") {
+                return;
+            }
+        }
         document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
         document.getElementsByClassName("button button-thin action text")[0].click();
     }
@@ -180,14 +186,14 @@ function get_pgn() {
     let output = "";
 
     for (let i = 0; i < l.length / 2; i++) {
-        let first = l[i*2].innerHTML;
+        let first = l[i * 2].innerHTML;
         first = first.split("<");
         first = first[0];
 
         output += (i + 1).toString() + "." + first;
 
         if (i * 2 + 1 < l.length) {
-            let second = l[i*2+1].innerHTML;
+            let second = l[i * 2 + 1].innerHTML;
             second = second.split("<");
             second = second[0];
             output += " " + second + " ";
