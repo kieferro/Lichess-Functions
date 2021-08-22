@@ -36,7 +36,7 @@ let last_status = null;
 function activateAnalysis() {
     setTimeout(activateAnalysis, 500);
 
-    if (!analyse) {
+    if (!analyse || document.visibilityState === "hidden") {
         return;
     }
     let toggle = document.getElementById("analyse-toggle-ceval");
