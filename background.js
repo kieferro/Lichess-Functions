@@ -16,7 +16,12 @@ function tab_updated(tabId, changeInfo, tabInfo) {
 }
 
 function send_message() {
-    browser.tabs.sendMessage(id_new_tab, {code: 2, pgn: pgn});
+    let send = browser.tabs.sendMessage(id_new_tab, {code: 2, pgn: pgn});
+
+    send.then(function () {
+    }, function () {
+        id_new_tab = -1;
+    });
 }
 
 function onGot(tabInfo) {
@@ -38,8 +43,7 @@ function open_new_tab(request, sender, sendResponse) {
         creating.then(onGot, onError);
     } else if (request.code === 1) {
         pgn = request.pgn;
-        setTimeout(get_pgn, 1000);
-        console.log(pgn);
+        setTimeout(get_pgn, 100);
 
         if (pgn !== last_pgn) {
             setTimeout(send_message, 100);

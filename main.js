@@ -176,14 +176,21 @@ function push_button() {
 setTimeout(push_button, 100);
 
 function get_pgn() {
-    var l = document.getElementsByTagName("u8t");
-    var output = "";
+    let l = document.getElementsByTagName("u8t");
+    let output = "";
 
-    for (var i = 0; i < l.length / 2; i++) {
-        output += (i + 1).toString() + "." + l[i * 2].innerHTML;
+    for (let i = 0; i < l.length / 2; i++) {
+        let first = l[i*2].innerHTML;
+        first = first.split("<");
+        first = first[0];
+
+        output += (i + 1).toString() + "." + first;
 
         if (i * 2 + 1 < l.length) {
-            output += " " + l[i * 2 + 1].innerHTML + " ";
+            let second = l[i*2+1].innerHTML;
+            second = second.split("<");
+            second = second[0];
+            output += " " + second + " ";
         }
     }
     browser.runtime.sendMessage({code: 1, pgn: output});
