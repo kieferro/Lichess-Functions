@@ -3,6 +3,7 @@ let id_reference_tab = -1;
 let reloaded = false;
 let pgn = "";
 let last_pgn = "";
+let close = false;
 
 function get_pgn() {
     browser.tabs.sendMessage(id_reference_tab, {code: 1});
@@ -13,6 +14,10 @@ function tab_updated(tabId, changeInfo, tabInfo) {
         get_pgn();
         reloaded = true;
     }
+}
+function close_connection(){
+    let send = browser.tabs.sendMessage(id_new_tab, {code: 3});
+    id_new_tab = -1;
 }
 
 function send_message() {
@@ -49,6 +54,8 @@ function open_new_tab(request, sender, sendResponse) {
             setTimeout(send_message, 100);
         }
         last_pgn = pgn;
+    } else if (request.code === 2){
+        setTimeout(close_connection, 2000);
     }
 }
 

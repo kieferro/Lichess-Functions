@@ -7,6 +7,18 @@ browser.runtime.onMessage.addListener(function (request) {
     if (request.code === 0) {
         location.reload();
     } else if (request.code === 1) {
+        const name = document.getElementById("user_tag").text;
+        const players = document.getElementsByClassName("text ulpt");
+        const text = players[players.length - 1].textContent;
+        console.log(name);
+        console.log(text);
+        console.log(name === text);
+
+        if (name === text){
+            browser.runtime.sendMessage({code: 2});
+            return;
+        }
+
         get_pgn();
     } else if (request.code === 2) {
         let all = document.getElementsByTagName("move");
@@ -18,6 +30,8 @@ browser.runtime.onMessage.addListener(function (request) {
         }
         document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
         document.getElementsByClassName("button button-thin action text")[0].click();
+    } else if (request.code === 3){
+        window.close();
     }
 });
 
