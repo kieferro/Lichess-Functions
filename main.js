@@ -57,8 +57,8 @@ function activateAnalysis() {
 setTimeout(activateAnalysis, 500);
 
 
-function start() {
-    setTimeout(start, 10);
+function hide_ratings() {
+    setTimeout(hide_ratings, 10);
     let status_now = 0;
 
     if (document.getElementsByClassName("game__meta__infos").length > 0) {
@@ -109,7 +109,7 @@ function start() {
     }
 }
 
-setTimeout(start, 10);
+setTimeout(hide_ratings, 10);
 
 let last_link = "none";
 
