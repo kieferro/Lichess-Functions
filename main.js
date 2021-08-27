@@ -181,6 +181,23 @@ function push_button() {
 
 setTimeout(push_button, 100);
 
+function guess_the_elo() {
+    setTimeout(guess_the_elo, 1000);
+
+    let button = document.getElementsByClassName("button button-metal config_ai");
+
+    if (button.length === 0 || document.getElementsByClassName("button button-metal config_gte").length > 0) {
+        return;
+    }
+    let button_new = button[0].cloneNode(true);
+    button_new.textContent = "Guess the elo";
+    button_new.className = "button button-metal config_gte";
+    button_new.removeAttribute("href");
+    button[0].parentNode.appendChild(button_new);
+}
+
+// setTimeout(guess_the_elo, 1000);
+
 function get_pgn() {
     let l = document.getElementsByTagName("u8t");
     let output = "";
@@ -199,6 +216,7 @@ function get_pgn() {
             output += " " + second + " ";
         }
     }
+    console.log("PGN:", output);
     browser.runtime.sendMessage({code: 1, pgn: output});
 }
 
