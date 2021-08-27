@@ -28,16 +28,13 @@ function send_message() {
         id_new_tab = -1;
     });
 }
-
 function onGot(tabInfo) {
     id_new_tab = tabInfo.id;
     reloaded = false;
 }
-
 function onError(error) {
     console.log("Error:", error);
 }
-
 function open_new_tab(request, sender, sendResponse) {
     if (request.code === 0) {
         browser.tabs.query({currentWindow: true, active: true},

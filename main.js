@@ -70,7 +70,6 @@ function activateAnalysis() {
 
 setTimeout(activateAnalysis, 500);
 
-
 function hide_ratings() {
     setTimeout(hide_ratings, 10);
     let status_now = 0;
