@@ -198,6 +198,29 @@ function guess_the_elo() {
 
 // setTimeout(guess_the_elo, 1000);
 
+function addFollowing() {
+    let buttons = document.getElementsByClassName("site-buttons");
+
+    if (buttons.length === 0) {
+        setTimeout(addFollowing, 10);
+        return;
+    }
+    if (buttons[0].childNodes.length > 5) {
+        return;
+    }
+    let name = document.getElementsByClassName("dasher")[0].childNodes[0].textContent;
+    console.log(name);
+
+    let button = buttons[0].childNodes[0].childNodes[0];
+    let new_node = button.cloneNode();
+    new_node.dataset.icon = "⛹";
+    new_node.href = "https://lichess.org/@/" + name + "/following";
+    buttons[0].insertBefore(new_node, document.getElementsByClassName("dasher")[0]);
+
+}
+
+setTimeout(addFollowing, 10);
+
 function get_pgn() {
     let l = document.getElementsByTagName("u8t");
     let output = "";
