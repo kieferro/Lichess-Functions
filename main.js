@@ -14,7 +14,7 @@ browser.runtime.onMessage.addListener(function (request) {
         console.log(text);
         console.log(name === text);
 
-        if (name === text){
+        if (name === text) {
             browser.runtime.sendMessage({code: 2});
             return;
         }
@@ -30,7 +30,7 @@ browser.runtime.onMessage.addListener(function (request) {
         }
         document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
         document.getElementsByClassName("button button-thin action text")[0].click();
-    } else if (request.code === 3){
+    } else if (request.code === 3) {
         window.close();
     }
 });
@@ -221,15 +221,13 @@ function addFollowing() {
     if (buttons[0].childNodes.length > 5) {
         return;
     }
-    let name = document.getElementsByClassName("dasher")[0].childNodes[0].textContent;
-    console.log(name);
+    let name = document.getElementById("user_tag").textContent;
 
-    let button = buttons[0].childNodes[0].childNodes[0];
-    let new_node = button.cloneNode();
+    let new_node = buttons[0].childNodes[0].childNodes[0].cloneNode();
     new_node.dataset.icon = "⛹";
     new_node.href = "https://lichess.org/@/" + name + "/following";
-    buttons[0].insertBefore(new_node, document.getElementsByClassName("dasher")[0]);
 
+    buttons[0].insertBefore(new_node, document.getElementById("user_tag").parentNode);
 }
 
 setTimeout(addFollowing, 10);
@@ -257,40 +255,31 @@ function get_pgn() {
 }
 
 function error(error) {
-    console.log("Es ist ein Fehler aufgetreten.");
-    console.log(error);
+    console.log("Error:", error);
 }
 
 function gotRatings(item) {
-    if (item.ratings === undefined) {
-        return;
+    if (item.ratings !== undefined) {
+        ratings = item.ratings;
     }
-    ratings = item.ratings;
-    console.log("Ratings: ", ratings);
 }
 
 function gotReport(item) {
-    if (item.report === undefined) {
-        return;
+    if (item.report !== undefined) {
+        report = item.report;
     }
-    report = item.report;
-    console.log("Report: ", report);
 }
 
 function gotDuell(item) {
-    if (item.duell === undefined) {
-        return;
+    if (item.duell !== undefined) {
+        duell = item.duell;
     }
-    duell = item.duell;
-    console.log("Duell: ", duell);
 }
 
 function gotAnalyse(item) {
-    if (item.analyse === undefined) {
-        return;
+    if (item.analyse !== undefined) {
+        analyse = item.analyse;
     }
-    analyse = item.analyse;
-    console.log("Analyse: ", analyse);
 }
 
 browser.storage.local.get("ratings").then(gotRatings, error);
