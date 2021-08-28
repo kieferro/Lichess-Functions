@@ -58,13 +58,6 @@ function clicked() {
     new_values();
 }
 
-function sendMessage(tabs) {
-    for (let tab of tabs) {
-        browser.tabs.sendMessage(tab.id, {code: 1});
-        console.log(tab.id);
-    }
-}
-
 function reload() {
     browser.tabs.query({currentWindow: true, active: true},
         function (tabs) {
