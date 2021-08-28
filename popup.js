@@ -1,3 +1,6 @@
+const messages = ["Deaktiviert", "Beim Spielen", "Immer"];
+let ratings = 0;
+
 function error(error) {
     console.log("Es ist ein Fehler aufgetreten.");
     console.log(error);
@@ -8,6 +11,13 @@ function gotReport(item) {
         return;
     }
     document.getElementById("report").checked = item.report;
+}
+
+function gotAnalyse(item) {
+    if (item.analyse === undefined) {
+        return;
+    }
+    document.getElementById("analyse").checked = item.analyse;
 }
 
 function gotDuell(item) {
@@ -22,14 +32,7 @@ function gotRatings(item) {
         return;
     }
     ratings = item.ratings;
-    set_state();
-}
-
-function gotAnalyse(item) {
-    if (item.analyse === undefined) {
-        return;
-    }
-    document.getElementById("analyse").checked = item.analyse;
+    set_state(false);
 }
 
 
@@ -37,30 +40,22 @@ function new_values() {
     let report = document.getElementById("report").checked;
     let duell = document.getElementById("duell").checked;
     let analyse = document.getElementById("analyse").checked;
-    browser.storage.local.set({report, duell, analyse});
+    browser.storage.local.set({report, duell, analyse, ratings});
 }
 
-function set_state() {
-    let button = document.getElementById("ratings");
-
-    if (ratings === 0) {
-        button.textContent = "Deaktiviert";
-        button.className = "change-button1";
-    } else if (ratings === 1) {
-        button.textContent = "Beim Spielen";
-        button.className = "change-button2";
-    } else {
-        button.textContent = "Immer"
-        button.className = "change-button3";
+function set_state(increment) {
+    if (increment) {
+        ratings = (ratings + 1) % 3;
     }
-}
 
-let ratings = 0;
+    let button = document.getElementById("ratings");
+    button.textContent = messages[ratings];
+    button.className = "change-button" + (ratings + 1).toString();
+}
 
 function clicked() {
-    ratings = (ratings + 1) % 3;
-    set_state();
-    browser.storage.local.set({ratings});
+    set_state(true);
+    new_values();
 }
 
 function sendMessage(tabs) {
@@ -82,7 +77,7 @@ function open_analysis() {
 }
 
 function start() {
-    set_state();
+    set_state(false);
     document.getElementById("ratings").addEventListener("click", clicked, false);
     document.getElementById("duell").addEventListener("click", new_values, false);
     document.getElementById("report").addEventListener("click", new_values, false);
