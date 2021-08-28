@@ -1,6 +1,7 @@
 ﻿let report = true;
 let duell = true;
 let analyse = true;
+let last_status = null;
 let ratings = 0;
 
 browser.runtime.onMessage.addListener(function (request) {
@@ -44,8 +45,6 @@ function show_all() {
         }
     }
 }
-
-let last_status = null;
 
 function activateAnalysis() {
     setTimeout(activateAnalysis, 500);
@@ -121,6 +120,30 @@ function hide_ratings() {
         document.getElementsByClassName("user-link")[i].innerHTML = text_element;
     }
 }
+
+function add_tv() {
+    let name = window.location.href;
+
+    if (name.substr(name.length - 10, 10) !== "/following") {
+        setTimeout(add_tv, 100);
+        return;
+    }
+    let tracks = document.getElementsByClassName("relation-actions btn-rack");
+    console.log(tracks.length);
+
+    for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i].childNodes.length < 1){
+            continue
+        }
+
+        let new_node = tracks[i].childNodes[0].cloneNode(true);
+        new_node.dataset.icon = "";
+        new_node.title = "Partien ansehen";
+        tracks[i].insertBefore(new_node, tracks[i].childNodes[0]);
+    }
+}
+
+setTimeout(add_tv, 100);
 
 setTimeout(hide_ratings, 10);
 
