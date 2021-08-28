@@ -70,7 +70,6 @@ function open_analysis() {
 }
 
 function start() {
-    set_state(false);
     document.getElementById("ratings").addEventListener("click", clicked, false);
     document.getElementById("duell").addEventListener("click", new_values, false);
     document.getElementById("report").addEventListener("click", new_values, false);
