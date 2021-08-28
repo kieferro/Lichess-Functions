@@ -266,7 +266,6 @@ function gotRatings(item) {
         return;
     }
     ratings = item.ratings;
-    console.log("Ratings: ", ratings);
 }
 
 function gotReport(item) {
@@ -274,7 +273,6 @@ function gotReport(item) {
         return;
     }
     report = item.report;
-    console.log("Report: ", report);
 }
 
 function gotDuell(item) {
@@ -282,7 +280,6 @@ function gotDuell(item) {
         return;
     }
     duell = item.duell;
-    console.log("Duell: ", duell);
 }
 
 function gotAnalyse(item) {
@@ -290,7 +287,6 @@ function gotAnalyse(item) {
         return;
     }
     analyse = item.analyse;
-    console.log("Analyse: ", analyse);
 }
 
 browser.storage.local.get("ratings").then(gotRatings, error);
