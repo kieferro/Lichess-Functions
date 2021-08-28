@@ -262,31 +262,27 @@ function error(error) {
 }
 
 function gotRatings(item) {
-    if (item.ratings === undefined) {
-        return;
+    if (item.ratings !== undefined) {
+        ratings = item.ratings;
     }
-    ratings = item.ratings;
 }
 
 function gotReport(item) {
-    if (item.report === undefined) {
-        return;
+    if (item.report !== undefined) {
+        report = item.report;
     }
-    report = item.report;
 }
 
 function gotDuell(item) {
-    if (item.duell === undefined) {
-        return;
+    if (item.duell !== undefined) {
+        duell = item.duell;
     }
-    duell = item.duell;
 }
 
 function gotAnalyse(item) {
-    if (item.analyse === undefined) {
-        return;
+    if (item.analyse !== undefined) {
+        analyse = item.analyse;
     }
-    analyse = item.analyse;
 }
 
 browser.storage.local.get("ratings").then(gotRatings, error);

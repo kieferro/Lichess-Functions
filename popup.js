@@ -7,32 +7,28 @@ function error(error) {
 }
 
 function gotReport(item) {
-    if (item.report === undefined) {
-        return;
+    if (item.report !== undefined) {
+        document.getElementById("report").checked = item.report;
     }
-    document.getElementById("report").checked = item.report;
 }
 
 function gotAnalyse(item) {
-    if (item.analyse === undefined) {
-        return;
+    if (item.analyse !== undefined) {
+        document.getElementById("analyse").checked = item.analyse;
     }
-    document.getElementById("analyse").checked = item.analyse;
 }
 
 function gotDuell(item) {
-    if (item.duell === undefined) {
-        return;
+    if (item.duell !== undefined) {
+        document.getElementById("duell").checked = item.duell;
     }
-    document.getElementById("duell").checked = item.duell;
 }
 
 function gotRatings(item) {
-    if (item.ratings === undefined) {
-        return;
+    if (item.ratings !== undefined) {
+        ratings = item.ratings;
+        set_state(false);
     }
-    ratings = item.ratings;
-    set_state(false);
 }
 
 
