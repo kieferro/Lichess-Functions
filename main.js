@@ -3,6 +3,7 @@ let duell = true;
 let analyse = true;
 let last_status = null;
 let ratings = 0;
+let tvs_loaded = 0;
 
 browser.runtime.onMessage.addListener(function (request) {
     if (request.code === 0) {
@@ -122,24 +123,36 @@ function hide_ratings() {
 }
 
 function add_tv() {
+    setTimeout(add_tv, 100);
     let name = window.location.href;
 
     if (name.substr(name.length - 10, 10) !== "/following") {
-        setTimeout(add_tv, 100);
         return;
     }
     let tracks = document.getElementsByClassName("relation-actions btn-rack");
     console.log(tracks.length);
 
-    for (let i = 0; i < tracks.length; i++) {
-        if (tracks[i].childNodes.length < 1){
+    for (tvs_loaded; tvs_loaded < tracks.length; tvs_loaded++) {
+        if (tracks[tvs_loaded].childNodes.length < 1){
             continue
         }
+        let continue_after = false;
 
-        let new_node = tracks[i].childNodes[0].cloneNode(true);
+        for (let j = 0; j < tracks[tvs_loaded].childNodes.length; j++){
+            if (tracks[tvs_loaded].childNodes[j].title === "Partien ansehen"){
+                continue_after = true;
+            }
+        }
+        if (continue_after){
+            continue;
+        }
+        let player = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].textContent;
+
+        let new_node = tracks[tvs_loaded].childNodes[0].cloneNode(true);
         new_node.dataset.icon = "";
         new_node.title = "Partien ansehen";
-        tracks[i].insertBefore(new_node, tracks[i].childNodes[0]);
+        new_node.href = "https://lichess.org/@/" + player + "/tv";
+        tracks[tvs_loaded].insertBefore(new_node, tracks[tvs_loaded].childNodes[0]);
     }
 }
 
