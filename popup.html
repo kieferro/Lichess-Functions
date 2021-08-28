@@ -5,17 +5,15 @@
     <meta charset="utf-8"/>
     <style>
         label {
-            color: #ffffff;
+            color: white;
             margin-left: 4px;
-            margin-right: auto;
         }
 
         #ratings {
+            cursor: pointer;
             border: none;
             color: white;
             padding: 8px 13px;
-            text-align: center;
-            text-decoration: none;
             display: block;
             font-size: 14px;
             margin-left: auto;
@@ -67,12 +65,6 @@
             height: 17px;
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
         .slider {
             position: absolute;
             cursor: pointer;
@@ -101,10 +93,6 @@
             background-color: #2196f3;
         }
 
-        .checkbox:focus + .slider {
-            box-shadow: 0 0 1px #2196f3;
-        }
-
         .checkbox:checked + .slider:before {
             -webkit-transform: translateX(13px);
             -ms-transform: translateX(13px);
@@ -128,37 +116,41 @@
         .small {
             content: "";
             display: block;
-            margin: -5px;
+            margin: 5px;
         }
-        #open-analysis{
-            color:white;
+
+        #open-analysis {
             background-color: white;
-            position:absolute;
-            top:15px;
-            left:15px;
+            position: absolute;
+            top: 15px;
+            left: 15px;
             height: 30px;
+            cursor: pointer;
         }
-        #open-analysis:hover{
+
+        #open-analysis:hover {
             background-color: #cbcbcb;
         }
-        #live-analysis-label{
-            color:white;
-            position:absolute;
-            top:22px;
-            left:50px;
+
+        #live-analysis-label {
+            position: absolute;
+            top: 22px;
+            left: 50px;
             height: 30px;
             border-radius: 5px;
         }
-        #reload{
-            color:white;
-            position:absolute;
-            top:15px;
-            right:20px;
-            height: 30px;
+
+        #reload {
             background-color: white;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            height: 30px;
+            cursor: pointer;
         }
+
         #reload:hover {
-            background-color: gray;
+            background-color: #cbcbcb;
         }
     </style>
     <title></title>
@@ -168,7 +160,7 @@
 
 <div>
     <img alt="This image could not be loaded. The ressource-files might be damaged"
-           src="/ressources/reload.png" id="reload">
+         src="/ressources/reload.png" id="reload">
 </div>
 <div>
     <img alt="This image could not be loaded. The ressource-files might be damaged"
@@ -185,18 +177,16 @@
         <span class="slider round"></span>
     </label>
     <label for="report">Benutzer melden</label>
-    <br>
-    <br>
 </div>
+<br>
 <div>
     <label class="switch">
         <input class="checkbox" type="checkbox" id="analyse" checked>
         <span class="slider round"></span>
     </label>
     <label for="analyse">Analyse automatisch aktivieren</label>
-    <br>
-    <br>
 </div>
+<br>
 <div>
     <label class="switch">
         <input class="checkbox" type="checkbox" id="duell" checked>
@@ -207,7 +197,7 @@
 <br>
 <br>
 <text>Ratings verbergen:</text>
-<br class="small">Test</br>
+<br class="small">
 <div>
     <button class="change-button1" type="button" id="ratings">Deaktiviert</button>
 </div>
