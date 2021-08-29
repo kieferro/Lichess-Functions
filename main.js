@@ -133,17 +133,17 @@ function add_tv() {
     console.log(tracks.length);
 
     for (tvs_loaded; tvs_loaded < tracks.length; tvs_loaded++) {
-        if (tracks[tvs_loaded].childNodes.length < 1){
+        if (tracks[tvs_loaded].childNodes.length < 1) {
             continue
         }
         let continue_after = false;
 
-        for (let j = 0; j < tracks[tvs_loaded].childNodes.length; j++){
-            if (tracks[tvs_loaded].childNodes[j].title === "Partien ansehen"){
+        for (let j = 0; j < tracks[tvs_loaded].childNodes.length; j++) {
+            if (tracks[tvs_loaded].childNodes[j].title === "Partien ansehen") {
                 continue_after = true;
             }
         }
-        if (continue_after){
+        if (continue_after) {
             continue;
         }
         let player = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].textContent;
