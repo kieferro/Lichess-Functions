@@ -139,6 +139,7 @@ function add_tv() {
         let continue_after = false;
 
         for (let j = 0; j < tracks[tvs_loaded].childNodes.length; j++) {
+            // TODO: this should not be necessary any more
             if (tracks[tvs_loaded].childNodes[j].title === "Partien ansehen") {
                 continue_after = true;
             }
@@ -230,23 +231,6 @@ function push_button() {
 
 setTimeout(push_button, 100);
 
-function guess_the_elo() {
-    setTimeout(guess_the_elo, 1000);
-
-    let button = document.getElementsByClassName("button button-metal config_ai");
-
-    if (button.length === 0 || document.getElementsByClassName("button button-metal config_gte").length > 0) {
-        return;
-    }
-    let button_new = button[0].cloneNode(true);
-    button_new.textContent = "Guess the elo";
-    button_new.className = "button button-metal config_gte";
-    button_new.removeAttribute("href");
-    button[0].parentNode.appendChild(button_new);
-}
-
-// setTimeout(guess_the_elo, 1000);
-
 function addFollowing() {
     let buttons = document.getElementsByClassName("site-buttons");
 
@@ -254,13 +238,16 @@ function addFollowing() {
         setTimeout(addFollowing, 10);
         return;
     }
-    if (buttons[0].childNodes.length > 5) {
-        return;
+    for (let i = 0; i < buttons[0].childNodes.length; i++) {
+        if (buttons[0].childNodes[i].title === "Personen, denen du folgst") {
+            return;
+        }
     }
     let name = document.getElementById("user_tag").textContent;
 
     let new_node = buttons[0].childNodes[0].childNodes[0].cloneNode();
     new_node.dataset.icon = "⛹";
+    new_node.title = "Personen, denen du folgst";
     new_node.href = "https://lichess.org/@/" + name + "/following";
 
     buttons[0].insertBefore(new_node, document.getElementById("user_tag").parentNode);
@@ -320,3 +307,20 @@ browser.storage.local.get("ratings").then(gotRatings, error);
 browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
 browser.storage.local.get("analyse").then(gotAnalyse, error);
+
+
+// will be installed in the future
+function guess_the_elo() {
+    setTimeout(guess_the_elo, 1000);
+
+    let button = document.getElementsByClassName("button button-metal config_ai");
+
+    if (button.length === 0 || document.getElementsByClassName("button button-metal config_gte").length > 0) {
+        return;
+    }
+    let button_new = button[0].cloneNode(true);
+    button_new.textContent = "Guess the elo";
+    button_new.className = "button button-metal config_gte";
+    button_new.removeAttribute("href");
+    button[0].parentNode.appendChild(button_new);
+}
