@@ -269,25 +269,23 @@ function addFollowing() {
 setTimeout(addFollowing, 10);
 
 function get_pgn() {
-    let l = document.getElementsByTagName("u8t");
-    let output = "";
+    let move_nodes = document.getElementsByTagName("u8t");
+    let pgn = "";
 
-    for (let i = 0; i < l.length / 2; i++) {
-        let first = l[i * 2].innerHTML;
-        first = first.split("<");
-        first = first[0];
+    for (let i = 0; i < move_nodes.length / 2; i++) {
+        let first = move_nodes[i * 2].innerHTML;
+        // to remove draw offers from the move text
+        first = first.split("<")[0];
 
-        output += (i + 1).toString() + "." + first;
+        pgn += (i + 1).toString() + "." + first;
 
-        if (i * 2 + 1 < l.length) {
-            let second = l[i * 2 + 1].innerHTML;
-            second = second.split("<");
-            second = second[0];
-            output += " " + second + " ";
+        if (i * 2 + 1 < move_nodes.length) {
+            let second = move_nodes[i * 2 + 1].innerHTML;
+            second = second.split("<")[0];
+            pgn += " " + second + " ";
         }
     }
-    console.log("PGN:", output);
-    browser.runtime.sendMessage({code: 1, pgn: output});
+    browser.runtime.sendMessage({code: 1, pgn: pgn});
 }
 
 function error(error) {
