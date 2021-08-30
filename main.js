@@ -4,6 +4,7 @@ let analyse = true;
 let last_status = null;
 let ratings = 0;
 let tvs_loaded = 0;
+// TODO: adding call list to call all methods
 
 browser.runtime.onMessage.addListener(function (request) {
     if (request.code === 0) {
@@ -211,20 +212,20 @@ function push_button() {
         if (last_text !== null && parent.length > 0) {
             parent[0].appendChild(last_text);
             parent[0].insertBefore(last_text, referenceNode[0]);
+            last_text = null;
         }
     } else {
         last_text = text[0];
     }
-
-    const time = document.getElementsByClassName("puz-clock__time");
+    let clock = document.getElementsByClassName("puz-clock__time");
     const button = document.getElementsByClassName("racer__skip button button-red");
 
-    if (time.length === 0 || button.length === 0) {
+    if (clock.length === 0 || button.length === 0) {
         return;
     }
-    let splitted = time[0].textContent.split(":");
+    let time = clock[0].textContent.split(":");
 
-    if (parseInt(splitted[0]) === 0 && parseInt(splitted[1]) <= 10) {
+    if (parseInt(time[0]) * 60 + parseInt(time[1]) <= 10) {
         button[0].click();
     }
 }
