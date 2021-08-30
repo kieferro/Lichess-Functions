@@ -5,6 +5,7 @@ let last_status = null;
 let ratings = 0;
 let tvs_loaded = 0;
 // TODO: adding call list to call all methods
+// TODO: change all function names to camel case
 
 browser.runtime.onMessage.addListener(function (request) {
     if (request.code === 0) {
@@ -123,30 +124,18 @@ function hide_ratings() {
     }
 }
 
-function add_tv() {
-    setTimeout(add_tv, 100);
+function addTv() {
+    setTimeout(addTv, 100);
     let name = window.location.href;
 
     if (name.substr(name.length - 10, 10) !== "/following") {
         return;
     }
     let tracks = document.getElementsByClassName("relation-actions btn-rack");
-    console.log(tracks.length);
 
     for (tvs_loaded; tvs_loaded < tracks.length; tvs_loaded++) {
         if (tracks[tvs_loaded].childNodes.length < 1) {
             continue
-        }
-        let continue_after = false;
-
-        for (let j = 0; j < tracks[tvs_loaded].childNodes.length; j++) {
-            // TODO: this should not be necessary any more
-            if (tracks[tvs_loaded].childNodes[j].title === "Partien ansehen") {
-                continue_after = true;
-            }
-        }
-        if (continue_after) {
-            continue;
         }
         let player = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].textContent;
 
@@ -158,7 +147,7 @@ function add_tv() {
     }
 }
 
-setTimeout(add_tv, 100);
+setTimeout(addTv, 100);
 
 setTimeout(hide_ratings, 10);
 
