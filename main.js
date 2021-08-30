@@ -162,38 +162,33 @@ setTimeout(add_tv, 100);
 
 setTimeout(hide_ratings, 10);
 
-let last_link = "none";
-
 function addReport() {
     if (!report) {
         return;
     }
     setTimeout(addReport, 100);
-    const actions = document.getElementsByClassName("upt__actions btn-rack");
+    let actions = document.getElementsByClassName("upt__actions btn-rack");
 
-    if (actions.length > 0) {
-        const action = actions[0];
-        let found = false;
+    if (actions.length === 0) {
+        return;
+    }
+    actions = actions[0];
 
-        for (let i = 0; i < action.childNodes.length; i++) {
-            if (action.childNodes[i].href === last_link) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            let new_action = action.childNodes[0].cloneNode(true);
-            new_action.dataset.icon = "";
-            new_action.title = "Benutzer melden";
-            let link = action.childNodes[0].href;
-            link = link.substr(0, link.length - 3);
-            link = link.split("/");
-            link = link[link.length - 1];
-            new_action.href = "https://lichess.org/report?username=" + link;
-            last_link = "https://lichess.org/report?username=" + link
-            action.appendChild(new_action);
+    for (let i = 0; i < actions.childNodes.length; i++) {
+        if (actions.childNodes[i].title === "Benutzer melden") {
+            return;
         }
     }
+    let new_action = actions.childNodes[0].cloneNode(true);
+    new_action.dataset.icon = "";
+    new_action.title = "Benutzer melden";
+
+    let link = actions.childNodes[0].href;
+    link = link.split("/");
+    let username = link[link.length - 2];
+    new_action.href = "https://lichess.org/report?username=" + username;
+
+    actions.appendChild(new_action);
 }
 
 setTimeout(addReport, 100);
