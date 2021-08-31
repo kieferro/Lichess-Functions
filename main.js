@@ -4,7 +4,7 @@ let last_status = null;
 let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
-let callers = [addFollowing, pushButton, addReport];
+let callers = [addFollowing, pushButton, addReport, addTv];
 // TODO: adding call list to call all methods
 // TODO: change all function names to camel case
 
@@ -131,7 +131,6 @@ function hideRatings() {
 }
 
 function addTv() {
-    setTimeout(addTv, 100);
     let name = window.location.href;
 
     if (name.substr(name.length - 10, 10) !== "/following") {
@@ -233,7 +232,6 @@ function call() {
 
 setTimeout(call, 10);
 
-setTimeout(addTv, 100);
 setTimeout(hideRatings, 10);
 setTimeout(activateAnalysis, 500);
 
