@@ -1,12 +1,10 @@
-﻿let report = true;
-let analyse = true;
-let last_status = null;
-let ratings = 0;
+﻿let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
-let callers = [addFollowing, pushButton, addReport, addTv];
-// TODO: adding call list to call all methods
-// TODO: change all function names to camel case
+let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
+
+// erst hinzufuegen wenn aus dem Speicher ausgelesen
+
 
 function removeFromCallers(caller) {
     const index = callers.indexOf(caller);
@@ -23,9 +21,6 @@ browser.runtime.onMessage.addListener(function (request) {
         const name = document.getElementById("user_tag").text;
         const players = document.getElementsByClassName("text ulpt");
         const text = players[players.length - 1].textContent;
-        console.log(name);
-        console.log(text);
-        console.log(name === text);
 
         if (name === text) {
             browser.runtime.sendMessage({code: 2});
@@ -58,28 +53,21 @@ function showAll() {
 }
 
 function activateAnalysis() {
-    setTimeout(activateAnalysis, 500);
-
-    if (!analyse || document.visibilityState === "hidden") {
+    if (document.visibilityState === "hidden") {
         return;
     }
     let toggle = document.getElementById("analyse-toggle-ceval");
 
     if (toggle == null) {
-        last_status = null;
-        return;
-    }
-    if (last_status != null) {
         return;
     }
     if (!toggle.checked) {
         toggle.parentNode.childNodes[1].click();
     }
-    last_status = toggle.checked;
+    removeFromCallers(activateAnalysis);
 }
 
 function hideRatings() {
-    setTimeout(hideRatings, 10);
     let status_now = 0;
 
     if (document.getElementsByClassName("game__meta__infos").length > 0) {
@@ -224,16 +212,12 @@ function addFollowing() {
 
 function call() {
     setTimeout(call, 10);
-    console.log("Called", callers.length, "callers");
     for (let i = 0; i < callers.length; i++) {
         callers[i]();
     }
 }
 
 setTimeout(call, 10);
-
-setTimeout(hideRatings, 10);
-setTimeout(activateAnalysis, 500);
 
 function getPgn() {
     let move_nodes = document.getElementsByTagName("u8t");
@@ -279,7 +263,11 @@ function gotDuell(item) {
 
 function gotAnalyse(item) {
     if (item.analyse !== undefined) {
-        analyse = item.analyse;
+        if (item.analyse) {
+            callers.push(activateAnalysis);
+        } else {
+            removeFromCallers(activateAnalysis);
+        }
     }
 }
 
