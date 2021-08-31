@@ -3,7 +3,6 @@ let id_reference_tab = -1;
 let reloaded = false;
 let pgn = "";
 let last_pgn = "";
-let close = false;
 
 function get_pgn() {
     browser.tabs.sendMessage(id_reference_tab, {code: 1});

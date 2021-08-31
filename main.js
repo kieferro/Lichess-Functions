@@ -1,9 +1,16 @@
-﻿let report = true;
-let duell = true;
-let analyse = true;
-let last_status = null;
-let ratings = 0;
+﻿let ratings = 0;
 let tvs_loaded = 0;
+let last_text = null;
+let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
+
+
+function removeFromCallers(caller) {
+    const index = callers.indexOf(caller);
+
+    if (index > -1) {
+        callers.splice(index, 1);
+    }
+}
 
 browser.runtime.onMessage.addListener(function (request) {
     if (request.code === 0) {
@@ -12,16 +19,12 @@ browser.runtime.onMessage.addListener(function (request) {
         const name = document.getElementById("user_tag").text;
         const players = document.getElementsByClassName("text ulpt");
         const text = players[players.length - 1].textContent;
-        console.log(name);
-        console.log(text);
-        console.log(name === text);
 
         if (name === text) {
             browser.runtime.sendMessage({code: 2});
             return;
         }
-
-        get_pgn();
+        getPgn();
     } else if (request.code === 2) {
         let all = document.getElementsByTagName("move");
 
@@ -37,7 +40,7 @@ browser.runtime.onMessage.addListener(function (request) {
     }
 });
 
-function show_all() {
+function showAll() {
     if (document.getElementsByClassName("status").length > 0) {
         const l = document.getElementsByTagName("rating");
 
@@ -48,30 +51,21 @@ function show_all() {
 }
 
 function activateAnalysis() {
-    setTimeout(activateAnalysis, 500);
-
-    if (!analyse || document.visibilityState === "hidden") {
+    if (document.visibilityState === "hidden") {
         return;
     }
     let toggle = document.getElementById("analyse-toggle-ceval");
 
     if (toggle == null) {
-        last_status = null;
-        return;
-    }
-    if (last_status != null) {
         return;
     }
     if (!toggle.checked) {
         toggle.parentNode.childNodes[1].click();
     }
-    last_status = toggle.checked;
+    removeFromCallers(activateAnalysis);
 }
 
-setTimeout(activateAnalysis, 500);
-
-function hide_ratings() {
-    setTimeout(hide_ratings, 10);
+function hideRatings() {
     let status_now = 0;
 
     if (document.getElementsByClassName("game__meta__infos").length > 0) {
@@ -92,15 +86,15 @@ function hide_ratings() {
         }
     }
     if (status_now === 0) {
-        show_all();
+        showAll();
         return;
     }
     if (status_now === 1 && ratings <= 1) {
-        show_all();
+        showAll();
         return;
     }
     if (status_now === 2 && ratings === 0) {
-        show_all();
+        showAll();
         return;
     }
 
@@ -122,29 +116,17 @@ function hide_ratings() {
     }
 }
 
-function add_tv() {
-    setTimeout(add_tv, 100);
+function addTv() {
     let name = window.location.href;
 
     if (name.substr(name.length - 10, 10) !== "/following") {
         return;
     }
     let tracks = document.getElementsByClassName("relation-actions btn-rack");
-    console.log(tracks.length);
 
     for (tvs_loaded; tvs_loaded < tracks.length; tvs_loaded++) {
         if (tracks[tvs_loaded].childNodes.length < 1) {
             continue
-        }
-        let continue_after = false;
-
-        for (let j = 0; j < tracks[tvs_loaded].childNodes.length; j++) {
-            if (tracks[tvs_loaded].childNodes[j].title === "Partien ansehen") {
-                continue_after = true;
-            }
-        }
-        if (continue_after) {
-            continue;
         }
         let player = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].textContent;
 
@@ -156,52 +138,32 @@ function add_tv() {
     }
 }
 
-setTimeout(add_tv, 100);
-
-setTimeout(hide_ratings, 10);
-
-let last_link = "none";
-
 function addReport() {
-    if (!report) {
+    let actions = document.getElementsByClassName("upt__actions btn-rack");
+
+    if (actions.length === 0) {
         return;
     }
-    setTimeout(addReport, 100);
-    const actions = document.getElementsByClassName("upt__actions btn-rack");
+    actions = actions[0];
 
-    if (actions.length > 0) {
-        const action = actions[0];
-        let found = false;
-
-        for (let i = 0; i < action.childNodes.length; i++) {
-            if (action.childNodes[i].href === last_link) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            let new_action = action.childNodes[0].cloneNode(true);
-            new_action.dataset.icon = "";
-            new_action.title = "Benutzer melden";
-            let link = action.childNodes[0].href;
-            link = link.substr(0, link.length - 3);
-            link = link.split("/");
-            link = link[link.length - 1];
-            new_action.href = "https://lichess.org/report?username=" + link;
-            last_link = "https://lichess.org/report?username=" + link
-            action.appendChild(new_action);
+    for (let i = 0; i < actions.childNodes.length; i++) {
+        if (actions.childNodes[i].title === "Benutzer melden") {
+            return;
         }
     }
+    let new_action = actions.childNodes[0].cloneNode(true);
+    new_action.dataset.icon = "";
+    new_action.title = "Benutzer melden";
+
+    let link = actions.childNodes[0].href;
+    link = link.split("/");
+    let username = link[link.length - 2];
+    new_action.href = "https://lichess.org/report?username=" + username;
+
+    actions.appendChild(new_action);
 }
 
-setTimeout(addReport, 100);
-let last_text = null;
-
-function push_button() {
-    if (!duell) {
-        return;
-    }
-    setTimeout(push_button, 100);
+function pushButton() {
     const text = document.getElementsByClassName("racer__pre__message__pov");
     const parent = document.getElementsByClassName("puz-side");
     const referenceNode = document.getElementsByClassName("puz-side__table");
@@ -210,84 +172,69 @@ function push_button() {
         if (last_text !== null && parent.length > 0) {
             parent[0].appendChild(last_text);
             parent[0].insertBefore(last_text, referenceNode[0]);
+            last_text = null;
         }
     } else {
         last_text = text[0];
     }
-
-    const time = document.getElementsByClassName("puz-clock__time");
+    let clock = document.getElementsByClassName("puz-clock__time");
     const button = document.getElementsByClassName("racer__skip button button-red");
 
-    if (time.length === 0 || button.length === 0) {
+    if (clock.length === 0 || button.length === 0) {
         return;
     }
-    let splitted = time[0].textContent.split(":");
+    let time = clock[0].textContent.split(":");
 
-    if (parseInt(splitted[0]) === 0 && parseInt(splitted[1]) <= 10) {
+    if (parseInt(time[0]) * 60 + parseInt(time[1]) <= 10) {
         button[0].click();
     }
 }
-
-setTimeout(push_button, 100);
-
-function guess_the_elo() {
-    setTimeout(guess_the_elo, 1000);
-
-    let button = document.getElementsByClassName("button button-metal config_ai");
-
-    if (button.length === 0 || document.getElementsByClassName("button button-metal config_gte").length > 0) {
-        return;
-    }
-    let button_new = button[0].cloneNode(true);
-    button_new.textContent = "Guess the elo";
-    button_new.className = "button button-metal config_gte";
-    button_new.removeAttribute("href");
-    button[0].parentNode.appendChild(button_new);
-}
-
-// setTimeout(guess_the_elo, 1000);
 
 function addFollowing() {
     let buttons = document.getElementsByClassName("site-buttons");
 
     if (buttons.length === 0) {
-        setTimeout(addFollowing, 10);
-        return;
-    }
-    if (buttons[0].childNodes.length > 5) {
         return;
     }
     let name = document.getElementById("user_tag").textContent;
 
     let new_node = buttons[0].childNodes[0].childNodes[0].cloneNode();
     new_node.dataset.icon = "⛹";
+    new_node.title = "Personen, denen du folgst";
     new_node.href = "https://lichess.org/@/" + name + "/following";
 
     buttons[0].insertBefore(new_node, document.getElementById("user_tag").parentNode);
+
+    removeFromCallers(addFollowing);
 }
 
-setTimeout(addFollowing, 10);
+function call() {
+    setTimeout(call, 10);
+    for (let i = 0; i < callers.length; i++) {
+        callers[i]();
+    }
+}
 
-function get_pgn() {
-    let l = document.getElementsByTagName("u8t");
-    let output = "";
+setTimeout(call, 10);
 
-    for (let i = 0; i < l.length / 2; i++) {
-        let first = l[i * 2].innerHTML;
-        first = first.split("<");
-        first = first[0];
+function getPgn() {
+    let move_nodes = document.getElementsByTagName("u8t");
+    let pgn = "";
 
-        output += (i + 1).toString() + "." + first;
+    for (let i = 0; i < move_nodes.length / 2; i++) {
+        let first = move_nodes[i * 2].innerHTML;
+        // to remove draw offers from the move text
+        first = first.split("<")[0];
 
-        if (i * 2 + 1 < l.length) {
-            let second = l[i * 2 + 1].innerHTML;
-            second = second.split("<");
-            second = second[0];
-            output += " " + second + " ";
+        pgn += (i + 1).toString() + "." + first;
+
+        if (i * 2 + 1 < move_nodes.length) {
+            let second = move_nodes[i * 2 + 1].innerHTML;
+            second = second.split("<")[0];
+            pgn += " " + second + " ";
         }
     }
-    console.log("PGN:", output);
-    browser.runtime.sendMessage({code: 1, pgn: output});
+    browser.runtime.sendMessage({code: 1, pgn: pgn});
 }
 
 function error(error) {
@@ -301,20 +248,24 @@ function gotRatings(item) {
 }
 
 function gotReport(item) {
-    if (item.report !== undefined) {
-        report = item.report;
+    if (item.report !== undefined && !item.report) {
+        removeFromCallers(addReport);
     }
 }
 
 function gotDuell(item) {
-    if (item.duell !== undefined) {
-        duell = item.duell;
+    if (item.duell !== undefined && !item.duell) {
+        removeFromCallers(pushButton);
     }
 }
 
 function gotAnalyse(item) {
     if (item.analyse !== undefined) {
-        analyse = item.analyse;
+        if (item.analyse) {
+            callers.push(activateAnalysis);
+        } else {
+            removeFromCallers(activateAnalysis);
+        }
     }
 }
 
@@ -322,3 +273,20 @@ browser.storage.local.get("ratings").then(gotRatings, error);
 browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
 browser.storage.local.get("analyse").then(gotAnalyse, error);
+
+
+// will be installed in the future
+function guessTheElo() {
+    setTimeout(guessTheElo, 1000);
+
+    let button = document.getElementsByClassName("button button-metal config_ai");
+
+    if (button.length === 0 || document.getElementsByClassName("button button-metal config_gte").length > 0) {
+        return;
+    }
+    let button_new = button[0].cloneNode(true);
+    button_new.textContent = "Guess the elo";
+    button_new.className = "button button-metal config_gte";
+    button_new.removeAttribute("href");
+    button[0].parentNode.appendChild(button_new);
+}
