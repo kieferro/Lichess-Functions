@@ -4,7 +4,7 @@ let last_status = null;
 let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
-let callers = [addFollowing, pushButton];
+let callers = [addFollowing, pushButton, addReport];
 // TODO: adding call list to call all methods
 // TODO: change all function names to camel case
 
@@ -154,10 +154,6 @@ function addTv() {
 }
 
 function addReport() {
-    if (!report) {
-        return;
-    }
-    setTimeout(addReport, 100);
     let actions = document.getElementsByClassName("upt__actions btn-rack");
 
     if (actions.length === 0) {
@@ -237,7 +233,6 @@ function call() {
 
 setTimeout(call, 10);
 
-setTimeout(addReport, 100);
 setTimeout(addTv, 100);
 setTimeout(hideRatings, 10);
 setTimeout(activateAnalysis, 500);
@@ -273,16 +268,14 @@ function gotRatings(item) {
 }
 
 function gotReport(item) {
-    if (item.report !== undefined) {
-        report = item.report;
+    if (item.report !== undefined && !item.report) {
+        removeFromCallers(addReport);
     }
 }
 
 function gotDuell(item) {
-    if (item.duell !== undefined) {
-        if (!item.duell) {
-            removeFromCallers(pushButton);
-        }
+    if (item.duell !== undefined && !item.duell) {
+        removeFromCallers(pushButton);
     }
 }
 
