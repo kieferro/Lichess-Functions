@@ -3,8 +3,6 @@ let tvs_loaded = 0;
 let last_text = null;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
-// erst hinzufuegen wenn aus dem Speicher ausgelesen
-
 
 function removeFromCallers(caller) {
     const index = callers.indexOf(caller);
