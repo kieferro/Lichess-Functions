@@ -4,7 +4,7 @@ let last_status = null;
 let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
-let callers = [addFollowing, push_button];
+let callers = [addFollowing, pushButton];
 // TODO: adding call list to call all methods
 // TODO: change all function names to camel case
 
@@ -31,7 +31,7 @@ browser.runtime.onMessage.addListener(function (request) {
             browser.runtime.sendMessage({code: 2});
             return;
         }
-        get_pgn();
+        getPgn();
     } else if (request.code === 2) {
         let all = document.getElementsByTagName("move");
 
@@ -47,7 +47,7 @@ browser.runtime.onMessage.addListener(function (request) {
     }
 });
 
-function show_all() {
+function showAll() {
     if (document.getElementsByClassName("status").length > 0) {
         const l = document.getElementsByTagName("rating");
 
@@ -78,8 +78,8 @@ function activateAnalysis() {
     last_status = toggle.checked;
 }
 
-function hide_ratings() {
-    setTimeout(hide_ratings, 10);
+function hideRatings() {
+    setTimeout(hideRatings, 10);
     let status_now = 0;
 
     if (document.getElementsByClassName("game__meta__infos").length > 0) {
@@ -100,15 +100,15 @@ function hide_ratings() {
         }
     }
     if (status_now === 0) {
-        show_all();
+        showAll();
         return;
     }
     if (status_now === 1 && ratings <= 1) {
-        show_all();
+        showAll();
         return;
     }
     if (status_now === 2 && ratings === 0) {
-        show_all();
+        showAll();
         return;
     }
 
@@ -182,7 +182,7 @@ function addReport() {
     actions.appendChild(new_action);
 }
 
-function push_button() {
+function pushButton() {
     const text = document.getElementsByClassName("racer__pre__message__pov");
     const parent = document.getElementsByClassName("puz-side");
     const referenceNode = document.getElementsByClassName("puz-side__table");
@@ -239,10 +239,10 @@ setTimeout(call, 10);
 
 setTimeout(addReport, 100);
 setTimeout(addTv, 100);
-setTimeout(hide_ratings, 10);
+setTimeout(hideRatings, 10);
 setTimeout(activateAnalysis, 500);
 
-function get_pgn() {
+function getPgn() {
     let move_nodes = document.getElementsByTagName("u8t");
     let pgn = "";
 
@@ -281,7 +281,7 @@ function gotReport(item) {
 function gotDuell(item) {
     if (item.duell !== undefined) {
         if (!item.duell) {
-            removeFromCallers(push_button);
+            removeFromCallers(pushButton);
         }
     }
 }
@@ -299,8 +299,8 @@ browser.storage.local.get("analyse").then(gotAnalyse, error);
 
 
 // will be installed in the future
-function guess_the_elo() {
-    setTimeout(guess_the_elo, 1000);
+function guessTheElo() {
+    setTimeout(guessTheElo, 1000);
 
     let button = document.getElementsByClassName("button button-metal config_ai");
 
