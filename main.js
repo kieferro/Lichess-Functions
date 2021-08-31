@@ -1,11 +1,20 @@
 ﻿let report = true;
-let duell = true;
 let analyse = true;
 let last_status = null;
 let ratings = 0;
 let tvs_loaded = 0;
+let last_text = null;
+let callers = [addFollowing, push_button];
 // TODO: adding call list to call all methods
 // TODO: change all function names to camel case
+
+function removeFromCallers(caller) {
+    const index = callers.indexOf(caller);
+
+    if (index > -1) {
+        callers.splice(index, 1);
+    }
+}
 
 browser.runtime.onMessage.addListener(function (request) {
     if (request.code === 0) {
@@ -22,7 +31,6 @@ browser.runtime.onMessage.addListener(function (request) {
             browser.runtime.sendMessage({code: 2});
             return;
         }
-
         get_pgn();
     } else if (request.code === 2) {
         let all = document.getElementsByTagName("move");
@@ -69,8 +77,6 @@ function activateAnalysis() {
     }
     last_status = toggle.checked;
 }
-
-setTimeout(activateAnalysis, 500);
 
 function hide_ratings() {
     setTimeout(hide_ratings, 10);
@@ -147,10 +153,6 @@ function addTv() {
     }
 }
 
-setTimeout(addTv, 100);
-
-setTimeout(hide_ratings, 10);
-
 function addReport() {
     if (!report) {
         return;
@@ -180,14 +182,7 @@ function addReport() {
     actions.appendChild(new_action);
 }
 
-setTimeout(addReport, 100);
-let last_text = null;
-
 function push_button() {
-    if (!duell) {
-        return;
-    }
-    setTimeout(push_button, 100);
     const text = document.getElementsByClassName("racer__pre__message__pov");
     const parent = document.getElementsByClassName("puz-side");
     const referenceNode = document.getElementsByClassName("puz-side__table");
@@ -214,19 +209,11 @@ function push_button() {
     }
 }
 
-setTimeout(push_button, 100);
-
 function addFollowing() {
     let buttons = document.getElementsByClassName("site-buttons");
 
     if (buttons.length === 0) {
-        setTimeout(addFollowing, 10);
         return;
-    }
-    for (let i = 0; i < buttons[0].childNodes.length; i++) {
-        if (buttons[0].childNodes[i].title === "Personen, denen du folgst") {
-            return;
-        }
     }
     let name = document.getElementById("user_tag").textContent;
 
@@ -236,9 +223,24 @@ function addFollowing() {
     new_node.href = "https://lichess.org/@/" + name + "/following";
 
     buttons[0].insertBefore(new_node, document.getElementById("user_tag").parentNode);
+
+    removeFromCallers(addFollowing);
 }
 
-setTimeout(addFollowing, 10);
+function call() {
+    setTimeout(call, 10);
+    console.log("Called", callers.length, "callers");
+    for (let i = 0; i < callers.length; i++) {
+        callers[i]();
+    }
+}
+
+setTimeout(call, 10);
+
+setTimeout(addReport, 100);
+setTimeout(addTv, 100);
+setTimeout(hide_ratings, 10);
+setTimeout(activateAnalysis, 500);
 
 function get_pgn() {
     let move_nodes = document.getElementsByTagName("u8t");
@@ -278,7 +280,9 @@ function gotReport(item) {
 
 function gotDuell(item) {
     if (item.duell !== undefined) {
-        duell = item.duell;
+        if (!item.duell) {
+            removeFromCallers(push_button);
+        }
     }
 }
 
