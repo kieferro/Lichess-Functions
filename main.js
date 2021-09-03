@@ -12,20 +12,35 @@ function removeFromCallers(caller) {
     }
 }
 
-browser.runtime.onMessage.addListener(function (request) {
+function getPgn() {
+    let move_nodes = document.getElementsByTagName("u8t");
+    let pgn = "";
+
+    for (let i = 0; i < move_nodes.length / 2; i++) {
+        let first = move_nodes[i * 2].innerHTML;
+        // to remove draw offers from the move text
+        first = first.split("<")[0];
+
+        pgn += (i + 1).toString() + "." + first;
+
+        if (i * 2 + 1 < move_nodes.length) {
+            let second = move_nodes[i * 2 + 1].innerHTML;
+            second = second.split("<")[0];
+            pgn += " " + second + " ";
+        }
+    }
+    return pgn;
+}
+
+function onMessage(request) {
     if (request.code === 0) {
         location.reload();
     } else if (request.code === 1) {
-        const name = document.getElementById("user_tag").text;
-        const players = document.getElementsByClassName("text ulpt");
-        const text = players[players.length - 1].textContent;
-
-        if (name === text) {
-            browser.runtime.sendMessage({code: 2});
-            return;
-        }
-        getPgn();
+        document.title = "Live-" + document.title;
+        browser.runtime.sendMessage({code: 1, sendToId: request.referenceTab, message: {code: 2}});
     } else if (request.code === 2) {
+        browser.runtime.sendMessage({code: 1, sendToId: request.response, message: {code: 3, pgn: getPgn()}});
+    } else if (request.code === 3) {
         let all = document.getElementsByTagName("move");
 
         if (all.length > 0) {
@@ -35,10 +50,8 @@ browser.runtime.onMessage.addListener(function (request) {
         }
         document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
         document.getElementsByClassName("button button-thin action text")[0].click();
-    } else if (request.code === 3) {
-        window.close();
     }
-});
+}
 
 function showAll() {
     if (document.getElementsByClassName("status").length > 0) {
@@ -217,26 +230,6 @@ function call() {
 
 setTimeout(call, 10);
 
-function getPgn() {
-    let move_nodes = document.getElementsByTagName("u8t");
-    let pgn = "";
-
-    for (let i = 0; i < move_nodes.length / 2; i++) {
-        let first = move_nodes[i * 2].innerHTML;
-        // to remove draw offers from the move text
-        first = first.split("<")[0];
-
-        pgn += (i + 1).toString() + "." + first;
-
-        if (i * 2 + 1 < move_nodes.length) {
-            let second = move_nodes[i * 2 + 1].innerHTML;
-            second = second.split("<")[0];
-            pgn += " " + second + " ";
-        }
-    }
-    browser.runtime.sendMessage({code: 1, pgn: pgn});
-}
-
 function error(error) {
     console.log("Error:", error);
 }
@@ -273,6 +266,7 @@ browser.storage.local.get("ratings").then(gotRatings, error);
 browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
 browser.storage.local.get("analyse").then(gotAnalyse, error);
+browser.runtime.onMessage.addListener(onMessage);
 
 
 // will be installed in the future
