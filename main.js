@@ -1,6 +1,7 @@
 ﻿let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
+let currentPgn = "";
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
 function removeFromCallers(caller) {
@@ -39,8 +40,11 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 2) {
         document.title = "Live-" + document.title;
 
-        document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
-        document.getElementsByClassName("button button-thin action text")[0].click();
+        if (request.pgn !== currentPgn) {
+            document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
+            document.getElementsByClassName("button button-thin action text")[0].click();
+            currentPgn = request.pgn;
+        }
     }
 }
 
