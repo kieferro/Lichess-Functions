@@ -3,7 +3,6 @@ let tvs_loaded = 0;
 let last_text = null;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
-
 function removeFromCallers(caller) {
     const index = callers.indexOf(caller);
 
@@ -32,22 +31,14 @@ function getPgn() {
     return pgn;
 }
 
-function onMessage(request) {
+function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         location.reload();
     } else if (request.code === 1) {
-        document.title = "Live-" + document.title;
-        browser.runtime.sendMessage({code: 1, sendToId: request.referenceTab, message: {code: 2}});
+        sendResponse({pgn: getPgn()});
     } else if (request.code === 2) {
-        browser.runtime.sendMessage({code: 1, sendToId: request.response, message: {code: 3, pgn: getPgn()}});
-    } else if (request.code === 3) {
-        let all = document.getElementsByTagName("move");
+        document.title = "Live-" + document.title;
 
-        if (all.length > 0) {
-            if (all[all.length - 1].classList[0] !== "active") {
-                return;
-            }
-        }
         document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
         document.getElementsByClassName("button button-thin action text")[0].click();
     }

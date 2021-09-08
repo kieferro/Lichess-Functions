@@ -1,9 +1,16 @@
 let referenceTab = -1;
 let analysisTab = -1;
 let hide = false;
+let currentPgn = "";
 
 function setId(tabInfo) {
     analysisTab = tabInfo.id;
+}
+
+function transmittPgn() {
+    browser.tabs.sendMessage(referenceTab, {code: 1}).then(
+        response => browser.tabs.sendMessage(analysisTab, {code: 2, pgn: response.pgn})
+    );
 }
 
 function tabUpdated(tabId, changeInfo, tabInfo) {
@@ -12,12 +19,13 @@ function tabUpdated(tabId, changeInfo, tabInfo) {
         hide = false;
     }
     if (changeInfo.status === "complete" && analysisTab === tabId) {
-        browser.tabs.sendMessage(tabId, {code: 1, referenceTab: referenceTab});
+        transmittPgn();
     }
 }
 
 function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
+        currentPgn = "";
         browser.tabs.query({currentWindow: true, active: true},
             function (tabs) {
                 referenceTab = tabs[0].id;
@@ -25,10 +33,6 @@ function onMessage(request, sender, sendResponse) {
                 browser.tabs.create({url: "https://lichess.org/analysis"}).then(setId);
             });
 
-    } else if (request.code === 1) {
-        let message = request.message;
-        message.response = sender.tab.id;
-        browser.tabs.sendMessage(request.sendToId, message);
     }
 }
 
