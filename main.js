@@ -40,9 +40,12 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 2) {
         document.title = "Live Analyse";
 
-        if (request.pgn !== currentPgn) {
-            document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
-            document.getElementsByClassName("button button-thin action text")[0].click();
+        let textField = document.getElementsByClassName("copyable autoselect");
+        let button = document.getElementsByClassName("button button-thin action text");
+
+        if (request.pgn !== currentPgn && textField.length > 1 && button.length > 0) {
+            textField[1].value = request.pgn;
+            button[0].click();
             currentPgn = request.pgn;
         }
     }
