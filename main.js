@@ -38,7 +38,7 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 1) {
         sendResponse({pgn: getPgn()});
     } else if (request.code === 2) {
-        document.title = "Live-" + document.title;
+        document.title = "Live Analyse";
 
         if (request.pgn !== currentPgn) {
             document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
