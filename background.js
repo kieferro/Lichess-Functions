@@ -9,10 +9,10 @@ function setId(tabInfo) {
 
 function setPgn(response) {
     browser.tabs.sendMessage(analysisTab, {code: 2, pgn: response.pgn})
-    setTimeout(transmittPgn, 200);
+    setTimeout(transferPgn, 200);
 }
 
-function transmittPgn() {
+function transferPgn() {
     browser.tabs.sendMessage(referenceTab, {code: 1}).then(setPgn);
 }
 
@@ -22,7 +22,7 @@ function tabUpdated(tabId, changeInfo, tabInfo) {
         hide = false;
     }
     if (changeInfo.status === "complete" && analysisTab === tabId) {
-        transmittPgn();
+        transferPgn();
     }
 }
 
