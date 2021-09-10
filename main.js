@@ -106,17 +106,17 @@ function getTimeSituation() {
 
     if (topClockRunning.length > 0) {
         response.topActive = true;
-        response.timeTop = topClockRunning[0].textContent;
+        response.timeTop = topClockRunning[0].childNodes[1].textContent;
     } else {
         response.topActive = false;
-        response.timeTop = topClock[0].textContent;
+        response.timeTop = topClock[0].childNodes[1].textContent;
     }
     if (bottomClockRunning.length > 0) {
         response.bottomActive = true;
-        response.timeBottom = bottomClockRunning[0].textContent;
+        response.timeBottom = bottomClockRunning[0].childNodes[1].textContent;
     } else {
         response.bottomActive = false;
-        response.timeBottom = bottomClock[0].textContent;
+        response.timeBottom = bottomClock[0].childNodes[1].textContent;
     }
     return response;
 }
