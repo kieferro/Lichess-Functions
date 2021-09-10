@@ -23,12 +23,7 @@ function analysisClosed() {
 
 function setPgn(response) {
     if (analysisTab !== -1) {
-        browser.tabs.sendMessage(analysisTab, {
-            code: 3,
-            pgn: response.pgn,
-            timeWhite: response.timeWhite,
-            timeBlack: response.timeBlack
-        }).then(function () {
+        browser.tabs.sendMessage(analysisTab, {code: 3, data:response}).then(function () {
             alreadyTransfered = true;
         }).catch(analysisClosed);
         setTimeout(transferPgn, 200);

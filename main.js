@@ -50,24 +50,27 @@ function getAnalyzable() {
 }
 
 function getTimeSituation(upper) {
-    let topClock = document.getElementsByClassName("rclock rclock-top running");
+    let topClockRunning = document.getElementsByClassName("rclock rclock-top running");
+    let topClock = document.getElementsByClassName("rclock rclock-top");
+    let bottomClockRunning = document.getElementsByClassName("rclock rclock-bottom running");
+    let bottomClock = document.getElementsByClassName("rclock rclock-bottom");
+    let response = {};
 
-    if (topClock.length === 0) {
-        topClock = document.getElementsByClassName("rclock rclock-top");
+    if (topClockRunning.length > 0) {
+        response.topActive = true;
+        response.timeTop = topClockRunning[0].textContent;
+    } else {
+        response.topActive = false;
+        response.timeTop = topClock[0].textContent;
     }
-    topClock = topClock[0].textContent;
-
-    let bottomClock = document.getElementsByClassName("rclock rclock-bottom running");
-
-    if (bottomClock.length === 0) {
-        bottomClock = document.getElementsByClassName("rclock rclock-bottom");
+    if (bottomClockRunning.length > 0) {
+        response.bottomActive = true;
+        response.timeBottom = bottomClockRunning[0].textContent;
+    } else {
+        response.bottomActive = false;
+        response.timeBottom = bottomClock[0].textContent;
     }
-    bottomClock = bottomClock[0].textContent;
-
-    if (upper) {
-        return topClock;
-    }
-    return bottomClock;
+    return response;
 }
 
 function onKey(event) {
@@ -82,23 +85,22 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
-        sendResponse({pgn: getPgn(), timeWhite: getTimeSituation(true), timeBlack: getTimeSituation(false)});
+        sendResponse({pgn: getPgn(), time: getTimeSituation()});
     } else if (request.code === 3) {
         if (stopAnalysis) {
             currentPgn = "";
             return;
         }
+        let data = request.data;
         document.title = "Live Analyse";
-
-        console.log(request.timeWhite, request.timeBlack);
 
         let textField = document.getElementsByClassName("copyable autoselect");
         let button = document.getElementsByClassName("button button-thin action text");
 
-        if (request.pgn !== currentPgn && textField.length > 1 && button.length > 0) {
-            textField[1].value = request.pgn;
+        if (data.pgn !== currentPgn && textField.length > 1 && button.length > 0) {
+            textField[1].value = data.pgn;
             button[0].click();
-            currentPgn = request.pgn;
+            currentPgn = data.pgn;
         }
         const dropdowns = document.getElementsByClassName("mselect");
 
