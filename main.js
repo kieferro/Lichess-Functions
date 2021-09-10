@@ -67,7 +67,6 @@ function onMessage(request, sender, sendResponse) {
             currentPgn = "";
             return;
         }
-
         document.title = "Live Analyse";
 
         let textField = document.getElementsByClassName("copyable autoselect");
@@ -77,6 +76,11 @@ function onMessage(request, sender, sendResponse) {
             textField[1].value = request.pgn;
             button[0].click();
             currentPgn = request.pgn;
+        }
+        const dropdowns = document.getElementsByClassName("mselect");
+
+        for (let i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].remove();
         }
     }
 }
