@@ -33,6 +33,28 @@ function getPgn() {
     return pgn;
 }
 
+function addClocks(){
+    const topStrip = document.getElementsByClassName("analyse__player_strip top");
+    const bottomStrip = document.getElementsByClassName("analyse__player_strip bottom");
+
+    if (document.getElementsByClassName("analyse__clock top active").length +
+        document.getElementsByClassName("analyse__clock top").length === 0) {
+        if (topStrip.length > 0) {
+            let node = document.createElement("div");
+            node.innerHTML = '<div class=\"analyse__clock top\">01:00<div></div></div>';
+            topStrip[0].appendChild(node);
+        }
+    }
+    if (document.getElementsByClassName("analyse__clock bottom active").length +
+        document.getElementsByClassName("analyse__clock bottom").length === 0) {
+        if (bottomStrip.length > 0) {
+            let node = document.createElement("div");
+            node.innerHTML = '<div class=\"analyse__clock bottom\">01:00<div></div></div>';
+            bottomStrip[0].appendChild(node);
+        }
+    }
+}
+
 function getAnalyzable() {
     if (document.getElementsByTagName("l4x").length === 0) {
         return false;
@@ -102,11 +124,7 @@ function onMessage(request, sender, sendResponse) {
             button[0].click();
             currentPgn = data.pgn;
         }
-        const dropdowns = document.getElementsByClassName("mselect");
-
-        for (let i = 0; i < dropdowns.length; i++) {
-            //dropdowns[i].remove();
-        }
+        addClocks();
     }
 }
 
