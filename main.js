@@ -132,7 +132,11 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
-        sendResponse({pgn: getPgn(), time: getTimeSituation()});
+        sendResponse({
+            pgn: getPgn(),
+            time: getTimeSituation(),
+            stop: document.getElementsByClassName("result").length > 0
+        });
     } else if (request.code === 3) {
         if (stopAnalysis) {
             currentPgn = "";

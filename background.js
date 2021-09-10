@@ -23,6 +23,9 @@ function analysisClosed() {
 
 function setPgn(response) {
     if (analysisTab !== -1) {
+        if (response.stop){
+            analysisClosed();
+        }
         browser.tabs.sendMessage(analysisTab, {code: 3, data:response}).then(function () {
             alreadyTransfered = true;
         }).catch(analysisClosed);
