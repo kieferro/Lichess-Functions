@@ -32,6 +32,22 @@ function getPgn() {
     return pgn;
 }
 
+function getAnalyzable() {
+    if (document.getElementsByTagName("l4x").length === 0) {
+        return false;
+    }
+    const players = document.getElementsByClassName("text ulpt");
+
+    if (players.length < 2) {
+        return true;
+    }
+
+    const text = players[players.length - 1].textContent;
+    const name = document.getElementById("user_tag").text;
+
+    return name !== text;
+}
+
 function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         location.reload();
