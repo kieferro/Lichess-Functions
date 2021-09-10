@@ -52,8 +52,10 @@ function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         location.reload();
     } else if (request.code === 1) {
-        sendResponse({pgn: getPgn()});
+        sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
+        sendResponse({pgn: getPgn()});
+    } else if (request.code === 3) {
         document.title = "Live Analyse";
 
         let textField = document.getElementsByClassName("copyable autoselect");
