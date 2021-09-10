@@ -29,6 +29,7 @@
     "<all_urls>",
     "storage",
     "webNavigation",
-    "*://*/*"
+    "*://*/*",
+    "tabHide"
   ]
 }

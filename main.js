@@ -1,8 +1,9 @@
 ﻿let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
+let currentPgn = "";
+let stopAnalysis = false;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
-
 
 function removeFromCallers(caller) {
     const index = callers.indexOf(caller);
@@ -12,33 +13,73 @@ function removeFromCallers(caller) {
     }
 }
 
-browser.runtime.onMessage.addListener(function (request) {
+function getPgn() {
+    let move_nodes = document.getElementsByTagName("u8t");
+    let pgn = "";
+
+    for (let i = 0; i < move_nodes.length / 2; i++) {
+        let first = move_nodes[i * 2].innerHTML;
+        // to remove draw offers from the move text
+        first = first.split("<")[0];
+
+        pgn += (i + 1).toString() + "." + first;
+
+        if (i * 2 + 1 < move_nodes.length) {
+            let second = move_nodes[i * 2 + 1].innerHTML;
+            second = second.split("<")[0];
+            pgn += " " + second + " ";
+        }
+    }
+    return pgn;
+}
+
+function getAnalyzable() {
+    if (document.getElementsByTagName("l4x").length === 0) {
+        return false;
+    }
+    const players = document.getElementsByClassName("text ulpt");
+
+    if (players.length < 2) {
+        return true;
+    }
+
+    const text = players[players.length - 1].textContent;
+    const name = document.getElementById("user_tag").text;
+
+    return name !== text;
+}
+
+function onKey(event) {
+    if (event.key === "p" && event.altKey) {
+        stopAnalysis = !stopAnalysis;
+    }
+}
+
+function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         location.reload();
     } else if (request.code === 1) {
-        const name = document.getElementById("user_tag").text;
-        const players = document.getElementsByClassName("text ulpt");
-        const text = players[players.length - 1].textContent;
-
-        if (name === text) {
-            browser.runtime.sendMessage({code: 2});
+        sendResponse({permission: getAnalyzable()});
+    } else if (request.code === 2) {
+        sendResponse({pgn: getPgn()});
+    } else if (request.code === 3) {
+        if (stopAnalysis) {
+            currentPgn = "";
             return;
         }
-        getPgn();
-    } else if (request.code === 2) {
-        let all = document.getElementsByTagName("move");
 
-        if (all.length > 0) {
-            if (all[all.length - 1].classList[0] !== "active") {
-                return;
-            }
+        document.title = "Live Analyse";
+
+        let textField = document.getElementsByClassName("copyable autoselect");
+        let button = document.getElementsByClassName("button button-thin action text");
+
+        if (request.pgn !== currentPgn && textField.length > 1 && button.length > 0) {
+            textField[1].value = request.pgn;
+            button[0].click();
+            currentPgn = request.pgn;
         }
-        document.getElementsByClassName("copyable autoselect")[1].value = request.pgn;
-        document.getElementsByClassName("button button-thin action text")[0].click();
-    } else if (request.code === 3) {
-        window.close();
     }
-});
+}
 
 function showAll() {
     if (document.getElementsByClassName("status").length > 0) {
@@ -217,26 +258,6 @@ function call() {
 
 setTimeout(call, 10);
 
-function getPgn() {
-    let move_nodes = document.getElementsByTagName("u8t");
-    let pgn = "";
-
-    for (let i = 0; i < move_nodes.length / 2; i++) {
-        let first = move_nodes[i * 2].innerHTML;
-        // to remove draw offers from the move text
-        first = first.split("<")[0];
-
-        pgn += (i + 1).toString() + "." + first;
-
-        if (i * 2 + 1 < move_nodes.length) {
-            let second = move_nodes[i * 2 + 1].innerHTML;
-            second = second.split("<")[0];
-            pgn += " " + second + " ";
-        }
-    }
-    browser.runtime.sendMessage({code: 1, pgn: pgn});
-}
-
 function error(error) {
     console.log("Error:", error);
 }
@@ -273,6 +294,8 @@ browser.storage.local.get("ratings").then(gotRatings, error);
 browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
 browser.storage.local.get("analyse").then(gotAnalyse, error);
+browser.runtime.onMessage.addListener(onMessage);
+document.addEventListener("keyup", onKey);
 
 
 // will be installed in the future

@@ -1,59 +1,75 @@
-let id_new_tab = -1;
-let id_reference_tab = -1;
-let reloaded = false;
-let pgn = "";
-let last_pgn = "";
+let referenceTab = -1;
+let analysisTab = -1;
+let hide = false;
+let alreadyTransfered = false;
 
-function get_pgn() {
-    browser.tabs.sendMessage(id_reference_tab, {code: 1});
+function setId(tabInfo) {
+    analysisTab = tabInfo.id;
 }
 
-function tab_updated(tabId, changeInfo, tabInfo) {
-    if (tabId === id_new_tab && changeInfo.status === "complete" && !reloaded) {
-        get_pgn();
-        reloaded = true;
+function referenceClosed() {
+    referenceTab = -1;
+    analysisTab = -1;
+}
+
+function analysisClosed() {
+    if (alreadyTransfered) {
+        alreadyTransfered = false;
+        browser.tabs.show(referenceTab);
+        referenceTab = -1;
+        analysisTab = -1;
     }
 }
-function close_connection(){
-    let send = browser.tabs.sendMessage(id_new_tab, {code: 3});
-    id_new_tab = -1;
+
+function setPgn(response) {
+    if (analysisTab !== -1) {
+        browser.tabs.sendMessage(analysisTab, {code: 3, pgn: response.pgn}).then(function () {
+            alreadyTransfered = true;
+        }).catch(analysisClosed);
+        setTimeout(transferPgn, 200);
+    }
 }
 
-function send_message() {
-    let send = browser.tabs.sendMessage(id_new_tab, {code: 2, pgn: pgn});
+function transferPgn() {
+    if (referenceTab !== -1) {
+        browser.tabs.sendMessage(referenceTab, {code: 2}).then(setPgn).catch(referenceClosed);
+    }
+}
 
-    send.then(function () {
-    }, function () {
-        id_new_tab = -1;
-    });
+function tabUpdated(tabId, changeInfo, tabInfo) {
+    if (hide && tabId !== referenceTab && tabInfo.active) {
+        browser.tabs.hide(referenceTab);
+        hide = false;
+    }
+    if (changeInfo.status === "complete" && analysisTab === tabId) {
+        alreadyTransfered = false;
+        transferPgn();
+    }
 }
-function onGot(tabInfo) {
-    id_new_tab = tabInfo.id;
-    reloaded = false;
+
+function start(message) {
+    if (!message.permission) {
+        return;
+    }
+    browser.tabs.query({currentWindow: true, active: true},
+        function (tabs) {
+            referenceTab = tabs[0].id;
+            hide = true;
+            browser.tabs.create({url: "https://lichess.org/analysis"}).then(setId);
+        });
 }
-function onError(error) {
-    console.log("Error:", error);
-}
-function open_new_tab(request, sender, sendResponse) {
+
+function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
+        referenceTab = -1;
+        analysisTab = -1;
+
         browser.tabs.query({currentWindow: true, active: true},
             function (tabs) {
-                id_reference_tab = tabs[0].id;
+                browser.tabs.sendMessage(tabs[0].id, {code: 1}).then(start);
             });
-        let creating = browser.tabs.create({url: "https://lichess.org/analysis"});
-        creating.then(onGot, onError);
-    } else if (request.code === 1) {
-        pgn = request.pgn;
-        setTimeout(get_pgn, 100);
-
-        if (pgn !== last_pgn) {
-            setTimeout(send_message, 100);
-        }
-        last_pgn = pgn;
-    } else if (request.code === 2){
-        setTimeout(close_connection, 2000);
     }
 }
 
-browser.runtime.onMessage.addListener(open_new_tab);
-browser.tabs.onUpdated.addListener(tab_updated);
+browser.runtime.onMessage.addListener(onMessage);
+browser.tabs.onUpdated.addListener(tabUpdated);
