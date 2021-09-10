@@ -33,7 +33,7 @@ function getPgn() {
     return pgn;
 }
 
-function addClocks(){
+function addClocks(data) {
     const topStrip = document.getElementsByClassName("analyse__player_strip top");
     const bottomStrip = document.getElementsByClassName("analyse__player_strip bottom");
 
@@ -44,13 +44,38 @@ function addClocks(){
             node.innerHTML = '<div class=\"analyse__clock top\">01:00<div></div></div>';
             topStrip[0].appendChild(node);
         }
+    } else {
+        let clock = document.getElementsByClassName("analyse__clock top active");
+        if (clock.length === 0) {
+            clock = document.getElementsByClassName("analyse__clock top");
+        }
+        clock[0].textContent = data.time.timeTop;
+
+        if (data.time.topActive) {
+            clock[0].className = "analyse__clock top active";
+        } else {
+            clock[0].className = "analyse__clock top";
+        }
     }
+
     if (document.getElementsByClassName("analyse__clock bottom active").length +
         document.getElementsByClassName("analyse__clock bottom").length === 0) {
         if (bottomStrip.length > 0) {
             let node = document.createElement("div");
             node.innerHTML = '<div class=\"analyse__clock bottom\">01:00<div></div></div>';
             bottomStrip[0].appendChild(node);
+        }
+    } else {
+        let clock = document.getElementsByClassName("analyse__clock bottom active");
+        if (clock.length === 0) {
+            clock = document.getElementsByClassName("analyse__clock bottom");
+        }
+        clock[0].textContent = data.time.timeBottom;
+
+        if (data.time.bottomActive) {
+            clock[0].className = "analyse__clock bottom active";
+        } else {
+            clock[0].className = "analyse__clock bottom";
         }
     }
 }
@@ -124,7 +149,7 @@ function onMessage(request, sender, sendResponse) {
             button[0].click();
             currentPgn = data.pgn;
         }
-        addClocks();
+        addClocks(data);
     }
 }
 
