@@ -126,11 +126,11 @@ function onKey(event) {
         stopAnalysis = !stopAnalysis;
 
         if (stopAnalysis) {
-            status.style = "color:white; background-color:orange;outline-color:orange; border-radius:5px; margin-top:30px";
+            status.style = "color:white; background-color:orange;outline-color:orange; border-radius:5px; margin-top:30px; text-align: center";
             status.textContent = "Paused";
             status.dataset.icon = "";
         } else {
-            status.style = "color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px";
+            status.style = "color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px; text-align: center";
             status.textContent = "Running";
             status.dataset.icon = "";
         }
@@ -168,7 +168,7 @@ function onMessage(request, sender, sendResponse) {
         const dropdowns = document.getElementsByClassName("analyse__side");
 
         if (dropdowns.length > 0) {
-            dropdowns[0].outerHTML = '<button class="text fbt" data-icon="" style="color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px">Running</button>'
+            dropdowns[0].outerHTML = '<label class="text fbt" data-icon="" style="color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px; text-align: center">Running</label>';
         }
         status = document.getElementsByClassName("text fbt")[0];
     }
