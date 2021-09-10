@@ -3,6 +3,7 @@ let tvs_loaded = 0;
 let last_text = null;
 let currentPgn = "";
 let stopAnalysis = false;
+let status = null;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
 function removeFromCallers(caller) {
@@ -123,6 +124,16 @@ function getTimeSituation() {
 function onKey(event) {
     if (event.key === "p" && event.altKey) {
         stopAnalysis = !stopAnalysis;
+
+        if (stopAnalysis) {
+            status.style = "color:white; background-color:orange;outline-color:orange; border-radius:5px; margin-top:30px";
+            status.textContent = "Paused";
+            status.dataset.icon = "";
+        } else {
+            status.style = "color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px";
+            status.textContent = "Running";
+            status.dataset.icon = "";
+        }
     }
 }
 
@@ -156,9 +167,10 @@ function onMessage(request, sender, sendResponse) {
         addClocks(data);
         const dropdowns = document.getElementsByClassName("analyse__side");
 
-        if (dropdowns.length > 0){
-            dropdowns[0].outerHTML = '<button class="text fbt weak" data-icon="" style="color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px">Running</button>'
+        if (dropdowns.length > 0) {
+            dropdowns[0].outerHTML = '<button class="text fbt" data-icon="" style="color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px">Running</button>'
         }
+        status = document.getElementsByClassName("text fbt")[0];
     }
 }
 
