@@ -245,7 +245,9 @@ function addTv() {
         if (tracks[tvs_loaded].childNodes.length < 1) {
             continue
         }
-        let player = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].textContent;
+        const playerLink = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].childNodes[0];
+        let player = playerLink.childNodes[playerLink.childNodes.length - 1].textContent;
+        player = player.trimLeft();
 
         let new_node = tracks[tvs_loaded].childNodes[0].cloneNode(true);
         new_node.dataset.icon = "";
