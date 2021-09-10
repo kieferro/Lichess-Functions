@@ -49,6 +49,27 @@ function getAnalyzable() {
     return name !== text;
 }
 
+function getTimeSituation(upper) {
+    let topClock = document.getElementsByClassName("rclock rclock-top running");
+
+    if (topClock.length === 0) {
+        topClock = document.getElementsByClassName("rclock rclock-top");
+    }
+    topClock = topClock[0].textContent;
+
+    let bottomClock = document.getElementsByClassName("rclock rclock-bottom running");
+
+    if (bottomClock.length === 0) {
+        bottomClock = document.getElementsByClassName("rclock rclock-bottom");
+    }
+    bottomClock = bottomClock[0].textContent;
+
+    if (upper) {
+        return topClock;
+    }
+    return bottomClock;
+}
+
 function onKey(event) {
     if (event.key === "p" && event.altKey) {
         stopAnalysis = !stopAnalysis;
@@ -61,13 +82,15 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
-        sendResponse({pgn: getPgn()});
+        sendResponse({pgn: getPgn(), timeWhite: getTimeSituation(true), timeBlack: getTimeSituation(false)});
     } else if (request.code === 3) {
         if (stopAnalysis) {
             currentPgn = "";
             return;
         }
         document.title = "Live Analyse";
+
+        console.log(request.timeWhite, request.timeBlack);
 
         let textField = document.getElementsByClassName("copyable autoselect");
         let button = document.getElementsByClassName("button button-thin action text");
@@ -80,7 +103,7 @@ function onMessage(request, sender, sendResponse) {
         const dropdowns = document.getElementsByClassName("mselect");
 
         for (let i = 0; i < dropdowns.length; i++) {
-            dropdowns[i].remove();
+            //dropdowns[i].remove();
         }
     }
 }
