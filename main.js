@@ -154,6 +154,11 @@ function onMessage(request, sender, sendResponse) {
             currentPgn = data.pgn;
         }
         addClocks(data);
+        const dropdowns = document.getElementsByClassName("analyse__side");
+
+        if (dropdowns.length > 0){
+            dropdowns[0].outerHTML = '<button class="text fbt weak" data-icon="" style="color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px">Running</button>'
+        }
     }
 }
 
