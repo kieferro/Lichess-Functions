@@ -96,7 +96,7 @@ function getAnalyzable() {
     return name !== text;
 }
 
-function getTimeSituation(upper) {
+function getTimeSituation() {
     let topClockRunning = document.getElementsByClassName("rclock rclock-top running");
     let topClock = document.getElementsByClassName("rclock rclock-top");
     let bottomClockRunning = document.getElementsByClassName("rclock rclock-bottom running");
