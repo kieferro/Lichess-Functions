@@ -2,6 +2,7 @@
 let tvs_loaded = 0;
 let last_text = null;
 let currentPgn = "";
+let stopAnalysis = false;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
 function removeFromCallers(caller) {
@@ -50,7 +51,7 @@ function getAnalyzable() {
 
 function onKey(event) {
     if (event.key === "p" && event.altKey) {
-        console.log("stop");
+        stopAnalysis = !stopAnalysis;
     }
 }
 
@@ -62,6 +63,11 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 2) {
         sendResponse({pgn: getPgn()});
     } else if (request.code === 3) {
+        if (stopAnalysis) {
+            currentPgn = "";
+            return;
+        }
+
         document.title = "Live Analyse";
 
         let textField = document.getElementsByClassName("copyable autoselect");
