@@ -48,6 +48,12 @@ function getAnalyzable() {
     return name !== text;
 }
 
+function onKey(event) {
+    if (event.key === "p" && event.altKey) {
+        console.log("stop");
+    }
+}
+
 function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         location.reload();
@@ -283,6 +289,7 @@ browser.storage.local.get("report").then(gotReport, error);
 browser.storage.local.get("duell").then(gotDuell, error);
 browser.storage.local.get("analyse").then(gotAnalyse, error);
 browser.runtime.onMessage.addListener(onMessage);
+document.addEventListener("keyup", onKey);
 
 
 // will be installed in the future
