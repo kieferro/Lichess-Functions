@@ -1,0 +1,82 @@
+.game__meta .user-tv {
+    white-space:nowrap
+}
+.game__meta .user-tv{
+    overflow:hidden;
+    text-overflow:ellipsis
+}
+.game__meta__infos{
+    display:flex;
+    flex-flow:row nowrap;
+    align-items:center
+}
+.game__meta {
+    border-radius:3px
+}
+.crosstable,
+.mchat,
+.game__meta {
+    overflow:hidden
+}
+.game__meta {
+    box-shadow:0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.2),0 1px 5px 0 rgba(0,0,0,0.12)
+}
+.round__side .game__meta {
+    flex:0 0 auto
+}
+.round__side .game__meta__players .team {
+    margin-left:1.7em
+}
+.game__meta {
+    background:#262421;
+    padding:1.4vmin 2vmin
+}
+.game__meta section:not(:last-child) {
+    border-bottom:1px solid #404040;
+    margin-bottom:1.33333vmin;
+    padding-bottom:1.33333vmin
+}
+.game__meta__infos {
+    position:relative
+}
+.game__meta__infos::before {
+    font-size:3rem;
+    margin-right:4%
+}
+.game__meta__infos p {
+    margin:0
+}
+.game__meta__infos time {
+    opacity:1
+}
+.game__meta .status {
+    text-align:center
+}
+.game__meta__players {
+    margin-top:0.3rem;
+    font-size:90%
+}
+.game__meta .bookmark {
+    position:absolute;
+    right:0;
+    z-index:2;
+    color:#999
+}
+.game__meta .bookmark ::before {
+    font-size:1.3em
+}
+.game__meta .bookmark:not(.bookmarked) .on,
+.game__meta .bookmark.bookmarked .off {
+    display:none
+}
+.game__meta .user-tv {
+    font-size:1.2em
+}
+@media (hover: hover) {
+    .game__meta .bookmark {
+        display:none
+    }
+    .game__meta:hover .bookmark {
+        display:block
+    }
+}

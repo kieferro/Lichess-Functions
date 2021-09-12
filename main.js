@@ -121,19 +121,23 @@ function getTimeSituation() {
     return response;
 }
 
+function togglePause() {
+    stopAnalysis = !stopAnalysis;
+
+    if (stopAnalysis) {
+        status.style = "color:white; background-color:orange; width:100%; border-radius: 5px";
+        status.textContent = "Paused";
+        status.dataset.icon = "";
+    } else {
+        status.style = "color:white; background-color:green; width:100%; border-radius: 5px";
+        status.textContent = "Running";
+        status.dataset.icon = "";
+    }
+}
+
 function onKey(event) {
     if (event.key === "p" && event.altKey) {
-        stopAnalysis = !stopAnalysis;
-
-        if (stopAnalysis) {
-            status.style = "color:white; background-color:orange;outline-color:orange; border-radius:5px; margin-top:30px; text-align: center";
-            status.textContent = "Paused";
-            status.dataset.icon = "";
-        } else {
-            status.style = "color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px; text-align: center";
-            status.textContent = "Running";
-            status.dataset.icon = "";
-        }
+        togglePause();
     }
 }
 
@@ -150,7 +154,6 @@ function onMessage(request, sender, sendResponse) {
         });
     } else if (request.code === 3) {
         if (stopAnalysis) {
-            currentPgn = "";
             return;
         }
         let data = request.data;
@@ -168,9 +171,18 @@ function onMessage(request, sender, sendResponse) {
         const dropdowns = document.getElementsByClassName("analyse__side");
 
         if (dropdowns.length > 0) {
-            dropdowns[0].outerHTML = '<label class="text fbt" data-icon="" style="color:white; background-color:green;outline-color:green; border-radius:5px; margin-top:30px; text-align: center">Running</label>';
+            dropdowns[0].outerHTML = '<aside class="analyse__side">\n' +
+                '            <div class="game__meta"><section><div class="game__meta__infos" data-icon=""><div class="header"><div class="setup">3+0 • Gewertet • <span title="Schnelle Spiele: 3 bis 8 Minuten">Blitz</span></div></div></div><div class="game__meta__players"><div class="player color-icon is white text"><a class="user-link" href="/@/mostrovski"><span class="utitle" title="International Master">IM</span>&nbsp;mostrovski (2670)</a></div><div class="player color-icon is black text"><a class="user-link" href="/@/ruzomberok"><span class="utitle" title="International Master">IM</span>&nbsp;ruzomberok (2616)</a></div></div></section></div>\n' +
+                '            <br>\n' +
+                '            <button class="text fbt" data-icon="" style="color:white; background-color:green; width:100%; border-radius: 5px">Running</button>\n' +
+                '        </aside>';
+            let node = document.createElement("link");
+            node.href = browser.runtime.getURL("game-meta.css");
+            node.rel = "stylesheet";
+            document.getElementsByTagName("head")[0].appendChild(node);
         }
         status = document.getElementsByClassName("text fbt")[0];
+        status.addEventListener("click", togglePause, false);
     }
 }
 
