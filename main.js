@@ -150,7 +150,8 @@ function onMessage(request, sender, sendResponse) {
         sendResponse({
             pgn: getPgn(),
             time: getTimeSituation(),
-            stop: document.getElementsByClassName("result").length > 0
+            stop: document.getElementsByClassName("result").length > 0,
+            gameMeta: document.getElementsByClassName("game__meta")[0].outerHTML
         });
     } else if (request.code === 3) {
         if (stopAnalysis) {
@@ -172,7 +173,7 @@ function onMessage(request, sender, sendResponse) {
 
         if (dropdowns.length > 0) {
             dropdowns[0].outerHTML = '<aside class="analyse__side">\n' +
-                '            <div class="game__meta"><section><div class="game__meta__infos" data-icon=""><div class="header"><div class="setup">3+0 • Gewertet • <span title="Schnelle Spiele: 3 bis 8 Minuten">Blitz</span></div></div></div><div class="game__meta__players"><div class="player color-icon is white text"><a class="user-link" href="/@/mostrovski"><span class="utitle" title="International Master">IM</span>&nbsp;mostrovski (2670)</a></div><div class="player color-icon is black text"><a class="user-link" href="/@/ruzomberok"><span class="utitle" title="International Master">IM</span>&nbsp;ruzomberok (2616)</a></div></div></section></div>\n' +
+                data.gameMeta +
                 '            <br>\n' +
                 '            <button class="text fbt" data-icon="" style="color:white; background-color:green; width:100%; border-radius: 5px">Running</button>\n' +
                 '        </aside>';
