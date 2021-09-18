@@ -38,7 +38,7 @@ function onMessage(request, sender, sendResponse) {
                 browser.tabs.sendMessage(tabs[0].id, {code: 1}).then(start);
             });
     } else if (request.code === 1) {
-        browser.tabs.sendMessage(analysisTab, {code: 3, data: request}).then(start);
+        browser.tabs.sendMessage(analysisTab, {code: 3, data: request});
         console.log(request);
     }
 }
