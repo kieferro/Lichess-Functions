@@ -147,43 +147,6 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
-        sendResponse({
-            pgn: getPgn(),
-            time: getTimeSituation(),
-            stop: document.getElementsByClassName("result").length > 0,
-            gameMeta: document.getElementsByClassName("game__meta")[0].outerHTML
-        });
-    } else if (request.code === 3) {
-        if (stopAnalysis) {
-            return;
-        }
-        let data = request.data;
-        document.title = "Live Analyse";
-
-        let textField = document.getElementsByClassName("copyable autoselect");
-        let button = document.getElementsByClassName("button button-thin action text");
-
-        if (data.pgn !== currentPgn && textField.length > 1 && button.length > 0) {
-            textField[1].value = data.pgn;
-            button[0].click();
-            currentPgn = data.pgn;
-        }
-        addClocks(data);
-        const dropdowns = document.getElementsByClassName("analyse__side");
-
-        if (dropdowns.length > 0) {
-            dropdowns[0].outerHTML = '<aside class="analyse__side">\n' +
-                data.gameMeta +
-                '            <br>\n' +
-                '            <button class="text fbt" data-icon="" style="color:white; background-color:green; width:100%; border-radius: 5px">Running</button>\n' +
-                '        </aside>';
-            let node = document.createElement("link");
-            node.href = browser.runtime.getURL("game-meta.css");
-            node.rel = "stylesheet";
-            document.getElementsByTagName("head")[0].appendChild(node);
-        }
-        status = document.getElementsByClassName("text fbt")[0];
-        status.addEventListener("click", togglePause, false);
     }
 }
 
