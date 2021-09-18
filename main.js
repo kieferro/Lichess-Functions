@@ -1,7 +1,7 @@
 ﻿let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
-let currentPgn = "";
+let lastPgn = "";
 let stopAnalysis = false;
 let status = null;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
@@ -141,12 +141,35 @@ function onKey(event) {
     }
 }
 
+function sendPgn() {
+    setTimeout(sendPgn, 1000);
+
+    const pgn = getPgn();
+
+    if (pgn !== lastPgn) {
+        lastPgn = pgn;
+        browser.runtime.sendMessage({code: 1, pgn: pgn});
+    }
+}
+
 function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         location.reload();
     } else if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
+        sendPgn();
+    } else if (request.code === 3) {
+        let data = request.data;
+        document.title = "Live Analyse";
+
+        let textField = document.getElementsByClassName("copyable autoselect");
+        let button = document.getElementsByClassName("button button-thin action text");
+
+        if (textField.length > 1 && button.length > 0) {
+            textField[1].value = data.pgn;
+            button[0].click();
+        }
     }
 }
 

@@ -1,42 +1,9 @@
 let referenceTab = -1;
 let analysisTab = -1;
 let hide = false;
-let alreadyTransfered = false;
 
 function setId(tabInfo) {
     analysisTab = tabInfo.id;
-}
-
-function referenceClosed() {
-    referenceTab = -1;
-    analysisTab = -1;
-}
-
-function analysisClosed() {
-    if (alreadyTransfered) {
-        alreadyTransfered = false;
-        browser.tabs.show(referenceTab);
-        referenceTab = -1;
-        analysisTab = -1;
-    }
-}
-
-function setPgn(response) {
-    if (analysisTab !== -1) {
-        if (response.stop){
-            analysisClosed();
-        }
-        browser.tabs.sendMessage(analysisTab, {code: 3, data:response}).then(function () {
-            alreadyTransfered = true;
-        }).catch(analysisClosed);
-        setTimeout(transferPgn, 200);
-    }
-}
-
-function transferPgn() {
-    if (referenceTab !== -1) {
-        browser.tabs.sendMessage(referenceTab, {code: 2}).then(setPgn).catch(referenceClosed);
-    }
 }
 
 function tabUpdated(tabId, changeInfo, tabInfo) {
@@ -45,8 +12,7 @@ function tabUpdated(tabId, changeInfo, tabInfo) {
         hide = false;
     }
     if (changeInfo.status === "complete" && analysisTab === tabId) {
-        alreadyTransfered = false;
-        transferPgn();
+        browser.tabs.sendMessage(referenceTab, {code: 2});
     }
 }
 
@@ -71,6 +37,9 @@ function onMessage(request, sender, sendResponse) {
             function (tabs) {
                 browser.tabs.sendMessage(tabs[0].id, {code: 1}).then(start);
             });
+    } else if (request.code === 1) {
+        browser.tabs.sendMessage(analysisTab, {code: 3, data: request}).then(start);
+        console.log(request);
     }
 }
 
