@@ -1,9 +1,16 @@
 let referenceTab = -1;
 let analysisTab = -1;
 let hide = false;
+let alredyLoaded = false;
 
 function setId(tabInfo) {
     analysisTab = tabInfo.id;
+}
+
+function analysisClosed() {
+    browser.tabs.show(referenceTab);
+    referenceTab = -1;
+    analysisTab = -1;
 }
 
 function establishConnection() {
@@ -15,8 +22,9 @@ function tabUpdated(tabId, changeInfo, tabInfo) {
         browser.tabs.hide(referenceTab);
         hide = false;
     }
-    if (changeInfo.status === "complete" && analysisTab === tabId) {
+    if (changeInfo.status === "complete" && analysisTab === tabId && !alredyLoaded) {
         setTimeout(establishConnection, 300);
+        alredyLoaded = true;
     }
 }
 
@@ -36,6 +44,7 @@ function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         referenceTab = -1;
         analysisTab = -1;
+        alredyLoaded = false;
 
         browser.tabs.query({currentWindow: true, active: true},
             function (tabs) {

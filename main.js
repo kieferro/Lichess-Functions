@@ -150,6 +150,7 @@ function sendPgn() {
     if (numberNodes === currentNumberOfNodes) {
         return;
     }
+    currentNumberOfNodes = numberNodes;
     const pgn = getPgn();
 
     if (pgn !== lastPgn) {
