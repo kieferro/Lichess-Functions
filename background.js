@@ -6,13 +6,17 @@ function setId(tabInfo) {
     analysisTab = tabInfo.id;
 }
 
+function establishConnection() {
+    browser.tabs.sendMessage(referenceTab, {code: 2});
+}
+
 function tabUpdated(tabId, changeInfo, tabInfo) {
     if (hide && tabId !== referenceTab && tabInfo.active) {
         browser.tabs.hide(referenceTab);
         hide = false;
     }
     if (changeInfo.status === "complete" && analysisTab === tabId) {
-        browser.tabs.sendMessage(referenceTab, {code: 2});
+        setTimeout(establishConnection, 300);
     }
 }
 
@@ -39,7 +43,6 @@ function onMessage(request, sender, sendResponse) {
             });
     } else if (request.code === 1) {
         browser.tabs.sendMessage(analysisTab, {code: 3, data: request});
-        console.log(request);
     }
 }
 

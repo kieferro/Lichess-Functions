@@ -3,6 +3,7 @@ let tvs_loaded = 0;
 let last_text = null;
 let lastPgn = "";
 let stopAnalysis = false;
+let currentNumberOfNodes = -1;
 let status = null;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
@@ -15,18 +16,18 @@ function removeFromCallers(caller) {
 }
 
 function getPgn() {
-    let move_nodes = document.getElementsByTagName("u8t");
+    let moveNodes = document.getElementsByTagName("u8t");
     let pgn = "";
 
-    for (let i = 0; i < move_nodes.length / 2; i++) {
-        let first = move_nodes[i * 2].innerHTML;
+    for (let i = 0; i < moveNodes.length / 2; i++) {
+        let first = moveNodes[i * 2].innerHTML;
         // to remove draw offers from the move text
         first = first.split("<")[0];
 
         pgn += (i + 1).toString() + "." + first;
 
-        if (i * 2 + 1 < move_nodes.length) {
-            let second = move_nodes[i * 2 + 1].innerHTML;
+        if (i * 2 + 1 < moveNodes.length) {
+            let second = moveNodes[i * 2 + 1].innerHTML;
             second = second.split("<")[0];
             pgn += " " + second + " ";
         }
@@ -142,8 +143,13 @@ function onKey(event) {
 }
 
 function sendPgn() {
-    setTimeout(sendPgn, 1000);
+    setTimeout(sendPgn, 200);
 
+    const numberNodes = document.getElementsByTagName("u8t").length;
+
+    if (numberNodes === currentNumberOfNodes) {
+        return;
+    }
     const pgn = getPgn();
 
     if (pgn !== lastPgn) {
@@ -158,6 +164,8 @@ function onMessage(request, sender, sendResponse) {
     } else if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
+        lastPgn = "";
+        currentNumberOfNodes = -1;
         sendPgn();
     } else if (request.code === 3) {
         let data = request.data;
