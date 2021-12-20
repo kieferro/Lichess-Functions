@@ -1,42 +1,20 @@
 let referenceTab = -1;
 let analysisTab = -1;
 let hide = false;
-let alreadyTransfered = false;
+let alredyLoaded = false;
 
 function setId(tabInfo) {
     analysisTab = tabInfo.id;
 }
 
-function referenceClosed() {
+function analysisClosed() {
+    browser.tabs.show(referenceTab);
     referenceTab = -1;
     analysisTab = -1;
 }
 
-function analysisClosed() {
-    if (alreadyTransfered) {
-        alreadyTransfered = false;
-        browser.tabs.show(referenceTab);
-        referenceTab = -1;
-        analysisTab = -1;
-    }
-}
-
-function setPgn(response) {
-    if (analysisTab !== -1) {
-        if (response.stop){
-            analysisClosed();
-        }
-        browser.tabs.sendMessage(analysisTab, {code: 3, data:response}).then(function () {
-            alreadyTransfered = true;
-        }).catch(analysisClosed);
-        setTimeout(transferPgn, 200);
-    }
-}
-
-function transferPgn() {
-    if (referenceTab !== -1) {
-        browser.tabs.sendMessage(referenceTab, {code: 2}).then(setPgn).catch(referenceClosed);
-    }
+function establishConnection() {
+    browser.tabs.sendMessage(referenceTab, {code: 2});
 }
 
 function tabUpdated(tabId, changeInfo, tabInfo) {
@@ -44,9 +22,9 @@ function tabUpdated(tabId, changeInfo, tabInfo) {
         browser.tabs.hide(referenceTab);
         hide = false;
     }
-    if (changeInfo.status === "complete" && analysisTab === tabId) {
-        alreadyTransfered = false;
-        transferPgn();
+    if (changeInfo.status === "complete" && analysisTab === tabId && !alredyLoaded) {
+        setTimeout(establishConnection, 300);
+        alredyLoaded = true;
     }
 }
 
@@ -66,11 +44,14 @@ function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         referenceTab = -1;
         analysisTab = -1;
+        alredyLoaded = false;
 
         browser.tabs.query({currentWindow: true, active: true},
             function (tabs) {
                 browser.tabs.sendMessage(tabs[0].id, {code: 1}).then(start);
             });
+    } else if (request.code === 1) {
+        browser.tabs.sendMessage(analysisTab, {code: 3, data: request});
     }
 }
 

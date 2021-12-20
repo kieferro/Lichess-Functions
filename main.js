@@ -1,8 +1,9 @@
 ﻿let ratings = 0;
 let tvs_loaded = 0;
 let last_text = null;
-let currentPgn = "";
+let lastPgn = "";
 let stopAnalysis = false;
+let currentNumberOfNodes = -1;
 let status = null;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
@@ -15,18 +16,18 @@ function removeFromCallers(caller) {
 }
 
 function getPgn() {
-    let move_nodes = document.getElementsByTagName("u8t");
+    let moveNodes = document.getElementsByTagName("u8t");
     let pgn = "";
 
-    for (let i = 0; i < move_nodes.length / 2; i++) {
-        let first = move_nodes[i * 2].innerHTML;
+    for (let i = 0; i < moveNodes.length / 2; i++) {
+        let first = moveNodes[i * 2].innerHTML;
         // to remove draw offers from the move text
         first = first.split("<")[0];
 
         pgn += (i + 1).toString() + "." + first;
 
-        if (i * 2 + 1 < move_nodes.length) {
-            let second = move_nodes[i * 2 + 1].innerHTML;
+        if (i * 2 + 1 < moveNodes.length) {
+            let second = moveNodes[i * 2 + 1].innerHTML;
             second = second.split("<")[0];
             pgn += " " + second + " ";
         }
@@ -141,49 +142,43 @@ function onKey(event) {
     }
 }
 
+function sendPgn() {
+    setTimeout(sendPgn, 200);
+
+    const numberNodes = document.getElementsByTagName("u8t").length;
+
+    if (numberNodes === currentNumberOfNodes) {
+        return;
+    }
+    currentNumberOfNodes = numberNodes;
+    const pgn = getPgn();
+
+    if (pgn !== lastPgn) {
+        lastPgn = pgn;
+        browser.runtime.sendMessage({code: 1, pgn: pgn});
+    }
+}
+
 function onMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         location.reload();
     } else if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
-        sendResponse({
-            pgn: getPgn(),
-            time: getTimeSituation(),
-            stop: document.getElementsByClassName("result").length > 0,
-            gameMeta: document.getElementsByClassName("game__meta")[0].outerHTML
-        });
+        lastPgn = "";
+        currentNumberOfNodes = -1;
+        sendPgn();
     } else if (request.code === 3) {
-        if (stopAnalysis) {
-            return;
-        }
         let data = request.data;
         document.title = "Live Analyse";
 
         let textField = document.getElementsByClassName("copyable autoselect");
         let button = document.getElementsByClassName("button button-thin action text");
 
-        if (data.pgn !== currentPgn && textField.length > 1 && button.length > 0) {
+        if (textField.length > 1 && button.length > 0) {
             textField[1].value = data.pgn;
             button[0].click();
-            currentPgn = data.pgn;
         }
-        addClocks(data);
-        const dropdowns = document.getElementsByClassName("analyse__side");
-
-        if (dropdowns.length > 0) {
-            dropdowns[0].outerHTML = '<aside class="analyse__side">\n' +
-                data.gameMeta +
-                '            <br>\n' +
-                '            <button class="text fbt" data-icon="" style="color:white; background-color:green; width:100%; border-radius: 5px">Running</button>\n' +
-                '        </aside>';
-            let node = document.createElement("link");
-            node.href = browser.runtime.getURL("game-meta.css");
-            node.rel = "stylesheet";
-            document.getElementsByTagName("head")[0].appendChild(node);
-        }
-        status = document.getElementsByClassName("text fbt")[0];
-        status.addEventListener("click", togglePause, false);
     }
 }
 
