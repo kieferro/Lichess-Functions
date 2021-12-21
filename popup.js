@@ -54,13 +54,6 @@ function clicked() {
     new_values();
 }
 
-function reload() {
-    browser.tabs.query({currentWindow: true, active: true},
-        function (tabs) {
-            browser.tabs.sendMessage(tabs[0].id, {code: 0});
-        });
-}
-
 function open_analysis() {
     browser.runtime.sendMessage({code: 0});
 }
@@ -70,7 +63,6 @@ function start() {
     document.getElementById("duell").addEventListener("click", new_values, false);
     document.getElementById("report").addEventListener("click", new_values, false);
     document.getElementById("analyse").addEventListener("click", new_values, false);
-    document.getElementById("reload").addEventListener("click", reload, false);
     document.getElementById("open-analysis").addEventListener("click", open_analysis, false);
     browser.storage.local.get("report").then(gotReport, error);
     browser.storage.local.get("duell").then(gotDuell, error);

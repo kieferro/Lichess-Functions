@@ -5,6 +5,7 @@ let lastPgn = "";
 let stopAnalysis = false;
 let currentNumberOfNodes = -1;
 let status = null;
+let stopSendingPgn = false;
 let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
 
 function removeFromCallers(caller) {
@@ -143,6 +144,11 @@ function onKey(event) {
 }
 
 function sendPgn() {
+    if (stopSendingPgn) {
+        stopSendingPgn = true;
+        return;
+    }
+
     setTimeout(sendPgn, 200);
 
     const numberNodes = document.getElementsByTagName("u8t").length;
@@ -160,9 +166,7 @@ function sendPgn() {
 }
 
 function onMessage(request, sender, sendResponse) {
-    if (request.code === 0) {
-        location.reload();
-    } else if (request.code === 1) {
+    if (request.code === 1) {
         sendResponse({permission: getAnalyzable()});
     } else if (request.code === 2) {
         lastPgn = "";
@@ -179,6 +183,8 @@ function onMessage(request, sender, sendResponse) {
             textField[1].value = data.pgn;
             button[0].click();
         }
+    } else if (request.code === 4) {
+        stopSendingPgn = true;
     }
 }
 
