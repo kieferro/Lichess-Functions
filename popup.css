@@ -2,6 +2,25 @@ body {
     background-color: black;
 }
 
+#open-analysis {
+    background-color: white;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    height: 30px;
+    cursor: pointer;
+}
+
+#open-analysis:hover {
+    background-color: lightgrey;
+}
+
+#live-analysis-text {
+    position: absolute;
+    top: 22px;
+    left: 55px;
+}
+
 .wrapper {
     margin-top: 70px;
     display: grid;
@@ -10,9 +29,18 @@ body {
     grid-auto-rows: 30px;
 }
 
+text {
+    color: white;
+    display: block;
+}
+
 .grid-element {
     grid-column: var(--x);
     grid-row: var(--y);
+}
+
+.option-text {
+    margin-left: 7px;
 }
 
 #ratings {
@@ -26,42 +54,6 @@ body {
     margin-right: auto;
     width: 75%;
     border-radius: 5px;
-}
-
-.change-button1 {
-    background-color: #c25367;
-}
-
-.change-button1:hover {
-    background-color: #c4374f;
-}
-
-.change-button1:active {
-    background-color: #e31d41;
-}
-
-.change-button2 {
-    background-color: #b9872d;
-}
-
-.change-button2:hover {
-    background-color: #c98b1b;
-}
-
-.change-button2:active {
-    background-color: #815405;
-}
-
-.change-button3 {
-    background-color: #53c257;
-}
-
-.change-button3:hover {
-    background-color: #41a345;
-}
-
-.change-button3:active {
-    background-color: #228c26;
 }
 
 .switch {
@@ -113,41 +105,50 @@ body {
     border-radius: 50%;
 }
 
-text {
-    color: #ffffff;
-    display: block;
-    text-align: center;
+.change-button1 {
+    background-color: #c25367;
 }
 
-.small {
-    content: "";
-    display: block;
-    margin: 5px;
+.change-button1:hover {
+    background-color: #c4374f;
 }
 
-#open-analysis {
-    background-color: white;
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    height: 30px;
-    cursor: pointer;
+.change-button1:active {
+    background-color: #e31d41;
 }
 
-#open-analysis:hover {
-    background-color: #cbcbcb;
+.change-button2 {
+    background-color: #b9872d;
 }
 
-#live-analysis-label {
-    position: absolute;
-    top: 22px;
-    left: 50px;
-    height: 30px;
-    border-radius: 5px;
+.change-button2:hover {
+    background-color: #c98b1b;
+}
+
+.change-button2:active {
+    background-color: #815405;
+}
+
+.change-button3 {
+    background-color: #53c257;
+}
+
+.change-button3:hover {
+    background-color: #41a345;
+}
+
+.change-button3:active {
+    background-color: #228c26;
 }
 
 #hide-ratings {
     margin-top: 15px;
+}
+
+#hide-ratings-text {
+    color: white;
+    display: block;
+    text-align: center;
 }
 
 #ratings {
