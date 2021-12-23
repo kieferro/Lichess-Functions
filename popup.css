@@ -2,11 +2,6 @@ body {
     background-color: black;
 }
 
-label {
-    color: white;
-    margin-left: 4px;
-}
-
 .wrapper {
     margin-top: 70px;
     display: grid;
