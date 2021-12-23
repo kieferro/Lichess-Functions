@@ -92,42 +92,6 @@ text {
     border-radius: 50%;
 }
 
-.change-button1 {
-    background-color: #c25367;
-}
-
-.change-button1:hover {
-    background-color: #c4374f;
-}
-
-.change-button1:active {
-    background-color: #e31d41;
-}
-
-.change-button2 {
-    background-color: #b9872d;
-}
-
-.change-button2:hover {
-    background-color: #c98b1b;
-}
-
-.change-button2:active {
-    background-color: #815405;
-}
-
-.change-button3 {
-    background-color: #53c257;
-}
-
-.change-button3:hover {
-    background-color: #41a345;
-}
-
-.change-button3:active {
-    background-color: #228c26;
-}
-
 #hide-ratings {
     margin-top: 15px;
 }
