@@ -14,8 +14,8 @@
         "*://*.lichess.org/*"
       ],
       "js": [
-        "main.js",
-        "third-party/jquery.js"
+        "third-party/jquery.js",
+        "main.js"
       ]
     }
   ],
