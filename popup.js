@@ -7,7 +7,7 @@ function open_analysis() {
 }
 
 function gotError(_) {
-    $("body").css({"background-color": "red"});
+    $("body").html("<text style='color: red'>Fehler:</text><text>Aufgetreten beim Laden der Einstellungen</text>");
 }
 
 function gotPreferences(item) {
