@@ -20,9 +20,24 @@ body {
     top: 22px;
     left: 55px;
 }
+#error-section{
+    margin-top: 70px;
+    margin-left: 10px;
+}
+#warning-sign{
+    height: 25px;
+}
+#error-text{
+    color: white;
+    position: absolute;
+    margin-top: 2px;
+    margin-left: 5px;
+    display: inline;
+    font-size: 11pt;
+}
 
 .wrapper {
-    margin-top: 70px;
+    margin-top: 20px;
     display: grid;
     grid-template-columns: auto auto;
     grid-gap: 5px;
