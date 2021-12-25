@@ -3,7 +3,16 @@ const button_color = [["#c25367", "#c4374f"], ["#b9872d", "#c98b1b"], ["#53c257"
 let preferences = {"toggles": [true, true, true, true], "ratings": 0, "signature": true};
 
 function open_analysis() {
-    browser.runtime.sendMessage({code: 0});
+    // PGN found:
+    if (true) {
+        $("#error-text").hide();
+        $("#warning-sign").hide();
+
+        browser.runtime.sendMessage({code: 0});
+    } else {
+        $("#error-text").show();
+        $("#warning-sign").show();
+    }
 }
 
 function gotError(_) {
@@ -61,6 +70,8 @@ function setup() {
 
     $("#open-analysis").on("click", open_analysis);
     $("#ratings").on("click", rating_button_clicked);
+    $("#error-text").hide();
+    $("#warning-sign").hide();
 }
 
 document.addEventListener("DOMContentLoaded", setup, false);
