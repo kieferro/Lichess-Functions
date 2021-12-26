@@ -4,7 +4,7 @@ let preferences = {"toggles": [true, true, true, true], "ratings": 0, "signature
 
 function open_analysis() {
     // PGN found:
-    if (true) {
+    if (false) {
         $("#error-text").hide();
         $("#warning-sign").hide();
 
@@ -20,10 +20,12 @@ function gotError(_) {
 }
 
 function gotPreferences(item) {
-    item = item.preferences;
+    if (item.preferences !== undefined) {
+        item = item.preferences;
 
-    if (item.signature) {
-        preferences = item;
+        if (item.signature) {
+            preferences = item;
+        }
     }
     applyPreferences();
 }
