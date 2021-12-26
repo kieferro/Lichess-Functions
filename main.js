@@ -6,7 +6,38 @@ let stopAnalysis = false;
 let currentNumberOfNodes = -1;
 let status = null;
 let stopSendingPgn = false;
-let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
+let callers = [addFollowing, pushButton, addTv, hideRatings];
+
+
+const config = {attributes: true, childList: true, subtree: true};
+
+function mutation(mutationsList, observer) {
+    if (document.querySelector("#reportButton") !== null) {
+        return;
+    }
+
+    let new_node = $('<a data-icon="" class="btn-rack__btn" id="reportButton" title="Benutzer melden"></a>');
+    let link_elements = document.querySelector(".upt__actions.btn-rack").childNodes[0].href.split("/");
+    new_node.attr("href", "https://lichess.org/report?username=" + link_elements.at(-2));
+    $(".upt__actions.btn-rack").append(new_node);
+    $("#reportButton").css("padding-left", "2px");
+}
+
+
+function setup() {
+    // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
+    // a users name. At the beginning it doesn't exist, so this function creates one so that it can be used
+    // for the MutationObserver, which will then add the Report-Buttons.
+    if (document.querySelector("#powerTip") === null) {
+        $("body").append("<div id=\"powerTip\"></div>");
+    }
+
+    const observer = new MutationObserver(mutation);
+    observer.observe(document.querySelector("#powerTip"), config);
+}
+
+setup();
+
 
 function removeFromCallers(caller) {
     const index = callers.indexOf(caller);
@@ -288,31 +319,6 @@ function addTv() {
     }
 }
 
-function addReport() {
-    let actions = document.getElementsByClassName("upt__actions btn-rack");
-
-    if (actions.length === 0) {
-        return;
-    }
-    actions = actions[0];
-
-    for (let i = 0; i < actions.childNodes.length; i++) {
-        if (actions.childNodes[i].title === "Benutzer melden") {
-            return;
-        }
-    }
-    let new_action = actions.childNodes[0].cloneNode(true);
-    new_action.dataset.icon = "";
-    new_action.title = "Benutzer melden";
-
-    let link = actions.childNodes[0].href;
-    link = link.split("/");
-    let username = link[link.length - 2];
-    new_action.href = "https://lichess.org/report?username=" + username;
-
-    actions.appendChild(new_action);
-}
-
 function pushButton() {
     const text = document.getElementsByClassName("racer__pre__message__pov");
     const parent = document.getElementsByClassName("puz-side");
@@ -365,7 +371,7 @@ function call() {
     }
 }
 
-setTimeout(call, 10);
+// setTimeout(call, 10);
 
 function error(error) {
     console.log("Error:", error);
@@ -374,12 +380,6 @@ function error(error) {
 function gotRatings(item) {
     if (item.ratings !== undefined) {
         ratings = item.ratings;
-    }
-}
-
-function gotReport(item) {
-    if (item.report !== undefined && !item.report) {
-        removeFromCallers(addReport);
     }
 }
 
@@ -399,12 +399,12 @@ function gotAnalyse(item) {
     }
 }
 
-browser.storage.local.get("ratings").then(gotRatings, error);
-browser.storage.local.get("report").then(gotReport, error);
-browser.storage.local.get("duell").then(gotDuell, error);
-browser.storage.local.get("analyse").then(gotAnalyse, error);
-browser.runtime.onMessage.addListener(onMessage);
-document.addEventListener("keyup", onKey);
+//browser.storage.local.get("ratings").then(gotRatings, error);
+//browser.storage.local.get("report").then(gotReport, error);
+//browser.storage.local.get("duell").then(gotDuell, error);
+//browser.storage.local.get("analyse").then(gotAnalyse, error);
+//browser.runtime.onMessage.addListener(onMessage);
+//document.addEventListener("keyup", onKey);
 
 
 // will be installed in the future
