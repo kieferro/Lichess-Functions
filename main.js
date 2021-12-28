@@ -38,7 +38,7 @@ function addTv(node, _) {
     new_node.insertBefore(bar.childNodes[0]);
 }
 
-function followingLoaderMutation(mutation_list, observer) {
+function followingLoaderMutation(mutation_list, _) {
     for (let i = 0; i < mutation_list.length; i++) {
         mutation_list[i].addedNodes.forEach(addTv);
     }
