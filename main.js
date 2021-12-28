@@ -6,7 +6,7 @@ let stopAnalysis = false;
 let currentNumberOfNodes = -1;
 let status = null;
 let stopSendingPgn = false;
-let callers = [pushButton, addTv, hideRatings];
+let callers = [pushButton, hideRatings];
 
 
 const config = {attributes: true, childList: true, subtree: true};
@@ -20,6 +20,28 @@ function hover_mutation(_, __) {
     new_node.attr("href", "https://lichess.org/report?username=" + link_elements.at(-2));
     $(".upt__actions.btn-rack").append(new_node);
     $("#reportButton").css("padding-left", 0);
+}
+
+function addTv(node, _) {
+    if (node.className !== "paginated") {
+        return;
+    }
+    let link = node.childNodes[0].childNodes[0].href;
+    let name = link.split("/").at(-1);
+
+    let childs = node.childNodes;
+    let bar = childs[childs.length - 1].childNodes[0];
+
+    let new_node = $('<a title="Partien ansehen"  class="btn-rack__btn" data-icon=""></a>');
+    new_node.attr("href", "https://lichess.org/@/" + name + "/tv");
+
+    new_node.insertBefore(bar.childNodes[0]);
+}
+
+function followingLoaderMutation(mutation_list, observer) {
+    for (let i = 0; i < mutation_list.length; i++) {
+        mutation_list[i].addedNodes.forEach(addTv);
+    }
 }
 
 function addFollowing() {
@@ -44,9 +66,22 @@ function setup() {
     }
 
     const observer = new MutationObserver(hover_mutation);
+    const observer2 = new MutationObserver(followingLoaderMutation);
     observer.observe(document.querySelector("#powerTip"), config);
 
+    let infiniteScrott = document.querySelector(".infinite-scroll");
+
+    if (infiniteScrott !== null) {
+        observer2.observe(infiniteScrott, config);
+    }
+
     addFollowing();
+
+    let paginated_elements = document.getElementsByClassName("paginated");
+
+    for (let i = 0; i < paginated_elements.length; i++) {
+        addTv(paginated_elements[i], null);
+    }
 }
 
 setup();
@@ -305,30 +340,6 @@ function hideRatings() {
         text_element = text_element.split("(");
         text_element = text_element[0] + "<span style=\"visibility:hidden\">(" + text_element[1] + "</span>";
         document.getElementsByClassName("user-link")[i].innerHTML = text_element;
-    }
-}
-
-function addTv() {
-    let name = window.location.href;
-
-    if (name.substr(name.length - 10, 10) !== "/following") {
-        return;
-    }
-    let tracks = document.getElementsByClassName("relation-actions btn-rack");
-
-    for (tvs_loaded; tvs_loaded < tracks.length; tvs_loaded++) {
-        if (tracks[tvs_loaded].childNodes.length < 1) {
-            continue
-        }
-        const playerLink = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].childNodes[0];
-        let player = playerLink.childNodes[playerLink.childNodes.length - 1].textContent;
-        player = player.trimLeft();
-
-        let new_node = tracks[tvs_loaded].childNodes[0].cloneNode(true);
-        new_node.dataset.icon = "";
-        new_node.title = "Partien ansehen";
-        new_node.href = "https://lichess.org/@/" + player + "/tv";
-        tracks[tvs_loaded].insertBefore(new_node, tracks[tvs_loaded].childNodes[0]);
     }
 }
 
