@@ -6,7 +6,7 @@ let stopAnalysis = false;
 let currentNumberOfNodes = -1;
 let status = null;
 let stopSendingPgn = false;
-let callers = [addFollowing, pushButton, addTv, hideRatings];
+let callers = [pushButton, addTv, hideRatings];
 
 
 const config = {attributes: true, childList: true, subtree: true};
@@ -15,12 +15,23 @@ function mutation(mutationsList, observer) {
     if (document.querySelector("#reportButton") !== null) {
         return;
     }
-
     let new_node = $('<a data-icon="" class="btn-rack__btn" id="reportButton" title="Benutzer melden"></a>');
     let link_elements = document.querySelector(".upt__actions.btn-rack").childNodes[0].href.split("/");
     new_node.attr("href", "https://lichess.org/report?username=" + link_elements.at(-2));
     $(".upt__actions.btn-rack").append(new_node);
-    $("#reportButton").css("padding-left", "2px");
+    $("#reportButton").css("padding-left", 0);
+}
+
+function addFollowing() {
+    let user_tag = document.querySelector("#user_tag");
+
+    if (user_tag === null) {
+        return;
+    }
+    let new_node = $('<a class="link"><span data-icon=""></span></a>');
+    new_node.attr("href", "https://lichess.org/@/" + user_tag.textContent + "/following");
+
+    new_node.insertBefore($(".dasher"));
 }
 
 
@@ -34,6 +45,8 @@ function setup() {
 
     const observer = new MutationObserver(mutation);
     observer.observe(document.querySelector("#powerTip"), config);
+
+    addFollowing();
 }
 
 setup();
@@ -344,24 +357,6 @@ function pushButton() {
     if (parseInt(time[0]) * 60 + parseInt(time[1]) <= 10) {
         button[0].click();
     }
-}
-
-function addFollowing() {
-    let buttons = document.getElementsByClassName("site-buttons");
-
-    if (buttons.length === 0) {
-        return;
-    }
-    let name = document.getElementById("user_tag").textContent;
-
-    let new_node = buttons[0].childNodes[0].childNodes[0].cloneNode();
-    new_node.dataset.icon = "⛹";
-    new_node.title = "Personen, denen du folgst";
-    new_node.href = "https://lichess.org/@/" + name + "/following";
-
-    buttons[0].insertBefore(new_node, document.getElementById("user_tag").parentNode);
-
-    removeFromCallers(addFollowing);
 }
 
 function call() {
