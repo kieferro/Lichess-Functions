@@ -400,20 +400,3 @@ function gotAnalyse(item) {
 //browser.storage.local.get("analyse").then(gotAnalyse, error);
 //browser.runtime.onMessage.addListener(onMessage);
 //document.addEventListener("keyup", onKey);
-
-
-// will be installed in the future
-function guessTheElo() {
-    setTimeout(guessTheElo, 1000);
-
-    let button = document.getElementsByClassName("button button-metal config_ai");
-
-    if (button.length === 0 || document.getElementsByClassName("button button-metal config_gte").length > 0) {
-        return;
-    }
-    let button_new = button[0].cloneNode(true);
-    button_new.textContent = "Guess the elo";
-    button_new.className = "button button-metal config_gte";
-    button_new.removeAttribute("href");
-    button[0].parentNode.appendChild(button_new);
-}
