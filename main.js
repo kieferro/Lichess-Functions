@@ -11,7 +11,7 @@ let callers = [pushButton, addTv, hideRatings];
 
 const config = {attributes: true, childList: true, subtree: true};
 
-function mutation(mutationsList, observer) {
+function hover_mutation(_, __) {
     if (document.querySelector("#reportButton") !== null) {
         return;
     }
@@ -43,7 +43,7 @@ function setup() {
         $("body").append("<div id=\"powerTip\"></div>");
     }
 
-    const observer = new MutationObserver(mutation);
+    const observer = new MutationObserver(hover_mutation);
     observer.observe(document.querySelector("#powerTip"), config);
 
     addFollowing();
@@ -359,44 +359,3 @@ function pushButton() {
     }
 }
 
-function call() {
-    setTimeout(call, 10);
-    for (let i = 0; i < callers.length; i++) {
-        callers[i]();
-    }
-}
-
-// setTimeout(call, 10);
-
-function error(error) {
-    console.log("Error:", error);
-}
-
-function gotRatings(item) {
-    if (item.ratings !== undefined) {
-        ratings = item.ratings;
-    }
-}
-
-function gotDuell(item) {
-    if (item.duell !== undefined && !item.duell) {
-        removeFromCallers(pushButton);
-    }
-}
-
-function gotAnalyse(item) {
-    if (item.analyse !== undefined) {
-        if (item.analyse) {
-            callers.push(activateAnalysis);
-        } else {
-            removeFromCallers(activateAnalysis);
-        }
-    }
-}
-
-//browser.storage.local.get("ratings").then(gotRatings, error);
-//browser.storage.local.get("report").then(gotReport, error);
-//browser.storage.local.get("duell").then(gotDuell, error);
-//browser.storage.local.get("analyse").then(gotAnalyse, error);
-//browser.runtime.onMessage.addListener(onMessage);
-//document.addEventListener("keyup", onKey);
