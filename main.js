@@ -51,9 +51,12 @@ function addFollowing() {
         return;
     }
     let new_node = $('<a class="link"><span data-icon=""></span></a>');
+    let new_node2 = $('<a class="link"><span data-icon=""></span></a>');
     new_node.attr("href", "https://lichess.org/@/" + user_tag.textContent + "/following");
+    new_node2.attr("href", "https://lichess.org/@/" + user_tag.textContent);
 
     new_node.insertBefore($(".dasher"));
+    new_node2.insertBefore($(".dasher"));
 }
 
 
