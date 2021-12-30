@@ -10,6 +10,8 @@ let callers = [pushButton, hideRatings];
 
 
 const config = {attributes: true, childList: true, subtree: true};
+let modes = ["", "", "", "", ""];
+let test = "";
 
 function hover_mutation(_, __) {
     if (document.querySelector("#reportButton") !== null) {
@@ -20,6 +22,16 @@ function hover_mutation(_, __) {
     new_node.attr("href", "https://lichess.org/report?username=" + link_elements.at(-2));
     $(".upt__actions.btn-rack").append(new_node);
     $("#reportButton").css("padding-left", 0);
+
+    let info = document.querySelector(".upt__info__ratings");
+
+    for (let i = 0; i < modes.length; i++) {
+        for (let j = 0; j < info.childNodes.length; j++) {
+            if (info.childNodes[j].dataset.icon === modes[i]) {
+                $(info.childNodes[j]).insertBefore($(info.childNodes[0]));
+            }
+        }
+    }
 }
 
 function addTv(node, _) {
