@@ -7,11 +7,24 @@ let currentNumberOfNodes = -1;
 let status = null;
 let stopSendingPgn = false;
 let callers = [pushButton, hideRatings];
+let interval_caller = null;
 
 
 const config = {attributes: true, childList: true, subtree: true};
 let modes = ["", "", "", "", ""];
-let test = "";
+
+function activateAnalysis() {
+    if (document.visibilityState === "visible") {
+        let slider = document.querySelector("#analyse-toggle-ceval");
+
+        if (slider !== null) {
+            if (!slider.checked) {
+                slider.click();
+                clearInterval(interval_caller);
+            }
+        }
+    }
+}
 
 function hover_mutation(_, __) {
     if (document.querySelector("#reportButton") !== null) {
@@ -97,18 +110,11 @@ function setup() {
     for (let i = 0; i < paginated_elements.length; i++) {
         addTv(paginated_elements[i], null);
     }
+
+    interval_caller = setInterval(activateAnalysis, 50);
 }
 
 setup();
-
-
-function removeFromCallers(caller) {
-    const index = callers.indexOf(caller);
-
-    if (index > -1) {
-        callers.splice(index, 1);
-    }
-}
 
 function getPgn() {
     let moveNodes = document.getElementsByTagName("u8t");
@@ -290,21 +296,6 @@ function showAll() {
             l[i].style.display = "block";
         }
     }
-}
-
-function activateAnalysis() {
-    if (document.visibilityState === "hidden") {
-        return;
-    }
-    let toggle = document.getElementById("analyse-toggle-ceval");
-
-    if (toggle == null) {
-        return;
-    }
-    if (!toggle.checked) {
-        toggle.parentNode.childNodes[1].click();
-    }
-    removeFromCallers(activateAnalysis);
 }
 
 function hideRatings() {
