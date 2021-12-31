@@ -11,7 +11,31 @@ let interval_caller = null;
 
 
 const config = {attributes: true, childList: true, subtree: true};
-let modes = ["", "", "", "", ""];
+const modes = ["", "", "", "", ""];
+
+function claimWin() {
+    let suggestion = document.querySelector(".suggestion");
+
+    if (suggestion === null) {
+        return;
+    }
+    let button = suggestion.querySelector("button");
+
+    if (button !== null) {
+        button.click();
+    }
+}
+
+function setupMutationObserver() {
+    let controls = document.querySelector(".rcontrols");
+
+    if (controls === null) {
+        return;
+    }
+
+    const observer = new MutationObserver(claimWin);
+    observer.observe(controls, config);
+}
 
 function activateAnalysis() {
     if (document.visibilityState === "visible") {
@@ -97,10 +121,10 @@ function setup() {
     const observer2 = new MutationObserver(followingLoaderMutation);
     observer.observe(document.querySelector("#powerTip"), config);
 
-    let infiniteScrott = document.querySelector(".infinite-scroll");
+    let infiniteScroll = document.querySelector(".infinite-scroll");
 
-    if (infiniteScrott !== null) {
-        observer2.observe(infiniteScrott, config);
+    if (infiniteScroll !== null) {
+        observer2.observe(infiniteScroll, config);
     }
 
     addFollowing();
@@ -112,6 +136,8 @@ function setup() {
     }
 
     interval_caller = setInterval(activateAnalysis, 50);
+
+    setTimeout(setupMutationObserver, 5000);
 }
 
 setup();
