@@ -8,6 +8,7 @@ let status = null;
 let stopSendingPgn = false;
 let callers = [pushButton, hideRatings];
 let interval_caller = null;
+let interval_minutes = null;
 
 
 const config = {attributes: true, childList: true, subtree: true};
@@ -108,6 +109,21 @@ function addFollowing() {
     new_node2.insertBefore($(".dasher"));
 }
 
+function addMinutes() {
+    let moretime = $(".moretime");
+    let minutes = $("#minutes");
+
+    if (moretime.length && !minutes.length) {
+        let new_node = $('<input spellcheck="false" autocomplete="off" aria-label="Minutes" placeholder="Minuten" id="minutes"' +
+            ' style="width: 30%;height: 50%;position: absolute;right: 50px;top: 25%;bottom: 25%;margin: auto;">');
+
+        new_node.insertBefore(moretime);
+    } else if (!moretime.length && minutes.length) {
+        minutes.remove();
+        clearInterval(interval_minutes);
+    }
+}
+
 
 function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
@@ -138,6 +154,8 @@ function setup() {
     interval_caller = setInterval(activateAnalysis, 50);
 
     setTimeout(setupMutationObserver, 5000);
+
+    interval_minutes = setInterval(addMinutes, 100);
 }
 
 setup();
