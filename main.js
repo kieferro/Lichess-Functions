@@ -7,9 +7,11 @@ let currentNumberOfNodes = -1;
 let status = null;
 let stopSendingPgn = false;
 let callers = [pushButton, hideRatings];
+
 let interval_caller = null;
 let interval_minutes = null;
 let pressed_button = false;
+let preferences = {"toggles": [true, true, true, true, true], "ratings": 0, "signature": true};
 
 
 const config = {attributes: true, childList: true, subtree: true};
@@ -125,7 +127,6 @@ function addSeconds(n) {
             $(".moretime").show();
             return;
         }
-
         setTimeout(function () {
             addSeconds(n - 15);
         }, randomNumber);
@@ -175,6 +176,13 @@ function addMinutes() {
     }
 }
 
+function gotPreferences(item) {
+    if (item.preferences !== undefined){
+        let preferences = item.preferences;
+        console.log(preferences);
+    }
+}
+
 
 function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
@@ -207,6 +215,11 @@ function setup() {
     setTimeout(setupMutationObserver, 5000);
 
     interval_minutes = setInterval(addMinutes, 100);
+
+
+    browser.storage.local.get("preferences").then(gotPreferences, function () {
+        console.log("error");
+    });
 }
 
 setup();
