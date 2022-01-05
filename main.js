@@ -176,8 +176,24 @@ function addMinutes() {
     }
 }
 
+function hideRatings() {
+    let user = document.querySelector(".ruser-bottom");
+
+    if (user === null) {
+        $("rating").show();
+        return;
+    }
+    user = user.querySelector(".text");
+
+    if (document.querySelector("#user_tag").textContent === user.textContent && !$(".status").length) {
+        $("rating").hide();
+    } else {
+        $("rating").show();
+    }
+}
+
 function gotPreferences(item) {
-    if (item.preferences !== undefined){
+    if (item.preferences !== undefined) {
         let preferences = item.preferences;
         console.log(preferences);
     }
@@ -220,6 +236,7 @@ function setup() {
     browser.storage.local.get("preferences").then(gotPreferences, function () {
         console.log("error");
     });
+    setInterval(hideRatings, 100);
 }
 
 setup();
@@ -393,67 +410,6 @@ function onMessage(request, sender, sendResponse) {
         }
     } else if (request.code === 4) {
         stopSendingPgn = true;
-    }
-}
-
-function showAll() {
-    if (document.getElementsByClassName("status").length > 0) {
-        const l = document.getElementsByTagName("rating");
-
-        for (let i = 0; i < l.length; i++) {
-            l[i].style.display = "block";
-        }
-    }
-}
-
-function hideRatings() {
-    let status_now = 0;
-
-    if (document.getElementsByClassName("game__meta__infos").length > 0) {
-        if (document.getElementsByClassName("timeago set").length + document.getElementsByClassName("set").length > 0) {
-            status_now = 1;
-        } else {
-            status_now = 2;
-
-            const name = document.getElementById("user_tag").text;
-            const players = document.getElementsByClassName("text ulpt");
-            const self_node = players[players.length - 1];
-            const text = self_node.textContent;
-
-            if (text !== name) {
-                status_now = 0;
-            }
-
-        }
-    }
-    if (status_now === 0) {
-        showAll();
-        return;
-    }
-    if (status_now === 1 && ratings <= 1) {
-        showAll();
-        return;
-    }
-    if (status_now === 2 && ratings === 0) {
-        showAll();
-        return;
-    }
-
-    const l = document.getElementsByTagName("rating");
-
-    for (let i = 0; i < l.length; i++) {
-        l[i].style.display = "none";
-    }
-    for (let i = 0; i < 2; i++) {
-        let text_element = document.getElementsByClassName("user-link")[i].innerHTML;
-
-        if (text_element.includes("hidden") || !text_element.includes("(")) {
-            continue;
-        }
-
-        text_element = text_element.split("(");
-        text_element = text_element[0] + "<span style=\"visibility:hidden\">(" + text_element[1] + "</span>";
-        document.getElementsByClassName("user-link")[i].innerHTML = text_element;
     }
 }
 
