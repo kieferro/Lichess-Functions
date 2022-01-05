@@ -9,6 +9,7 @@ let stopSendingPgn = false;
 let callers = [pushButton, hideRatings];
 let interval_caller = null;
 let interval_minutes = null;
+let pressed_button = false;
 
 
 const config = {attributes: true, childList: true, subtree: true};
@@ -109,6 +110,55 @@ function addFollowing() {
     new_node2.insertBefore($(".dasher"));
 }
 
+function addSeconds(n) {
+    let moretime = document.querySelector(".moretime");
+
+    console.log(n);
+
+    if (moretime !== null && n > 0) {
+        moretime.click();
+
+        let randomNumber = Math.floor(Math.random() * 10) + 300;
+
+        if (n - 15 <= 0) {
+            pressed_button = false;
+            $(".moretime").show();
+            return;
+        }
+
+        setTimeout(function () {
+            addSeconds(n - 15);
+        }, randomNumber);
+    } else {
+        pressed_button = false;
+        $(".moretime").show();
+    }
+}
+
+function clickedAddTime() {
+    if (pressed_button) {
+        return;
+    }
+
+    let moretime = $(".moretime");
+    let minutes = $("#minutes");
+
+    if (moretime.length && minutes.length) {
+        let value = document.querySelector("#minutes").value;
+        document.querySelector("#minutes").value = "";
+
+        if (value === "" || isNaN(value)) {
+            console.log("Returned");
+            return;
+        }
+        setTimeout(function () {
+            addSeconds(parseInt(value) * 60 - 15);
+        }, 300);
+        pressed_button = true;
+        $(".moretime").hide();
+    }
+}
+
 function addMinutes() {
     let moretime = $(".moretime");
     let minutes = $("#minutes");
@@ -118,6 +168,7 @@ function addMinutes() {
             ' style="width: 30%;height: 50%;position: absolute;right: 50px;top: 25%;bottom: 25%;margin: auto;">');
 
         new_node.insertBefore(moretime);
+        moretime.on("click", clickedAddTime);
     } else if (!moretime.length && minutes.length) {
         minutes.remove();
         clearInterval(interval_minutes);
