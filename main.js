@@ -185,7 +185,16 @@ function hideRatings() {
     }
     user = user.querySelector(".text");
 
-    if (document.querySelector("#user_tag").textContent === user.textContent && !$(".status").length) {
+    let status = document.getElementsByClassName("status");
+
+    for (let i = 0; i < status.length; i++) {
+        if (status[i].parentElement.className === "game__meta") {
+            $("rating").show();
+            return;
+        }
+    }
+
+    if (document.querySelector("#user_tag").textContent === user.textContent) {
         $("rating").hide();
     } else {
         $("rating").show();
@@ -195,7 +204,6 @@ function hideRatings() {
 function gotPreferences(item) {
     if (item.preferences !== undefined) {
         let preferences = item.preferences;
-        console.log(preferences);
     }
 }
 
@@ -236,7 +244,7 @@ function setup() {
     browser.storage.local.get("preferences").then(gotPreferences, function () {
         console.log("error");
     });
-    setInterval(hideRatings, 100);
+    setInterval(hideRatings, 250);
 }
 
 setup();
