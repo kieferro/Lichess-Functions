@@ -38,6 +38,11 @@ function savePreferences() {
 
     preferences.toggles = toggles;
     browser.storage.local.set({preferences});
+
+    browser.tabs.query({currentWindow: true, active: true},
+        function (tabs) {
+            browser.tabs.sendMessage(tabs[0].id, {code: 0, content:preferences});
+        });
 }
 
 function applyPreferences() {

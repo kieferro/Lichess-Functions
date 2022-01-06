@@ -64,7 +64,7 @@ function hover_mutation(_, __) {
     $(".upt__actions.btn-rack").append(new_node);
     $("#reportButton").css("padding-left", 0);
 
-    if (!preferences.toggles[4]){
+    if (!preferences.toggles[4]) {
         return;
     }
 
@@ -208,7 +208,7 @@ function hideRatings() {
         for (let i = 0; i < game_meta.length; i++) {
             let element = game_meta[i].childNodes[0];
 
-            if (element.querySelector("span") !== null){
+            if (element.querySelector("span") !== null) {
                 continue;
             }
 
@@ -221,6 +221,12 @@ function hideRatings() {
         $("rating").show();
 
         $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
+    }
+}
+
+function gotMessage(request, sender, sendResponse) {
+    if (request.code === 0) {
+        preferences = request.content;
     }
 }
 
@@ -268,6 +274,8 @@ function setup() {
         console.log("error");
     });
     setInterval(hideRatings, 250);
+
+    browser.runtime.onMessage.addListener(gotMessage);
 }
 
 setup();
