@@ -64,6 +64,10 @@ function hover_mutation(_, __) {
     $(".upt__actions.btn-rack").append(new_node);
     $("#reportButton").css("padding-left", 0);
 
+    if (!preferences.toggles[4]){
+        return;
+    }
+
     let info = document.querySelector(".upt__info__ratings");
 
     for (let i = 0; i < modes.length; i++) {
@@ -222,7 +226,7 @@ function hideRatings() {
 
 function gotPreferences(item) {
     if (item.preferences !== undefined) {
-        let preferences = item.preferences;
+        preferences = item.preferences;
     }
 }
 
