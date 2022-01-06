@@ -181,6 +181,7 @@ function hideRatings() {
 
     if (user === null) {
         $("rating").show();
+        $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
         return;
     }
     user = user.querySelector(".text");
@@ -190,14 +191,32 @@ function hideRatings() {
     for (let i = 0; i < status.length; i++) {
         if (status[i].parentElement.className === "game__meta") {
             $("rating").show();
+            $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
             return;
         }
     }
 
     if (document.querySelector("#user_tag").textContent === user.textContent) {
         $("rating").hide();
+
+        let game_meta = document.querySelector(".game__meta__players").childNodes;
+
+        for (let i = 0; i < game_meta.length; i++) {
+            let element = game_meta[i].childNodes[0];
+
+            if (element.querySelector("span") !== null){
+                continue;
+            }
+
+            let HTML = element.innerHTML;
+            let index = HTML.indexOf("(");
+
+            element.innerHTML = HTML.substring(0, index) + '<span style="visibility:hidden">' + HTML.substring(index, HTML.length) + '</span>';
+        }
     } else {
         $("rating").show();
+
+        $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
     }
 }
 
