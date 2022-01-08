@@ -1,418 +1,311 @@
-﻿let ratings = 0;
-let tvs_loaded = 0;
-let last_text = null;
-let lastPgn = "";
-let stopAnalysis = false;
-let currentNumberOfNodes = -1;
-let status = null;
-let callers = [addFollowing, pushButton, addReport, addTv, hideRatings];
+﻿let interval_caller = null;
+let interval_minutes = null;
+let pressed_button = false;
+// the default value for the automatic activation of the analysis must be false, because then
+// the process waits until the preferences are loaded and doesn't turn on the analysis before
+let preferences = {"toggles": [true, false, true, true, true], "ratings": 0, "signature": true};
 
-function removeFromCallers(caller) {
-    const index = callers.indexOf(caller);
 
-    if (index > -1) {
-        callers.splice(index, 1);
-    }
-}
+const config = {attributes: true, childList: true, subtree: true};
+const modes = ["", "", "", "", ""];
 
-function getPgn() {
-    let moveNodes = document.getElementsByTagName("u8t");
-    let pgn = "";
-
-    for (let i = 0; i < moveNodes.length / 2; i++) {
-        let first = moveNodes[i * 2].innerHTML;
-        // to remove draw offers from the move text
-        first = first.split("<")[0];
-
-        pgn += (i + 1).toString() + "." + first;
-
-        if (i * 2 + 1 < moveNodes.length) {
-            let second = moveNodes[i * 2 + 1].innerHTML;
-            second = second.split("<")[0];
-            pgn += " " + second + " ";
-        }
-    }
-    return pgn;
-}
-
-function addClocks(data) {
-    const topStrip = document.getElementsByClassName("analyse__player_strip top");
-    const bottomStrip = document.getElementsByClassName("analyse__player_strip bottom");
-
-    if (document.getElementsByClassName("analyse__clock top active").length +
-        document.getElementsByClassName("analyse__clock top").length === 0) {
-        if (topStrip.length > 0) {
-            let node = document.createElement("div");
-            node.innerHTML = '<div class=\"analyse__clock top\">01:00<div></div></div>';
-            topStrip[0].appendChild(node);
-        }
-    } else {
-        let clock = document.getElementsByClassName("analyse__clock top active");
-        if (clock.length === 0) {
-            clock = document.getElementsByClassName("analyse__clock top");
-        }
-        clock[0].textContent = data.time.timeTop;
-
-        if (data.time.topActive) {
-            clock[0].className = "analyse__clock top active";
-        } else {
-            clock[0].className = "analyse__clock top";
-        }
-    }
-
-    if (document.getElementsByClassName("analyse__clock bottom active").length +
-        document.getElementsByClassName("analyse__clock bottom").length === 0) {
-        if (bottomStrip.length > 0) {
-            let node = document.createElement("div");
-            node.innerHTML = '<div class=\"analyse__clock bottom\">01:00<div></div></div>';
-            bottomStrip[0].appendChild(node);
-        }
-    } else {
-        let clock = document.getElementsByClassName("analyse__clock bottom active");
-        if (clock.length === 0) {
-            clock = document.getElementsByClassName("analyse__clock bottom");
-        }
-        clock[0].textContent = data.time.timeBottom;
-
-        if (data.time.bottomActive) {
-            clock[0].className = "analyse__clock bottom active";
-        } else {
-            clock[0].className = "analyse__clock bottom";
-        }
-    }
-}
-
-function getAnalyzable() {
-    if (document.getElementsByTagName("l4x").length === 0) {
-        return false;
-    }
-    const players = document.getElementsByClassName("text ulpt");
-
-    if (players.length < 2) {
-        return true;
-    }
-
-    const text = players[players.length - 1].textContent;
-    const name = document.getElementById("user_tag").text;
-
-    return name !== text;
-}
-
-function getTimeSituation() {
-    let topClockRunning = document.getElementsByClassName("rclock rclock-top running");
-    let topClock = document.getElementsByClassName("rclock rclock-top");
-    let bottomClockRunning = document.getElementsByClassName("rclock rclock-bottom running");
-    let bottomClock = document.getElementsByClassName("rclock rclock-bottom");
-    let response = {};
-
-    if (topClockRunning.length > 0) {
-        response.topActive = true;
-        response.timeTop = topClockRunning[0].childNodes[1].textContent;
-    } else {
-        response.topActive = false;
-        response.timeTop = topClock[0].childNodes[1].textContent;
-    }
-    if (bottomClockRunning.length > 0) {
-        response.bottomActive = true;
-        response.timeBottom = bottomClockRunning[0].childNodes[1].textContent;
-    } else {
-        response.bottomActive = false;
-        response.timeBottom = bottomClock[0].childNodes[1].textContent;
-    }
-    return response;
-}
-
-function togglePause() {
-    stopAnalysis = !stopAnalysis;
-
-    if (stopAnalysis) {
-        status.style = "color:white; background-color:orange; width:100%; border-radius: 5px";
-        status.textContent = "Paused";
-        status.dataset.icon = "";
-    } else {
-        status.style = "color:white; background-color:green; width:100%; border-radius: 5px";
-        status.textContent = "Running";
-        status.dataset.icon = "";
-    }
-}
-
-function onKey(event) {
-    if (event.key === "p" && event.altKey) {
-        togglePause();
-    }
-}
-
-function sendPgn() {
-    setTimeout(sendPgn, 200);
-
-    const numberNodes = document.getElementsByTagName("u8t").length;
-
-    if (numberNodes === currentNumberOfNodes) {
+function claimWin() {
+    if (!preferences.toggles[3]) {
         return;
     }
-    currentNumberOfNodes = numberNodes;
-    const pgn = getPgn();
+    let suggestion = document.querySelector(".suggestion");
 
-    if (pgn !== lastPgn) {
-        lastPgn = pgn;
-        browser.runtime.sendMessage({code: 1, pgn: pgn});
+    if (suggestion === null) {
+        return;
+    }
+    let button = suggestion.querySelector("button");
+
+    if (button !== null) {
+        button.click();
     }
 }
 
-function onMessage(request, sender, sendResponse) {
-    if (request.code === 0) {
-        location.reload();
-    } else if (request.code === 1) {
-        sendResponse({permission: getAnalyzable()});
-    } else if (request.code === 2) {
-        lastPgn = "";
-        currentNumberOfNodes = -1;
-        sendPgn();
-    } else if (request.code === 3) {
-        let data = request.data;
-        document.title = "Live Analyse";
+function setupMutationObserver() {
+    let controls = document.querySelector(".rcontrols");
 
-        let textField = document.getElementsByClassName("copyable autoselect");
-        let button = document.getElementsByClassName("button button-thin action text");
-
-        if (textField.length > 1 && button.length > 0) {
-            textField[1].value = data.pgn;
-            button[0].click();
-        }
+    if (controls === null) {
+        return;
     }
-}
-
-function showAll() {
-    if (document.getElementsByClassName("status").length > 0) {
-        const l = document.getElementsByTagName("rating");
-
-        for (let i = 0; i < l.length; i++) {
-            l[i].style.display = "block";
-        }
-    }
+    const observer = new MutationObserver(claimWin);
+    observer.observe(controls, config);
 }
 
 function activateAnalysis() {
-    if (document.visibilityState === "hidden") {
+    if (!preferences.toggles[1]) {
         return;
     }
-    let toggle = document.getElementById("analyse-toggle-ceval");
+    if (document.visibilityState === "visible") {
+        let slider = document.querySelector("#analyse-toggle-ceval");
 
-    if (toggle == null) {
-        return;
-    }
-    if (!toggle.checked) {
-        toggle.parentNode.childNodes[1].click();
-    }
-    removeFromCallers(activateAnalysis);
-}
-
-function hideRatings() {
-    let status_now = 0;
-
-    if (document.getElementsByClassName("game__meta__infos").length > 0) {
-        if (document.getElementsByClassName("timeago set").length + document.getElementsByClassName("set").length > 0) {
-            status_now = 1;
-        } else {
-            status_now = 2;
-
-            const name = document.getElementById("user_tag").text;
-            const players = document.getElementsByClassName("text ulpt");
-            const self_node = players[players.length - 1];
-            const text = self_node.textContent;
-
-            if (text !== name) {
-                status_now = 0;
+        if (slider !== null) {
+            if (!slider.checked) {
+                slider.click();
+                clearInterval(interval_caller);
             }
-
         }
-    }
-    if (status_now === 0) {
-        showAll();
-        return;
-    }
-    if (status_now === 1 && ratings <= 1) {
-        showAll();
-        return;
-    }
-    if (status_now === 2 && ratings === 0) {
-        showAll();
-        return;
-    }
-
-    const l = document.getElementsByTagName("rating");
-
-    for (let i = 0; i < l.length; i++) {
-        l[i].style.display = "none";
-    }
-    for (let i = 0; i < 2; i++) {
-        let text_element = document.getElementsByClassName("user-link")[i].innerHTML;
-
-        if (text_element.includes("hidden") || !text_element.includes("(")) {
-            continue;
-        }
-
-        text_element = text_element.split("(");
-        text_element = text_element[0] + "<span style=\"visibility:hidden\">(" + text_element[1] + "</span>";
-        document.getElementsByClassName("user-link")[i].innerHTML = text_element;
     }
 }
 
-function addTv() {
-    let name = window.location.href;
-
-    if (name.substr(name.length - 10, 10) !== "/following") {
+function hover_mutation(_, __) {
+    if (document.querySelector("#reportButton") !== null) {
         return;
     }
-    let tracks = document.getElementsByClassName("relation-actions btn-rack");
+    let new_node = $('<a data-icon="" class="btn-rack__btn" id="reportButton" title="Benutzer melden"></a>');
+    let link_elements = document.querySelector(".upt__actions.btn-rack").childNodes[0].href.split("/");
+    new_node.attr("href", "https://lichess.org/report?username=" + link_elements.at(-2));
+    $(".upt__actions.btn-rack").append(new_node);
+    $("#reportButton").css("padding-left", 0);
 
-    for (tvs_loaded; tvs_loaded < tracks.length; tvs_loaded++) {
-        if (tracks[tvs_loaded].childNodes.length < 1) {
-            continue
+    if (!preferences.toggles[4]) {
+        return;
+    }
+    let info = document.querySelector(".upt__info__ratings");
+
+    for (let i = 0; i < modes.length; i++) {
+        for (let j = 0; j < info.childNodes.length; j++) {
+            if (info.childNodes[j].dataset.icon === modes[i]) {
+                $(info.childNodes[j]).insertBefore($(info.childNodes[0]));
+            }
         }
-        const playerLink = tracks[tvs_loaded].parentNode.parentNode.childNodes[0].childNodes[0];
-        let player = playerLink.childNodes[playerLink.childNodes.length - 1].textContent;
-        player = player.trimLeft();
-
-        let new_node = tracks[tvs_loaded].childNodes[0].cloneNode(true);
-        new_node.dataset.icon = "";
-        new_node.title = "Partien ansehen";
-        new_node.href = "https://lichess.org/@/" + player + "/tv";
-        tracks[tvs_loaded].insertBefore(new_node, tracks[tvs_loaded].childNodes[0]);
     }
 }
 
-function addReport() {
-    let actions = document.getElementsByClassName("upt__actions btn-rack");
-
-    if (actions.length === 0) {
+function addTv(node, _) {
+    if (node.className !== "paginated") {
         return;
     }
-    actions = actions[0];
+    let link = node.childNodes[0].childNodes[0].href;
+    let name = link.split("/").at(-1);
 
-    for (let i = 0; i < actions.childNodes.length; i++) {
-        if (actions.childNodes[i].title === "Benutzer melden") {
-            return;
-        }
-    }
-    let new_action = actions.childNodes[0].cloneNode(true);
-    new_action.dataset.icon = "";
-    new_action.title = "Benutzer melden";
+    let childs = node.childNodes;
+    let bar = childs[childs.length - 1].childNodes[0];
 
-    let link = actions.childNodes[0].href;
-    link = link.split("/");
-    let username = link[link.length - 2];
-    new_action.href = "https://lichess.org/report?username=" + username;
+    let new_node = $('<a title="Partien ansehen"  class="btn-rack__btn" data-icon=""></a>');
+    new_node.attr("href", "https://lichess.org/@/" + name + "/tv");
 
-    actions.appendChild(new_action);
+    new_node.insertBefore(bar.childNodes[0]);
 }
 
-function pushButton() {
-    const text = document.getElementsByClassName("racer__pre__message__pov");
-    const parent = document.getElementsByClassName("puz-side");
-    const referenceNode = document.getElementsByClassName("puz-side__table");
-
-    if (text.length === 0) {
-        if (last_text !== null && parent.length > 0) {
-            parent[0].appendChild(last_text);
-            parent[0].insertBefore(last_text, referenceNode[0]);
-            last_text = null;
-        }
-    } else {
-        last_text = text[0];
-    }
-    let clock = document.getElementsByClassName("puz-clock__time");
-    const button = document.getElementsByClassName("racer__skip button button-red");
-
-    if (clock.length === 0 || button.length === 0) {
-        return;
-    }
-    let time = clock[0].textContent.split(":");
-
-    if (parseInt(time[0]) * 60 + parseInt(time[1]) <= 10) {
-        button[0].click();
+function followingLoaderMutation(mutation_list, _) {
+    for (let i = 0; i < mutation_list.length; i++) {
+        mutation_list[i].addedNodes.forEach(addTv);
     }
 }
 
 function addFollowing() {
-    let buttons = document.getElementsByClassName("site-buttons");
+    let user_tag = document.querySelector("#user_tag");
 
-    if (buttons.length === 0) {
+    if (user_tag === null) {
         return;
     }
-    let name = document.getElementById("user_tag").textContent;
+    let new_node = $('<a class="link"><span data-icon=""></span></a>');
+    let new_node2 = $('<a class="link"><span data-icon=""></span></a>');
+    new_node.attr("href", "https://lichess.org/@/" + user_tag.textContent + "/following");
+    new_node2.attr("href", "https://lichess.org/@/" + user_tag.textContent);
 
-    let new_node = buttons[0].childNodes[0].childNodes[0].cloneNode();
-    new_node.dataset.icon = "⛹";
-    new_node.title = "Personen, denen du folgst";
-    new_node.href = "https://lichess.org/@/" + name + "/following";
-
-    buttons[0].insertBefore(new_node, document.getElementById("user_tag").parentNode);
-
-    removeFromCallers(addFollowing);
+    new_node.insertBefore($(".dasher"));
+    new_node2.insertBefore($(".dasher"));
 }
 
-function call() {
-    setTimeout(call, 10);
-    for (let i = 0; i < callers.length; i++) {
-        callers[i]();
+function addSeconds(n) {
+    let moretime = document.querySelector(".moretime");
+
+    console.log(n);
+
+    if (moretime !== null && n > 0) {
+        moretime.click();
+
+        let randomNumber = Math.floor(Math.random() * 10) + 300;
+
+        if (n - 15 <= 0) {
+            pressed_button = false;
+            $(".moretime").show();
+            return;
+        }
+        setTimeout(function () {
+            addSeconds(n - 15);
+        }, randomNumber);
+    } else {
+        pressed_button = false;
+        $(".moretime").show();
     }
 }
 
-setTimeout(call, 10);
+function clickedAddTime() {
+    if (pressed_button) {
+        return;
+    }
+    let moretime = $(".moretime");
+    let minutes = $("#minutes");
 
-function error(error) {
-    console.log("Error:", error);
-}
+    if (moretime.length && minutes.length) {
+        let value = document.querySelector("#minutes").value;
+        document.querySelector("#minutes").value = "";
 
-function gotRatings(item) {
-    if (item.ratings !== undefined) {
-        ratings = item.ratings;
+        if (value === "" || isNaN(value)) {
+            console.log("Returned");
+            return;
+        }
+        setTimeout(function () {
+            addSeconds(parseInt(value) * 60 - 15);
+        }, 300);
+        pressed_button = true;
+        $(".moretime").hide();
     }
 }
 
-function gotReport(item) {
-    if (item.report !== undefined && !item.report) {
-        removeFromCallers(addReport);
+function addMinutes() {
+    let moretime = $(".moretime");
+    let minutes = $("#minutes");
+
+    if (moretime.length && !minutes.length) {
+        let new_node = $('<input spellcheck="false" autocomplete="off" aria-label="Minutes" placeholder="Minuten" id="minutes"' +
+            ' style="width: 30%;height: 50%;position: absolute;right: 50px;top: 25%;bottom: 25%;margin: auto;">');
+
+        new_node.insertBefore(moretime);
+        moretime.on("click", clickedAddTime);
+    } else if (!moretime.length && minutes.length) {
+        minutes.remove();
+        clearInterval(interval_minutes);
     }
 }
 
-function gotDuell(item) {
-    if (item.duell !== undefined && !item.duell) {
-        removeFromCallers(pushButton);
-    }
-}
+function hideRatings() {
+    console.log(preferences.ratings);
 
-function gotAnalyse(item) {
-    if (item.analyse !== undefined) {
-        if (item.analyse) {
-            callers.push(activateAnalysis);
-        } else {
-            removeFromCallers(activateAnalysis);
+    if (preferences.ratings === 0) {
+        return;
+    }
+
+    let user = document.querySelector(".ruser-bottom");
+
+    if (user === null) {
+        $("rating").show();
+        $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
+        return;
+    }
+    user = user.querySelector(".text");
+
+    let status = document.getElementsByClassName("status");
+
+    for (let i = 0; i < status.length; i++) {
+        if (status[i].parentElement.className === "game__meta") {
+            $("rating").show();
+            $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
+            return;
         }
     }
+    if (document.querySelector("#user_tag").textContent === user.textContent || preferences.ratings === 2) {
+        $("rating").hide();
+
+        let game_meta = document.querySelector(".game__meta__players").childNodes;
+
+        for (let i = 0; i < game_meta.length; i++) {
+            let element = game_meta[i].childNodes[0];
+
+            if (element.querySelector("span") !== null) {
+                continue;
+            }
+            let HTML = element.innerHTML;
+            let index = HTML.indexOf("(");
+
+            element.innerHTML = HTML.substring(0, index) + '<span style="visibility:hidden">' + HTML.substring(index, HTML.length) + '</span>';
+        }
+    } else {
+        $("rating").show();
+
+        $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
+    }
 }
 
-browser.storage.local.get("ratings").then(gotRatings, error);
-browser.storage.local.get("report").then(gotReport, error);
-browser.storage.local.get("duell").then(gotDuell, error);
-browser.storage.local.get("analyse").then(gotAnalyse, error);
-browser.runtime.onMessage.addListener(onMessage);
-document.addEventListener("keyup", onKey);
+let lastMessage = "";
 
+function pressButton() {
+    let message = document.querySelector(".racer__pre__message__pov");
 
-// will be installed in the future
-function guessTheElo() {
-    setTimeout(guessTheElo, 1000);
-
-    let button = document.getElementsByClassName("button button-metal config_ai");
-
-    if (button.length === 0 || document.getElementsByClassName("button button-metal config_gte").length > 0) {
+    if (message !== null) {
+        lastMessage = message.textContent;
+    }
+    if ($(".puz-clock__time").length && !$(".racer__pre__message__pov").length) {
+        let new_node = $('<p class="racer__pre__message__pov" style="margin: 3em 0 0 0;">' + lastMessage + '</p>');
+        new_node.insertAfter($(".puz-clock"));
+    }
+    if (!preferences.toggles[2]) {
         return;
     }
-    let button_new = button[0].cloneNode(true);
-    button_new.textContent = "Guess the elo";
-    button_new.className = "button button-metal config_gte";
-    button_new.removeAttribute("href");
-    button[0].parentNode.appendChild(button_new);
+    let timer = $(".puz-clock__time");
+    let time_left = timer.text().split(":");
+    time_left = parseInt(time_left[0]) * 60 + parseInt(time_left[1]);
+
+    if (timer.length && time_left <= 10) {
+        document.querySelector(".racer__skip").click();
+    }
 }
+
+function getPGN() {
+    let PGN = "";
+    $("l4x").children().each(function (_, item) {
+        if (item.tagName !== "DIV") {
+            PGN += item.textContent + " ";
+        }
+    });
+}
+
+function gotMessage(request, sender, sendResponse) {
+    if (request.code === 0) {
+        preferences = request.content;
+    }
+}
+
+function gotPreferences(item) {
+    if (item.preferences !== undefined) {
+        preferences = item.preferences;
+    }
+}
+
+
+function setup() {
+    // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
+    // a users name. At the beginning it doesn't exist, so this function creates one so that it can be used
+    // for the MutationObserver, which will then add the Report-Buttons.
+    if (document.querySelector("#powerTip") === null) {
+        $("body").append("<div id=\"powerTip\"></div>");
+    }
+    const observer = new MutationObserver(hover_mutation);
+    const observer2 = new MutationObserver(followingLoaderMutation);
+    observer.observe(document.querySelector("#powerTip"), config);
+
+    let infiniteScroll = document.querySelector(".infinite-scroll");
+
+    if (infiniteScroll !== null) {
+        observer2.observe(infiniteScroll, config);
+    }
+    addFollowing();
+
+    let paginated_elements = document.getElementsByClassName("paginated");
+
+    for (let i = 0; i < paginated_elements.length; i++) {
+        addTv(paginated_elements[i], null);
+    }
+    interval_caller = setInterval(activateAnalysis, 50);
+
+    setTimeout(setupMutationObserver, 5000);
+
+    interval_minutes = setInterval(addMinutes, 100);
+
+    browser.storage.local.get("preferences").then(gotPreferences, function () {
+        console.log("error");
+    });
+    setInterval(hideRatings, 250);
+    setInterval(pressButton, 500);
+    setInterval(getPGN, 2000);
+
+    browser.runtime.onMessage.addListener(gotMessage);
+}
+
+setup();

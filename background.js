@@ -9,6 +9,7 @@ function setId(tabInfo) {
 
 function analysisClosed() {
     browser.tabs.show(referenceTab);
+    browser.tabs.sendMessage(referenceTab, {code: 4});
     referenceTab = -1;
     analysisTab = -1;
 }
@@ -51,7 +52,7 @@ function onMessage(request, sender, sendResponse) {
                 browser.tabs.sendMessage(tabs[0].id, {code: 1}).then(start);
             });
     } else if (request.code === 1) {
-        browser.tabs.sendMessage(analysisTab, {code: 3, data: request});
+        browser.tabs.sendMessage(analysisTab, {code: 3, data: request}).catch(analysisClosed);
     }
 }
 

@@ -1,5 +1,4 @@
 {
-
   "manifest_version": 2,
   "name": "Lichess-Extension",
   "version": "0.1",
@@ -8,12 +7,16 @@
     "48": "ressources/icon-48.jpg",
     "96": "ressources/icon-96.jpg"
   },
-
   "content_scripts": [
     {
-      "run_at": "document_idle",
-      "matches": [ "*://*.lichess.org/*" ],
-      "js": [ "main.js" ]
+      "run_at": "document_end",
+      "matches": [
+        "*://*.lichess.org/*"
+      ],
+      "js": [
+        "third-party/jquery.js",
+        "main.js"
+      ]
     }
   ],
   "browser_action": {
@@ -22,7 +25,10 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.js",
+      "third-party/jquery.js"
+    ]
   },
   "permissions": [
     "tabs",

@@ -1,81 +1,84 @@
-const messages = ["Deaktiviert", "Beim Spielen", "Immer"];
-let ratings = 0;
+const button_text = ["Deaktiviert", "Beim Spielen", "Immer"];
+const button_color = [["#c25367", "#c4374f"], ["#b9872d", "#c98b1b"], ["#53c257", "#41a345"]];
+let preferences = {"toggles": [true, true, true, true, true], "ratings": 0, "signature": true};
 
-function error(error) {
-    console.log("Es ist ein Fehler aufgetreten.");
-    console.log(error);
-}
+function open_analysis() {
+    // PGN found:
+    if (false) {
+        $("#error-text").hide();
+        $("#warning-sign").hide();
 
-function gotReport(item) {
-    if (item.report !== undefined) {
-        document.getElementById("report").checked = item.report;
+        browser.runtime.sendMessage({code: 0});
+    } else {
+        $("#error-text").show();
+        $("#warning-sign").show();
     }
 }
 
-function gotAnalyse(item) {
-    if (item.analyse !== undefined) {
-        document.getElementById("analyse").checked = item.analyse;
+function gotError(_) {
+    $("body").html("<text style='color: red'>Fehler:</text><text>Aufgetreten beim Laden der Einstellungen</text>");
+}
+
+function gotPreferences(item) {
+    if (item.preferences !== undefined) {
+        item = item.preferences;
+
+        if (item.signature) {
+            preferences = item;
+        }
     }
+    applyPreferences();
 }
 
-function gotDuell(item) {
-    if (item.duell !== undefined) {
-        document.getElementById("duell").checked = item.duell;
-    }
-}
+function savePreferences() {
+    let toggles = [];
+    $(".checkbox").each(function (index, checkbox) {
+        toggles.push(checkbox.checked);
+    });
 
-function gotRatings(item) {
-    if (item.ratings !== undefined) {
-        ratings = item.ratings;
-        set_state(false);
-    }
-}
+    preferences.toggles = toggles;
+    browser.storage.local.set({preferences});
 
-
-function new_values() {
-    let report = document.getElementById("report").checked;
-    let duell = document.getElementById("duell").checked;
-    let analyse = document.getElementById("analyse").checked;
-    browser.storage.local.set({report, duell, analyse, ratings});
-}
-
-function set_state(increment) {
-    if (increment) {
-        ratings = (ratings + 1) % 3;
-    }
-
-    let button = document.getElementById("ratings");
-    button.textContent = messages[ratings];
-    button.className = "change-button" + (ratings + 1).toString();
-}
-
-function clicked() {
-    set_state(true);
-    new_values();
-}
-
-function reload() {
     browser.tabs.query({currentWindow: true, active: true},
         function (tabs) {
-            browser.tabs.sendMessage(tabs[0].id, {code: 0});
+            browser.tabs.sendMessage(tabs[0].id, {code: 0, content:preferences});
         });
 }
 
-function open_analysis() {
-    browser.runtime.sendMessage({code: 0});
+function applyPreferences() {
+    $(".checkbox").each(function (index, checkbox) {
+        checkbox.checked = preferences["toggles"][index];
+    });
+
+    $("#ratings")
+        .html(button_text[preferences.ratings])
+        .css("background-color", button_color[preferences.ratings][0])
+        .hover(
+            function () {
+                $("#ratings").css("background-color", button_color[preferences.ratings][1]);
+            },
+            function () {
+                $("#ratings").css("background-color", button_color[preferences.ratings][0]);
+            });
 }
 
-function start() {
-    document.getElementById("ratings").addEventListener("click", clicked, false);
-    document.getElementById("duell").addEventListener("click", new_values, false);
-    document.getElementById("report").addEventListener("click", new_values, false);
-    document.getElementById("analyse").addEventListener("click", new_values, false);
-    document.getElementById("reload").addEventListener("click", reload, false);
-    document.getElementById("open-analysis").addEventListener("click", open_analysis, false);
-    browser.storage.local.get("report").then(gotReport, error);
-    browser.storage.local.get("duell").then(gotDuell, error);
-    browser.storage.local.get("ratings").then(gotRatings, error);
-    browser.storage.local.get("analyse").then(gotAnalyse, error);
+function rating_button_clicked() {
+    preferences.ratings = (preferences.ratings + 1) % 3;
+    savePreferences();
+    applyPreferences();
 }
 
-document.addEventListener("DOMContentLoaded", start, false);
+function setup() {
+    browser.storage.local.get("preferences").then(gotPreferences, gotError);
+
+    $(".slider").on("click", function () {
+        setTimeout(savePreferences, 100)
+    });
+
+    $("#open-analysis").on("click", open_analysis);
+    $("#ratings").on("click", rating_button_clicked);
+    $("#error-text").hide();
+    $("#warning-sign").hide();
+}
+
+document.addEventListener("DOMContentLoaded", setup, false);
