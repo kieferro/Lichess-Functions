@@ -1,13 +1,4 @@
-﻿let ratings = 0;
-let tvs_loaded = 0;
-let last_text = null;
-let lastPgn = "";
-let stopAnalysis = false;
-let currentNumberOfNodes = -1;
-let status = null;
-let stopSendingPgn = false;
-
-let interval_caller = null;
+﻿let interval_caller = null;
 let interval_minutes = null;
 let pressed_button = false;
 let preferences = {"toggles": [true, true, true, true, true], "ratings": 0, "signature": true};
@@ -17,6 +8,10 @@ const config = {attributes: true, childList: true, subtree: true};
 const modes = ["", "", "", "", ""];
 
 function claimWin() {
+    if (!preferences.toggles[3]) {
+        return;
+    }
+
     let suggestion = document.querySelector(".suggestion");
 
     if (suggestion === null) {
@@ -306,4 +301,3 @@ function setup() {
 }
 
 setup();
-
