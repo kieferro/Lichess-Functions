@@ -1,6 +1,8 @@
 ﻿let interval_caller = null;
 let interval_minutes = null;
 let pressed_button = false;
+// the default value for the automatic activation of the analysis must be false, because then
+// the process waits until the preferences are loaded and doesn't turn on the analysis before
 let preferences = {"toggles": [true, false, true, true, true], "ratings": 0, "signature": true};
 
 
@@ -249,6 +251,16 @@ function pressButton() {
     }
 }
 
+function getPGN() {
+    let PGN = "";
+    $("l4x").children().each(function (_, item) {
+        if (item.tagName !== "DIV"){
+            PGN += item.textContent + " ";
+        }
+    });
+    console.log(PGN);
+}
+
 function gotMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         preferences = request.content;
@@ -300,6 +312,7 @@ function setup() {
     });
     setInterval(hideRatings, 250);
     setInterval(pressButton, 500);
+    setInterval(getPGN, 2000);
 
     browser.runtime.onMessage.addListener(gotMessage);
 }
