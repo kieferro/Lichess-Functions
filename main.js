@@ -1,7 +1,7 @@
 ﻿let interval_caller = null;
 let interval_minutes = null;
 let pressed_button = false;
-let preferences = {"toggles": [true, true, true, true, true], "ratings": 0, "signature": true};
+let preferences = {"toggles": [true, false, true, true, true], "ratings": 0, "signature": true};
 
 
 const config = {attributes: true, childList: true, subtree: true};
@@ -36,6 +36,10 @@ function setupMutationObserver() {
 }
 
 function activateAnalysis() {
+    if (!preferences.toggles[1]) {
+        return;
+    }
+
     if (document.visibilityState === "visible") {
         let slider = document.querySelector("#analyse-toggle-ceval");
 
