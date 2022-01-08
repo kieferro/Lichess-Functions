@@ -13,7 +13,6 @@ function claimWin() {
     if (!preferences.toggles[3]) {
         return;
     }
-
     let suggestion = document.querySelector(".suggestion");
 
     if (suggestion === null) {
@@ -32,7 +31,6 @@ function setupMutationObserver() {
     if (controls === null) {
         return;
     }
-
     const observer = new MutationObserver(claimWin);
     observer.observe(controls, config);
 }
@@ -41,7 +39,6 @@ function activateAnalysis() {
     if (!preferences.toggles[1]) {
         return;
     }
-
     if (document.visibilityState === "visible") {
         let slider = document.querySelector("#analyse-toggle-ceval");
 
@@ -67,7 +64,6 @@ function hover_mutation(_, __) {
     if (!preferences.toggles[4]) {
         return;
     }
-
     let info = document.querySelector(".upt__info__ratings");
 
     for (let i = 0; i < modes.length; i++) {
@@ -144,7 +140,6 @@ function clickedAddTime() {
     if (pressed_button) {
         return;
     }
-
     let moretime = $(".moretime");
     let minutes = $("#minutes");
 
@@ -181,6 +176,12 @@ function addMinutes() {
 }
 
 function hideRatings() {
+    console.log(preferences.ratings);
+
+    if (preferences.ratings === 0) {
+        return;
+    }
+
     let user = document.querySelector(".ruser-bottom");
 
     if (user === null) {
@@ -199,8 +200,7 @@ function hideRatings() {
             return;
         }
     }
-
-    if (document.querySelector("#user_tag").textContent === user.textContent) {
+    if (document.querySelector("#user_tag").textContent === user.textContent || preferences.ratings === 2) {
         $("rating").hide();
 
         let game_meta = document.querySelector(".game__meta__players").childNodes;
@@ -211,7 +211,6 @@ function hideRatings() {
             if (element.querySelector("span") !== null) {
                 continue;
             }
-
             let HTML = element.innerHTML;
             let index = HTML.indexOf("(");
 
@@ -232,16 +231,13 @@ function pressButton() {
     if (message !== null) {
         lastMessage = message.textContent;
     }
-
     if ($(".puz-clock__time").length && !$(".racer__pre__message__pov").length) {
         let new_node = $('<p class="racer__pre__message__pov" style="margin: 3em 0 0 0;">' + lastMessage + '</p>');
         new_node.insertAfter($(".puz-clock"));
     }
-
     if (!preferences.toggles[2]) {
         return;
     }
-
     let timer = $(".puz-clock__time");
     let time_left = timer.text().split(":");
     time_left = parseInt(time_left[0]) * 60 + parseInt(time_left[1]);
@@ -254,11 +250,10 @@ function pressButton() {
 function getPGN() {
     let PGN = "";
     $("l4x").children().each(function (_, item) {
-        if (item.tagName !== "DIV"){
+        if (item.tagName !== "DIV") {
             PGN += item.textContent + " ";
         }
     });
-    console.log(PGN);
 }
 
 function gotMessage(request, sender, sendResponse) {
@@ -281,7 +276,6 @@ function setup() {
     if (document.querySelector("#powerTip") === null) {
         $("body").append("<div id=\"powerTip\"></div>");
     }
-
     const observer = new MutationObserver(hover_mutation);
     const observer2 = new MutationObserver(followingLoaderMutation);
     observer.observe(document.querySelector("#powerTip"), config);
@@ -291,7 +285,6 @@ function setup() {
     if (infiniteScroll !== null) {
         observer2.observe(infiniteScroll, config);
     }
-
     addFollowing();
 
     let paginated_elements = document.getElementsByClassName("paginated");
@@ -299,13 +292,11 @@ function setup() {
     for (let i = 0; i < paginated_elements.length; i++) {
         addTv(paginated_elements[i], null);
     }
-
     interval_caller = setInterval(activateAnalysis, 50);
 
     setTimeout(setupMutationObserver, 5000);
 
     interval_minutes = setInterval(addMinutes, 100);
-
 
     browser.storage.local.get("preferences").then(gotPreferences, function () {
         console.log("error");
