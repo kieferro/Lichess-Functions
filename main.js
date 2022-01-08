@@ -6,7 +6,6 @@ let stopAnalysis = false;
 let currentNumberOfNodes = -1;
 let status = null;
 let stopSendingPgn = false;
-let callers = [pushButton, hideRatings];
 
 let interval_caller = null;
 let interval_minutes = null;
@@ -224,6 +223,48 @@ function hideRatings() {
     }
 }
 
+function pressButton() {
+    if (!preferences.toggles[2]) {
+        return;
+    }
+
+    let timer = $(".puz-clock__time");
+    let time_left = timer.text().split(":");
+    time_left = parseInt(time_left[0]) * 60 + parseInt(time_left[1]);
+
+    if (timer.length && time_left <= 10) {
+        document.querySelector(".racer__skip").click();
+    }
+
+
+    return;
+    const text = document.getElementsByClassName("racer__pre__message__pov");
+    const parent = document.getElementsByClassName("puz-side");
+    const referenceNode = document.getElementsByClassName("puz-side__table");
+
+    if (text.length === 0) {
+        if (last_text !== null && parent.length > 0) {
+            parent[0].appendChild(last_text);
+            parent[0].insertBefore(last_text, referenceNode[0]);
+            last_text = null;
+        }
+    } else {
+        last_text = text[0];
+    }
+    let clock = document.getElementsByClassName("puz-clock__time");
+    const button = document.getElementsByClassName("racer__skip button button-red");
+
+    if (clock.length === 0 || button.length === 0) {
+        return;
+    }
+    let time = clock[0].textContent.split(":");
+
+    if (parseInt(time[0]) * 60 + parseInt(time[1]) <= 10) {
+        button[0].click();
+    }
+
+}
+
 function gotMessage(request, sender, sendResponse) {
     if (request.code === 0) {
         preferences = request.content;
@@ -274,6 +315,7 @@ function setup() {
         console.log("error");
     });
     setInterval(hideRatings, 250);
+    setInterval(pressButton, 1000);
 
     browser.runtime.onMessage.addListener(gotMessage);
 }
@@ -449,33 +491,6 @@ function onMessage(request, sender, sendResponse) {
         }
     } else if (request.code === 4) {
         stopSendingPgn = true;
-    }
-}
-
-function pushButton() {
-    const text = document.getElementsByClassName("racer__pre__message__pov");
-    const parent = document.getElementsByClassName("puz-side");
-    const referenceNode = document.getElementsByClassName("puz-side__table");
-
-    if (text.length === 0) {
-        if (last_text !== null && parent.length > 0) {
-            parent[0].appendChild(last_text);
-            parent[0].insertBefore(last_text, referenceNode[0]);
-            last_text = null;
-        }
-    } else {
-        last_text = text[0];
-    }
-    let clock = document.getElementsByClassName("puz-clock__time");
-    const button = document.getElementsByClassName("racer__skip button button-red");
-
-    if (clock.length === 0 || button.length === 0) {
-        return;
-    }
-    let time = clock[0].textContent.split(":");
-
-    if (parseInt(time[0]) * 60 + parseInt(time[1]) <= 10) {
-        button[0].click();
     }
 }
 
