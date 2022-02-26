@@ -3,7 +3,7 @@ let interval_minutes = null;
 let pressed_button = false;
 // the default value for the automatic activation of the analysis must be false, because then
 // the process waits until the preferences are loaded and doesn't turn on the analysis before
-let preferences = {"toggles": [true, false, true, true, true], "ratings": 0, "signature": true};
+let preferences = {"toggles": [true, false, true, true, true], "ratings": 1, "signature": true};
 
 
 const config = {attributes: true, childList: true, subtree: true};

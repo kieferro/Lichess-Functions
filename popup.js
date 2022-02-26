@@ -1,6 +1,6 @@
 const button_text = ["Deaktiviert", "Beim Spielen", "Immer"];
 const button_color = [["#c25367", "#c4374f"], ["#b9872d", "#c98b1b"], ["#53c257", "#41a345"]];
-let preferences = {"toggles": [true, true, true, true, true], "ratings": 0, "signature": true};
+let preferences = {"toggles": [true, true, true, true, true], "ratings": 1, "signature": true};
 
 function open_analysis() {
     // PGN found:
