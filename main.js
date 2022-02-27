@@ -6,7 +6,28 @@ let preferences = {"toggles": [false, false, false, false], "ratings": 1, "signa
 // Default config for MutationObserver
 const mutationConfig = {attributes: true, childList: true, subtree: true};
 
-// Function to set the Preferences to a passed parameter
+// Function to add the buttons on the upper right
+function addMenuButtons() {
+    if (document.querySelector(".site-buttons") === null) {
+        return;
+    }
+    // Getting the parent element of the buttons
+    const siteButtons = document.querySelector(".site-buttons");
+    const dasher = siteButtons.lastChild;
+    const userName = dasher.childNodes[0].textContent;
+
+    // Creating the two nodes which will be added to the panel
+    let nodeFollowing = $('<a class="link"><span data-icon=""></span></a>');
+    let nodeProfile = $('<a class="link"><span data-icon=""></span></a>');
+    nodeFollowing.attr("href", "https://lichess.org/@/" + userName + "/following");
+    nodeProfile.attr("href", "https://lichess.org/@/" + userName);
+
+    // Adding the nodes to the panel
+    nodeFollowing.insertBefore(dasher);
+    nodeProfile.insertBefore(dasher);
+}
+
+// Function to set the preferences to a passed parameter
 function setPreferences(pref) {
     if (pref.signature) {
         preferences = pref;
@@ -29,13 +50,17 @@ function gotMessage(request, sender, sendResponse) {
     }
 }
 
+function gotError(_) {
+    console.log("Es ist beim Laden der Einstellungen ein Fehler aufgetreten.");
+}
+
 function setupNew() {
     // Fetching the preferences from the local storage
-    browser.storage.local.get("preferences").then(gotPreferences, function () {
-        console.log("Es ist beim Laden der Einstellungen ein Fehler aufgetreten.");
-    });
+    browser.storage.local.get("preferences").then(gotPreferences, gotError);
     // Sending all messages from background/popup-script to gotMessage()
     browser.runtime.onMessage.addListener(gotMessage);
+
+    addMenuButtons();
 }
 
 setupNew();
@@ -113,21 +138,6 @@ function followingLoaderMutation(mutation_list, _) {
     for (let i = 0; i < mutation_list.length; i++) {
         mutation_list[i].addedNodes.forEach(addTv);
     }
-}
-
-function addFollowing() {
-    let user_tag = document.querySelector("#user_tag");
-
-    if (user_tag === null) {
-        return;
-    }
-    let new_node = $('<a class="link"><span data-icon=""></span></a>');
-    let new_node2 = $('<a class="link"><span data-icon=""></span></a>');
-    new_node.attr("href", "https://lichess.org/@/" + user_tag.textContent + "/following");
-    new_node2.attr("href", "https://lichess.org/@/" + user_tag.textContent);
-
-    new_node.insertBefore($(".dasher"));
-    new_node2.insertBefore($(".dasher"));
 }
 
 function addSeconds(n) {
@@ -291,7 +301,7 @@ function setup() {
     if (infiniteScroll !== null) {
         observer2.observe(infiniteScroll, mutationConfig);
     }
-    addFollowing();
+    // addFollowing();
 
     let paginated_elements = document.getElementsByClassName("paginated");
 
