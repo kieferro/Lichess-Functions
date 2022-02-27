@@ -81,6 +81,44 @@ function activateAnalysis() {
     }
 }
 
+// Function to extract the PGN from a displayed game
+function getPGN() {
+    let PGN = "";
+    $("l4x").children().each(function (_, item) {
+        if (item.tagName !== "DIV") {
+            PGN += item.textContent + " ";
+        }
+    });
+}
+
+// Function which gets called when a button to claim the win is displayed
+function claimWin() {
+    if (!preferences.toggles[3]) {
+        return;
+    }
+    let informationText = document.querySelector(".suggestion");
+
+    if (informationText === null) {
+        return;
+    }
+    // The left button is the one to claim a win and it gets selected by the querySelector
+    let button = informationText.querySelector("button");
+
+    if (button !== null) {
+        button.click();
+    }
+}
+
+// Function which gets called 5s after the tab got loaded. This is the setup
+// for the MutationObserver which checks whether it's possible to claim a win.
+function setupClaimWinObserver() {
+    if (document.querySelector(".rcontrols") === null) {
+        return;
+    }
+    const observer = new MutationObserver(claimWin);
+    observer.observe(document.querySelector(".rcontrols"), mutationConfig);
+}
+
 // Function to set the preferences to a passed parameter
 function setPreferences(pref) {
     if (pref.signature) {
@@ -142,35 +180,10 @@ function setupNew() {
     addMenuButtons();
 
     intervalActivateAnalysis = setInterval(activateAnalysis, 100);
+    setTimeout(setupClaimWinObserver, 5000);
 }
 
 setupNew();
-
-function claimWin() {
-    if (!preferences.toggles[3]) {
-        return;
-    }
-    let suggestion = document.querySelector(".suggestion");
-
-    if (suggestion === null) {
-        return;
-    }
-    let button = suggestion.querySelector("button");
-
-    if (button !== null) {
-        button.click();
-    }
-}
-
-function setupMutationObserver() {
-    let controls = document.querySelector(".rcontrols");
-
-    if (controls === null) {
-        return;
-    }
-    const observer = new MutationObserver(claimWin);
-    observer.observe(controls, mutationConfig);
-}
 
 function addSeconds(n) {
     let moretime = document.querySelector(".moretime");
@@ -307,15 +320,6 @@ function pressButton() {
     }
 }
 
-function getPGN() {
-    let PGN = "";
-    $("l4x").children().each(function (_, item) {
-        if (item.tagName !== "DIV") {
-            PGN += item.textContent + " ";
-        }
-    });
-}
-
 
 function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
@@ -342,7 +346,7 @@ function setup() {
     // }
     // interval_caller = setInterval(activateAnalysis, 50);
 
-    setTimeout(setupMutationObserver, 5000);
+    // setTimeout(setupMutationObserver, 5000);
 
     interval_minutes = setInterval(addMinutes, 100);
 
@@ -351,7 +355,7 @@ function setup() {
     // });
     setInterval(hideRatings, 250);
     setInterval(pressButton, 500);
-    setInterval(getPGN, 2000);
+    // setInterval(getPGN, 2000);
 
     // browser.runtime.onMessage.addListener(gotMessage);
 }
