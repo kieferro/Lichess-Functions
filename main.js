@@ -3,11 +3,10 @@ let interval_minutes = null;
 let pressed_button = false;
 // the default value for the automatic activation of the analysis must be false, because then
 // the process waits until the preferences are loaded and doesn't turn on the analysis before
-let preferences = {"toggles": [true, false, true, true, true], "ratings": 1, "signature": true};
+let preferences = {"toggles": [true, false, true, true], "ratings": 1, "signature": true};
 
 
 const config = {attributes: true, childList: true, subtree: true};
-const modes = ["", "", "", "", ""];
 
 function claimWin() {
     if (!preferences.toggles[3]) {
@@ -60,19 +59,6 @@ function hover_mutation(_, __) {
     new_node.attr("href", "https://lichess.org/report?username=" + link_elements.at(-2));
     $(".upt__actions.btn-rack").append(new_node);
     $("#reportButton").css("padding-left", 0);
-
-    if (!preferences.toggles[4]) {
-        return;
-    }
-    let info = document.querySelector(".upt__info__ratings");
-
-    for (let i = 0; i < modes.length; i++) {
-        for (let j = 0; j < info.childNodes.length; j++) {
-            if (info.childNodes[j].dataset.icon === modes[i]) {
-                $(info.childNodes[j]).insertBefore($(info.childNodes[0]));
-            }
-        }
-    }
 }
 
 function addTv(node, _) {
