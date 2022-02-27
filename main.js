@@ -1,4 +1,4 @@
-﻿let interval_caller = null;
+﻿let intervalActivateAnalysis = null;
 let interval_minutes = null;
 let pressed_button = false;
 
@@ -61,12 +61,35 @@ function followingLoaderMutation(mutation_list, _) {
     }
 }
 
+// Function which gets called every 100ms which tries to turn on the analysis
+function activateAnalysis() {
+    if (!preferences.toggles[1]) {
+        clearInterval(intervalActivateAnalysis);
+        return;
+    }
+    // This waits until the analysis is opened in the current tab
+    if (document.visibilityState === "visible") {
+        let slider = document.querySelector("#analyse-toggle-ceval");
+
+        // Trying to click the lisder if it is not activated
+        if (slider !== null) {
+            if (!slider.checked) {
+                slider.click();
+            }
+            clearInterval(intervalActivateAnalysis);
+        }
+    }
+}
+
 // Function to set the preferences to a passed parameter
 function setPreferences(pref) {
     if (pref.signature) {
         preferences = pref;
     }
-    // TODO: Apply preferences
+    // Deleting the potential old Interval and then creating a new
+    // interval to activate the analysis
+    clearInterval(intervalActivateAnalysis);
+    intervalActivateAnalysis = setInterval(activateAnalysis, 100);
 }
 
 // Function which gets called when the preferences were read from local storage
@@ -117,6 +140,8 @@ function setupNew() {
     browser.runtime.onMessage.addListener(gotMessage);
 
     addMenuButtons();
+
+    intervalActivateAnalysis = setInterval(activateAnalysis, 100);
 }
 
 setupNew();
@@ -145,22 +170,6 @@ function setupMutationObserver() {
     }
     const observer = new MutationObserver(claimWin);
     observer.observe(controls, mutationConfig);
-}
-
-function activateAnalysis() {
-    if (!preferences.toggles[1]) {
-        return;
-    }
-    if (document.visibilityState === "visible") {
-        let slider = document.querySelector("#analyse-toggle-ceval");
-
-        if (slider !== null) {
-            if (!slider.checked) {
-                slider.click();
-                clearInterval(interval_caller);
-            }
-        }
-    }
 }
 
 function addSeconds(n) {
@@ -331,7 +340,7 @@ function setup() {
     // for (let i = 0; i < paginated_elements.length; i++) {
     //     addTv(paginated_elements[i], null);
     // }
-    interval_caller = setInterval(activateAnalysis, 50);
+    // interval_caller = setInterval(activateAnalysis, 50);
 
     setTimeout(setupMutationObserver, 5000);
 
