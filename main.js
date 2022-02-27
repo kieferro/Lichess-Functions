@@ -1,12 +1,44 @@
 ﻿let interval_caller = null;
 let interval_minutes = null;
 let pressed_button = false;
-// the default value for the automatic activation of the analysis must be false, because then
-// the process waits until the preferences are loaded and doesn't turn on the analysis before
-let preferences = {"toggles": [true, false, true, true], "ratings": 1, "signature": true};
 
+let preferences = {"toggles": [false, false, false, false], "ratings": 1, "signature": true};
+// Default config for MutationObserver
+const mutationConfig = {attributes: true, childList: true, subtree: true};
 
-const config = {attributes: true, childList: true, subtree: true};
+// Function to set the Preferences to a passed parameter
+function setPreferences(pref) {
+    if (pref.signature) {
+        preferences = pref;
+    }
+    // TODO: Apply preferences
+}
+
+// Function which gets called when the preferences were read from local storage
+function gotPreferences(item) {
+    if (item.preferences !== undefined) {
+        setPreferences(item.preferences);
+    }
+}
+
+// Function which gets called from the popup and from the background-script
+function gotMessage(request, sender, sendResponse) {
+    // The different types of messages are indicated by the codes
+    if (request.code === 0) {
+        setPreferences(request.content);
+    }
+}
+
+function setupNew() {
+    // Fetching the preferences from the local storage
+    browser.storage.local.get("preferences").then(gotPreferences, function () {
+        console.log("Es ist beim Laden der Einstellungen ein Fehler aufgetreten.");
+    });
+    // Sending all messages from background/popup-script to gotMessage()
+    browser.runtime.onMessage.addListener(gotMessage);
+}
+
+setupNew();
 
 function claimWin() {
     if (!preferences.toggles[3]) {
@@ -31,7 +63,7 @@ function setupMutationObserver() {
         return;
     }
     const observer = new MutationObserver(claimWin);
-    observer.observe(controls, config);
+    observer.observe(controls, mutationConfig);
 }
 
 function activateAnalysis() {
@@ -242,18 +274,6 @@ function getPGN() {
     });
 }
 
-function gotMessage(request, sender, sendResponse) {
-    if (request.code === 0) {
-        preferences = request.content;
-    }
-}
-
-function gotPreferences(item) {
-    if (item.preferences !== undefined) {
-        preferences = item.preferences;
-    }
-}
-
 
 function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
@@ -264,12 +284,12 @@ function setup() {
     }
     const observer = new MutationObserver(hover_mutation);
     const observer2 = new MutationObserver(followingLoaderMutation);
-    observer.observe(document.querySelector("#powerTip"), config);
+    observer.observe(document.querySelector("#powerTip"), mutationConfig);
 
     let infiniteScroll = document.querySelector(".infinite-scroll");
 
     if (infiniteScroll !== null) {
-        observer2.observe(infiniteScroll, config);
+        observer2.observe(infiniteScroll, mutationConfig);
     }
     addFollowing();
 
@@ -284,14 +304,14 @@ function setup() {
 
     interval_minutes = setInterval(addMinutes, 100);
 
-    browser.storage.local.get("preferences").then(gotPreferences, function () {
-        console.log("error");
-    });
+    // browser.storage.local.get("preferences").then(gotPreferences, function () {
+    //     console.log("error");
+    // });
     setInterval(hideRatings, 250);
     setInterval(pressButton, 500);
     setInterval(getPGN, 2000);
 
-    browser.runtime.onMessage.addListener(gotMessage);
+    // browser.runtime.onMessage.addListener(gotMessage);
 }
 
-setup();
+// setup();
