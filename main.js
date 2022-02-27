@@ -14,7 +14,7 @@ function addMenuButtons() {
     // Getting the parent element of the buttons
     const siteButtons = document.querySelector(".site-buttons");
     const dasher = siteButtons.lastChild;
-    const userName = dasher.childNodes[0].textContent;
+    const userName = dasher.firstChild.textContent;
 
     // Creating the two nodes which will be added to the panel
     let nodeFollowing = $('<a class="link"><span data-icon=""></span></a>');
@@ -25,6 +25,19 @@ function addMenuButtons() {
     // Adding the nodes to the panel
     nodeFollowing.insertBefore(dasher);
     nodeProfile.insertBefore(dasher);
+}
+
+// Function which gets called when hovering over a profile name so that the report-buttton gets added
+function hoverOverProfile(_, __) {
+    // Checking if the button has already been added
+    if (document.querySelector("#reportButton") !== null) {
+        return;
+    }
+    let reportButton = $('<a data-icon="" class="btn-rack__btn" id="reportButton" title="Benutzer melden" style="padding-left: 0"></a>');
+    // Fetching username from the card
+    let username = document.querySelector(".upt__info__top").firstChild.firstChild.textContent;
+    reportButton.attr("href", "https://lichess.org/report?username=" + username);
+    $(".upt__actions.btn-rack").append(reportButton);
 }
 
 // Function to set the preferences to a passed parameter
@@ -55,6 +68,17 @@ function gotError(_) {
 }
 
 function setupNew() {
+    // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
+    // a users name. At the beginning it doesn't exist, so this function creates one so that it can be used
+    // for the MutationObserver, which will then add the Report-Buttons.
+    if (document.querySelector("#powerTip") === null) {
+        $("body").append("<div id=\"powerTip\"></div>");
+    }
+    // Adding an MutationObserver for the object which will be created when hovering over the name
+    // of another player. In that case a report-button is added in the hoverOverProfile-function
+    const profileCardObserver = new MutationObserver(hoverOverProfile);
+    profileCardObserver.observe(document.querySelector("#powerTip"), mutationConfig);
+
     // Fetching the preferences from the local storage
     browser.storage.local.get("preferences").then(gotPreferences, gotError);
     // Sending all messages from background/popup-script to gotMessage()
@@ -105,17 +129,6 @@ function activateAnalysis() {
             }
         }
     }
-}
-
-function hover_mutation(_, __) {
-    if (document.querySelector("#reportButton") !== null) {
-        return;
-    }
-    let new_node = $('<a data-icon="" class="btn-rack__btn" id="reportButton" title="Benutzer melden"></a>');
-    let link_elements = document.querySelector(".upt__actions.btn-rack").childNodes[0].href.split("/");
-    new_node.attr("href", "https://lichess.org/report?username=" + link_elements.at(-2));
-    $(".upt__actions.btn-rack").append(new_node);
-    $("#reportButton").css("padding-left", 0);
 }
 
 function addTv(node, _) {
@@ -289,12 +302,12 @@ function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
     // a users name. At the beginning it doesn't exist, so this function creates one so that it can be used
     // for the MutationObserver, which will then add the Report-Buttons.
-    if (document.querySelector("#powerTip") === null) {
+    if (document.querySelector("#powerTip") === null && false) {
         $("body").append("<div id=\"powerTip\"></div>");
     }
-    const observer = new MutationObserver(hover_mutation);
+    // const observer = new MutationObserver(hover_mutation);
     const observer2 = new MutationObserver(followingLoaderMutation);
-    observer.observe(document.querySelector("#powerTip"), mutationConfig);
+    // observer.observe(document.querySelector("#powerTip"), mutationConfig);
 
     let infiniteScroll = document.querySelector(".infinite-scroll");
 
