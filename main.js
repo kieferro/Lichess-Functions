@@ -40,6 +40,27 @@ function hoverOverProfile(_, __) {
     $(".upt__actions.btn-rack").append(reportButton);
 }
 
+// This function gets called to add a TV-button to the passed node
+function addTv(node, _) {
+    if (node.className !== "paginated") {
+        return;
+    }
+    // Getting username from the left part of the node
+    let username = node.firstChild.firstChild.href.split("/").at(-1);
+
+    let new_node = $('<a title="Partien ansehen"  class="btn-rack__btn" data-icon=""></a>');
+    new_node.attr("href", "https://lichess.org/@/" + username + "/tv");
+
+    new_node.insertBefore(node.lastChild.firstChild.firstChild);
+}
+
+// Gets called when the list of people on the following-list gets longer
+function followingLoaderMutation(mutation_list, _) {
+    for (let i = 0; i < mutation_list.length; i++) {
+        mutation_list[i].addedNodes.forEach(addTv);
+    }
+}
+
 // Function to set the preferences to a passed parameter
 function setPreferences(pref) {
     if (pref.signature) {
@@ -78,6 +99,17 @@ function setupNew() {
     // of another player. In that case a report-button is added in the hoverOverProfile-function
     const profileCardObserver = new MutationObserver(hoverOverProfile);
     profileCardObserver.observe(document.querySelector("#powerTip"), mutationConfig);
+
+    // Initialising the Observer for the list of people the user follows to add TVs
+    const followingListObserver = new MutationObserver(followingLoaderMutation);
+
+    if (document.querySelector(".infinite-scroll") !== null) {
+        followingListObserver.observe(document.querySelector(".infinite-scroll"), mutationConfig);
+    }
+    // Adding TVs for all already existing entries in the following-list
+    $(".paginated").each(function (index) {
+        addTv($(this).get(0), index);
+    });
 
     // Fetching the preferences from the local storage
     browser.storage.local.get("preferences").then(gotPreferences, gotError);
@@ -128,28 +160,6 @@ function activateAnalysis() {
                 clearInterval(interval_caller);
             }
         }
-    }
-}
-
-function addTv(node, _) {
-    if (node.className !== "paginated") {
-        return;
-    }
-    let link = node.childNodes[0].childNodes[0].href;
-    let name = link.split("/").at(-1);
-
-    let childs = node.childNodes;
-    let bar = childs[childs.length - 1].childNodes[0];
-
-    let new_node = $('<a title="Partien ansehen"  class="btn-rack__btn" data-icon=""></a>');
-    new_node.attr("href", "https://lichess.org/@/" + name + "/tv");
-
-    new_node.insertBefore(bar.childNodes[0]);
-}
-
-function followingLoaderMutation(mutation_list, _) {
-    for (let i = 0; i < mutation_list.length; i++) {
-        mutation_list[i].addedNodes.forEach(addTv);
     }
 }
 
@@ -302,25 +312,25 @@ function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
     // a users name. At the beginning it doesn't exist, so this function creates one so that it can be used
     // for the MutationObserver, which will then add the Report-Buttons.
-    if (document.querySelector("#powerTip") === null && false) {
-        $("body").append("<div id=\"powerTip\"></div>");
-    }
+    // if (document.querySelector("#powerTip") === null) {
+    //     $("body").append("<div id=\"powerTip\"></div>");
+    // }
     // const observer = new MutationObserver(hover_mutation);
-    const observer2 = new MutationObserver(followingLoaderMutation);
+    // const observer2 = new MutationObserver(followingLoaderMutation);
     // observer.observe(document.querySelector("#powerTip"), mutationConfig);
 
-    let infiniteScroll = document.querySelector(".infinite-scroll");
+    // let infiniteScroll = document.querySelector(".infinite-scroll");
 
-    if (infiniteScroll !== null) {
-        observer2.observe(infiniteScroll, mutationConfig);
-    }
+    // if (infiniteScroll !== null) {
+    //     observer2.observe(infiniteScroll, mutationConfig);
+    // }
     // addFollowing();
 
-    let paginated_elements = document.getElementsByClassName("paginated");
+    // let paginated_elements = document.getElementsByClassName("paginated");
 
-    for (let i = 0; i < paginated_elements.length; i++) {
-        addTv(paginated_elements[i], null);
-    }
+    // for (let i = 0; i < paginated_elements.length; i++) {
+    //     addTv(paginated_elements[i], null);
+    // }
     interval_caller = setInterval(activateAnalysis, 50);
 
     setTimeout(setupMutationObserver, 5000);
