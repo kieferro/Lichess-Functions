@@ -292,7 +292,7 @@ function gotError(_) {
     console.log("Es ist beim Laden der Einstellungen ein Fehler aufgetreten.");
 }
 
-function setupNew() {
+function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
     // a users name. At the beginning it doesn't exist, so this function creates one so that it can be used
     // for the MutationObserver, which will then add the Report-Buttons.
@@ -329,4 +329,4 @@ function setupNew() {
     setInterval(hideRatings, 500);
 }
 
-setupNew();
+setup();
