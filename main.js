@@ -136,6 +136,59 @@ function pressButton() {
     }
 }
 
+// This is a function which gets called twice every second and which hides the ratings
+// if the user is playing
+function hideRatings() {
+    let status;
+
+    // Setting up the hiding of the left ratings by moving the ratings into an own container
+    // If this container already exists, this routine is not necessary
+    if ($(".extension-rating-span").length === 0) {
+        let playerInformation = $(".game__meta__players").children();
+        let player1 = playerInformation.get(0).firstChild.childNodes;
+        player1 = player1[player1.length - 1];
+        let player2 = playerInformation.get(1).firstChild.childNodes;
+        player2 = player2[player2.length - 1];
+
+        // Collecting the textContents
+        let splitted1 = player1.textContent.split("(");
+        let splitted2 = player2.textContent.split("(");
+
+        // Deleting the ratings from the text of the player
+        player1.textContent = splitted1[0];
+        player2.textContent = splitted2[0];
+
+        // Generating new container-nodes for the ratings
+        let newNode = $("<span class='extension-rating-span'>" + "(" + splitted1[1] + "</span>");
+        newNode.insertAfter(player1);
+        let newNode2 = $("<span class='extension-rating-span'>" + "(" + splitted2[1] + "</span>");
+        newNode2.insertAfter(player2);
+    }
+    if ($(".game__meta > .status").length > 0) {
+        // A game was played
+        status = 1;
+    } else if ($(".game__meta").length > 0) {
+        // A game is being played
+        if ($(".ruser-bottom > .text").get(0).textContent === $("#user_tag").get(0).textContent) {
+            // It is played by the user
+            status = 0;
+        } else {
+            // It is played by someone else
+            status = 1;
+        }
+    } else {
+        status = 2;
+    }
+    // Checking if the ratings need to be hidden
+    if ((preferences.ratings >= 1 && status === 0) || (preferences.ratings === 2 && status === 1)) {
+        $(".round__app").children().find("rating").hide();
+        $(".extension-rating-span").hide();
+    } else {
+        $(".round__app").children().find("rating").show();
+        $(".extension-rating-span").show();
+    }
+}
+
 // Function to set the preferences to a passed parameter
 function setPreferences(pref) {
     if (pref.signature) {
@@ -145,6 +198,9 @@ function setPreferences(pref) {
     // interval to activate the analysis
     clearInterval(intervalActivateAnalysis);
     intervalActivateAnalysis = setInterval(activateAnalysis, 100);
+
+    // Calling the function which manages the visibility of the ratings
+    hideRatings();
 }
 
 // Function which gets called when the preferences were read from local storage
@@ -199,6 +255,7 @@ function setupNew() {
     intervalActivateAnalysis = setInterval(activateAnalysis, 1000);
     setTimeout(setupClaimWinObserver, 5000);
     intervalPressButton = setInterval(pressButton, 1000);
+    setInterval(hideRatings, 500);
 }
 
 setupNew();
@@ -263,53 +320,5 @@ function addMinutes() {
     } else if (!moretime.length && minutes.length) {
         minutes.remove();
         // clearInterval();
-    }
-}
-
-function hideRatings() {
-    console.log(preferences.ratings);
-
-    if (preferences.ratings === 0) {
-        return;
-    }
-
-    let user = document.querySelector(".ruser-bottom");
-
-    if (user === null) {
-        $("rating").show();
-        $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
-        return;
-    }
-    user = user.querySelector(".text");
-
-    let status = document.getElementsByClassName("status");
-
-    for (let i = 0; i < status.length; i++) {
-        if (status[i].parentElement.className === "game__meta") {
-            $("rating").show();
-            $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
-            return;
-        }
-    }
-    if (document.querySelector("#user_tag").textContent === user.textContent || preferences.ratings === 2) {
-        $("rating").hide();
-
-        let game_meta = document.querySelector(".game__meta__players").childNodes;
-
-        for (let i = 0; i < game_meta.length; i++) {
-            let element = game_meta[i].childNodes[0];
-
-            if (element.querySelector("span") !== null) {
-                continue;
-            }
-            let HTML = element.innerHTML;
-            let index = HTML.indexOf("(");
-
-            element.innerHTML = HTML.substring(0, index) + '<span style="visibility:hidden">' + HTML.substring(index, HTML.length) + '</span>';
-        }
-    } else {
-        $("rating").show();
-
-        $(".game__meta__players").$(".user-link").$("span").css("visibility", "visible");
     }
 }
