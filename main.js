@@ -47,8 +47,14 @@ function addTv(node, _) {
     if (node.className !== "paginated") {
         return;
     }
-    // Getting username from the left part of the node
-    let username = node.firstChild.firstChild.href.split("/").at(-1);
+    let username;
+    try {
+        // Getting username from the left part of the node
+        username = node.firstChild.firstChild.href.split("/").at(-1);
+    } catch {
+        // This try-catch is for other paginated-elements, which exist for example on the tournaments site
+        return;
+    }
 
     let new_node = $('<a title="Partien ansehen"  class="btn-rack__btn" data-icon=""></a>');
     new_node.attr("href", "https://lichess.org/@/" + username + "/tv");
