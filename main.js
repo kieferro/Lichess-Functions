@@ -1,7 +1,8 @@
 ﻿let intervalActivateAnalysis = null;
 let intervalPressButton = null;
+let intervalAddMinutes = null;
 
-let pressed_button = false;
+let pressedButton = false;
 
 let preferences = {"toggles": [false, false, false, false], "ratings": 1, "signature": true};
 // Default config for MutationObserver
@@ -189,6 +190,75 @@ function hideRatings() {
     }
 }
 
+// Function which gets called several times to add more than 15 seconds to the time of the opponent
+function addSeconds(n) {
+    let moretime = document.querySelector(".moretime");
+
+    if (moretime !== null && n > 0) {
+        moretime.click();
+
+        const randomNumber = Math.floor(Math.random() * 10) + 300;
+
+        if (n - 15 <= 0) {
+            pressedButton = false;
+            $(".moretime").show();
+            return;
+        }
+        setTimeout(function () {
+            addSeconds(n - 15);
+        }, randomNumber);
+    } else {
+        pressedButton = false;
+        $(".moretime").show();
+    }
+}
+
+// Function which gets called when the plus-button is pressed
+function clickedAddTime() {
+    // If the button was pressed by the extension: return
+    if (pressedButton) {
+        return;
+    }
+    let moretime = $(".moretime");
+    let minutes = $("#minutes");
+
+    if (moretime.length && minutes.length) {
+        // It reads the value and then calls the function which adds more and more time
+        let value = document.querySelector("#minutes").value;
+        document.querySelector("#minutes").value = "";
+
+        if (value === "" || isNaN(value)) {
+            return;
+        }
+        setTimeout(function () {
+            addSeconds(parseInt(value) * 60 - 15);
+        }, 300);
+        pressedButton = true;
+        $(".moretime").hide();
+    }
+}
+
+// Function which adds and remove the input fiels for extra time
+function addMinutes() {
+    // Plus-button
+    let moretime = $(".moretime");
+    // Added input field
+    let minutes = $("#minutes");
+
+    if (moretime.length && !minutes.length) {
+        let new_node = $('<input spellcheck="false" autocomplete="off" aria-label="Minutes" placeholder="Minuten" id="minutes"' +
+            ' style="width: 30%;height: 50%;position: absolute;right: 50px;top: 25%;bottom: 25%;margin: auto;">');
+
+        new_node.insertBefore(moretime);
+        moretime.on("click", clickedAddTime);
+    } else if (!moretime.length && minutes.length) {
+        // Removing after the game is over
+        minutes.remove();
+        clearInterval(intervalAddMinutes);
+    }
+}
+
+
 // Function to set the preferences to a passed parameter
 function setPreferences(pref) {
     if (pref.signature) {
@@ -253,72 +323,10 @@ function setupNew() {
     addMenuButtons();
 
     intervalActivateAnalysis = setInterval(activateAnalysis, 1000);
-    setTimeout(setupClaimWinObserver, 5000);
     intervalPressButton = setInterval(pressButton, 1000);
+    intervalAddMinutes = setInterval(addMinutes, 250);
+    setTimeout(setupClaimWinObserver, 5000);
     setInterval(hideRatings, 500);
 }
 
 setupNew();
-
-function addSeconds(n) {
-    let moretime = document.querySelector(".moretime");
-
-    console.log(n);
-
-    if (moretime !== null && n > 0) {
-        moretime.click();
-
-        let randomNumber = Math.floor(Math.random() * 10) + 300;
-
-        if (n - 15 <= 0) {
-            pressed_button = false;
-            $(".moretime").show();
-            return;
-        }
-        setTimeout(function () {
-            addSeconds(n - 15);
-        }, randomNumber);
-    } else {
-        pressed_button = false;
-        $(".moretime").show();
-    }
-}
-
-function clickedAddTime() {
-    if (pressed_button) {
-        return;
-    }
-    let moretime = $(".moretime");
-    let minutes = $("#minutes");
-
-    if (moretime.length && minutes.length) {
-        let value = document.querySelector("#minutes").value;
-        document.querySelector("#minutes").value = "";
-
-        if (value === "" || isNaN(value)) {
-            console.log("Returned");
-            return;
-        }
-        setTimeout(function () {
-            addSeconds(parseInt(value) * 60 - 15);
-        }, 300);
-        pressed_button = true;
-        $(".moretime").hide();
-    }
-}
-
-function addMinutes() {
-    let moretime = $(".moretime");
-    let minutes = $("#minutes");
-
-    if (moretime.length && !minutes.length) {
-        let new_node = $('<input spellcheck="false" autocomplete="off" aria-label="Minutes" placeholder="Minuten" id="minutes"' +
-            ' style="width: 30%;height: 50%;position: absolute;right: 50px;top: 25%;bottom: 25%;margin: auto;">');
-
-        new_node.insertBefore(moretime);
-        moretime.on("click", clickedAddTime);
-    } else if (!moretime.length && minutes.length) {
-        minutes.remove();
-        // clearInterval();
-    }
-}
