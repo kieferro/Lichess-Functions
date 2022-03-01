@@ -1,4 +1,6 @@
 ﻿let intervalActivateAnalysis = null;
+let intervalPressButton = null;
+
 let interval_minutes = null;
 let pressed_button = false;
 
@@ -119,6 +121,22 @@ function setupClaimWinObserver() {
     observer.observe(document.querySelector(".rcontrols"), mutationConfig);
 }
 
+// This function gets called every second to press the skip-button on puzzle racer
+function pressButton() {
+    if (!preferences.toggles[2]) {
+        return;
+    }
+    const timer = $(".puz-clock__time").get(0);
+    // Reading the text from the time display
+    let time_left = timer.textContent.split(":");
+    time_left = parseInt(time_left[0]) * 60 + parseInt(time_left[1]);
+
+    if (time_left <= 10) {
+        $(".racer__skip").click();
+        clearInterval(intervalPressButton);
+    }
+}
+
 // Function to set the preferences to a passed parameter
 function setPreferences(pref) {
     if (pref.signature) {
@@ -179,8 +197,9 @@ function setupNew() {
 
     addMenuButtons();
 
-    intervalActivateAnalysis = setInterval(activateAnalysis, 100);
+    intervalActivateAnalysis = setInterval(activateAnalysis, 1000);
     setTimeout(setupClaimWinObserver, 5000);
+    intervalPressButton = setInterval(pressButton, 1000);
 }
 
 setupNew();
@@ -296,31 +315,6 @@ function hideRatings() {
     }
 }
 
-let lastMessage = "";
-
-function pressButton() {
-    let message = document.querySelector(".racer__pre__message__pov");
-
-    if (message !== null) {
-        lastMessage = message.textContent;
-    }
-    if ($(".puz-clock__time").length && !$(".racer__pre__message__pov").length) {
-        let new_node = $('<p class="racer__pre__message__pov" style="margin: 3em 0 0 0;">' + lastMessage + '</p>');
-        new_node.insertAfter($(".puz-clock"));
-    }
-    if (!preferences.toggles[2]) {
-        return;
-    }
-    let timer = $(".puz-clock__time");
-    let time_left = timer.text().split(":");
-    time_left = parseInt(time_left[0]) * 60 + parseInt(time_left[1]);
-
-    if (timer.length && time_left <= 10) {
-        document.querySelector(".racer__skip").click();
-    }
-}
-
-
 function setup() {
     // The powerTip-object is an object, which is always in the DOM. Its childs only appear when you hover over
     // a users name. At the beginning it doesn't exist, so this function creates one so that it can be used
@@ -354,7 +348,7 @@ function setup() {
     //     console.log("error");
     // });
     setInterval(hideRatings, 250);
-    setInterval(pressButton, 500);
+    // setInterval(pressButton, 500);
     // setInterval(getPGN, 2000);
 
     // browser.runtime.onMessage.addListener(gotMessage);
