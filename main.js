@@ -153,9 +153,10 @@ function hideRatings() {
     if ($(".extension-rating-span").length === 0) {
         let playerInformation = $(".game__meta__players").children();
         let player1 = playerInformation.get(0).firstChild.childNodes;
-        player1 = player1[player1.length - 1];
+        // If there is a title before the text, the second element contains the rating
+        player1 = player1[((player1[0].className === "utitle") ? 1 : 0)];
         let player2 = playerInformation.get(1).firstChild.childNodes;
-        player2 = player2[player2.length - 1];
+        player2 = player2[((player2[0].className === "utitle") ? 1 : 0)];
 
         // Collecting the textContents
         let splitted1 = player1.textContent.split("(");
