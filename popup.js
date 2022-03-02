@@ -33,6 +33,9 @@ function gotPreferences(item) {
         if (item.signature) {
             preferences = item;
         }
+    } else {
+        // The first time the popup gets oppened, the preferences will still be saved as they are shown
+        savePreferences();
     }
     applyPreferences();
 }
