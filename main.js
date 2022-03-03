@@ -144,6 +144,17 @@ function pressButton() {
     }
 }
 
+// This function is used to toggle the visibility of the rating graphs
+function toggleRatingGraph(buttonName, graphNumbers) {
+    // Toggle the color of the button
+    document.querySelector(buttonName).style.color = (document.querySelector(buttonName).style.color === "lightblue") ? "grey" : "lightblue";
+
+    // Toggle the visibility of the graphs
+    for (let i = 0; i < graphNumbers.length; i++) {
+        $(".highcharts-series-" + graphNumbers[i]).toggle();
+    }
+}
+
 // This function gets called to add the on-off-switches to the rating-graph
 function addRatingGraph() {
     // The rating graph needs to load
@@ -151,7 +162,17 @@ function addRatingGraph() {
         return;
     }
     clearInterval(intervallCallRatingGraph);
-    $("#highcharts-0").prepend($('<div style=\"position: absolute;right: 10px;top: 13px;\"><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></div>'));
+    // Adding the buttons to the DOM
+    $("#highcharts-0").prepend($('<div style=\"position: absolute;right: 10px;top: 13px;\"><text id="chart-toggle1" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle2" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle3" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle4" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle5" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></text><text id="chart-toggle6" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle7" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></div>'));
+    // The rating-graphs are numbered. These are the numbers that correspond to the modes
+    const links = [[14], [0], [1], [2], [13], [3], [4, 5, 6, 7, 8, 9, 10, 11, 12]];
+
+    for (let i = 0; i < links.length; i++) {
+        // Adding an onClick-Event to every button
+        $("#chart-toggle" + (i + 1).toString()).on("click", function () {
+            toggleRatingGraph("#chart-toggle" + (i + 1).toString(), links[i]);
+        });
+    }
 }
 
 // This is a function which gets called twice every second and which hides the ratings
