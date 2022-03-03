@@ -162,6 +162,9 @@ function addRatingGraph() {
     if (graph.length === 0) {
         return;
     }
+    // Hiding the circles around the markers by CSS
+    $("body").append($("<style>.highcharts-series-group > path{visibility: hidden}</style>"));
+
     clearInterval(intervallCallRatingGraph);
     // Adding the buttons to the DOM
     graph.prepend($('<div style=\"position: absolute;right: 10px;top: 13px;\"><text id="chart-toggle1" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle2" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle3" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle4" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle5" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></text><text id="chart-toggle6" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle7" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></div>'));
