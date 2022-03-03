@@ -157,13 +157,14 @@ function toggleRatingGraph(buttonName, graphNumbers) {
 
 // This function gets called to add the on-off-switches to the rating-graph
 function addRatingGraph() {
+    const graph = $("#us_profile > .rating-history > #highcharts-0");
     // The rating graph needs to load
-    if ($("#highcharts-0").length === 0) {
+    if (graph.length === 0) {
         return;
     }
     clearInterval(intervallCallRatingGraph);
     // Adding the buttons to the DOM
-    $("#highcharts-0").prepend($('<div style=\"position: absolute;right: 10px;top: 13px;\"><text id="chart-toggle1" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle2" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle3" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle4" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle5" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></text><text id="chart-toggle6" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle7" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></div>'));
+    graph.prepend($('<div style=\"position: absolute;right: 10px;top: 13px;\"><text id="chart-toggle1" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle2" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle3" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle4" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle5" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></text><text id="chart-toggle6" data-icon=\"" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text id="chart-toggle7" data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></div>'));
     // The rating-graphs are numbered. These are the numbers that correspond to the modes
     const links = [[14], [0], [1], [2], [13], [3], [4, 5, 6, 7, 8, 9, 10, 11, 12]];
 
@@ -364,7 +365,7 @@ function setup() {
     intervalActivateAnalysis = setInterval(activateAnalysis, 1000);
     intervalPressButton = setInterval(pressButton, 1000);
     intervalAddMinutes = setInterval(addMinutes, 250);
-    intervallCallRatingGraph = setInterval(addRatingGraph, 10);
+    intervallCallRatingGraph = setInterval(addRatingGraph, 500);
     setTimeout(setupClaimWinObserver, 5000);
     setInterval(hideRatings, 500);
 }
