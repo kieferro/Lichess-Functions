@@ -1,6 +1,7 @@
 ﻿let intervalActivateAnalysis = null;
 let intervalPressButton = null;
 let intervalAddMinutes = null;
+let intervallCallRatingGraph = null;
 
 let pressedButton = false;
 
@@ -141,6 +142,16 @@ function pressButton() {
         $(".racer__skip").click();
         clearInterval(intervalPressButton);
     }
+}
+
+// This function gets called to add the on-off-switches to the rating-graph
+function addRatingGraph() {
+    // The rating graph needs to load
+    if ($("#highcharts-0").length === 0) {
+        return;
+    }
+    clearInterval(intervallCallRatingGraph);
+    $("#highcharts-0").prepend($('<div style=\"position: absolute;right: 10px;top: 13px;\"><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text><text data-icon=\"\" style=\"padding-right: 10px;color: lightblue;cursor: pointer;\"></text></div>'));
 }
 
 // This is a function which gets called twice every second and which hides the ratings
@@ -332,6 +343,7 @@ function setup() {
     intervalActivateAnalysis = setInterval(activateAnalysis, 1000);
     intervalPressButton = setInterval(pressButton, 1000);
     intervalAddMinutes = setInterval(addMinutes, 250);
+    intervallCallRatingGraph = setInterval(addRatingGraph, 10);
     setTimeout(setupClaimWinObserver, 5000);
     setInterval(hideRatings, 500);
 }
