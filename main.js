@@ -166,6 +166,7 @@ function addRatingGraph() {
     }
     // Hiding the circles around the markers by CSS
     $("body").append($("<style>.highcharts-series-group > path{visibility: hidden}</style>"));
+    // Clicking the "all"-button so that all graphs get added to DOM
     document.getElementsByClassName("highcharts-button")[5].dispatchEvent(new Event('click'));
 
     clearInterval(intervallCallRatingGraph);
@@ -175,8 +176,14 @@ function addRatingGraph() {
     const links = [[14], [0], [1], [2], [13], [3], [4, 5, 6, 7, 8, 9, 10, 11, 12]];
 
     for (let i = 0; i < links.length; i++) {
-        if (document.querySelector(".highcharts-series.highcharts-series-" + links[i][0].toString()).childNodes.length <= 1) {
-            $("#chart-toggle" + (i + 1).toString()).css("color", "rgb(50, 50, 50)").css("cursor", "auto");
+        let countChilds = 0;
+
+        for (let j = 0; j < links[i].length; j++) {
+            countChilds += $(".highcharts-series.highcharts-series-" + links[i][j].toString()).children().length;
+        }
+
+        if (countChilds <= links[i].length) {
+            $("#chart-toggle" + (i + 1).toString()).css("color", "rgb(50, 50, 50)");
             continue;
         }
         // Adding an onClick-Event to every button
