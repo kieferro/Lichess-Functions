@@ -147,9 +147,11 @@ function pressButton() {
     }
 }
 
+// Reading time span preference from local storage and trying to apply
 function gotTimeSpan(item) {
     if (item.timeSpan !== undefined) {
         if (preferences.toggles[5]) {
+            // If it isn't already displayed; catch
             try {
                 document.getElementsByClassName("highcharts-button")[item.timeSpan].dispatchEvent(new Event('click'));
             } catch {
