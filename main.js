@@ -147,12 +147,16 @@ function pressButton() {
     }
 }
 
+// Function which gets called when the on/off-switch gets clicked
 function onOffSwitch() {
+    // Variable which shows if any of the switches are activated
     let activated = false;
 
     for (let i = 1; i <= 7; i++) {
         let element = document.querySelector("#chart-toggle" + i.toString());
+        // Indication if this switch is activated
         if (element.style.color === LIGHTBLUE) {
+            // If a switch is activated it gets directly clicked
             element.click();
             activated = true;
         }
@@ -160,6 +164,7 @@ function onOffSwitch() {
     if (activated) {
         return;
     }
+    // If no switch is activated they all get activated
     for (let i = 1; i <= 7; i++) {
         document.querySelector("#chart-toggle" + i.toString()).click();
     }
