@@ -146,6 +146,14 @@ function pressButton() {
     }
 }
 
+// This function writes the selected time span in the local storage
+function handleTimeSpan() {
+    $(".highcharts-button").click(function () {
+        let timeSpan = $(".highcharts-button").index(this);
+        browser.storage.local.set({timeSpan});
+    });
+}
+
 // This function is used to toggle the visibility of the rating graphs
 function toggleRatingGraph(buttonName, graphNumbers) {
     // Toggle the color of the button
@@ -193,6 +201,8 @@ function addRatingGraph() {
         }).css("color", LIGHTBLUE).css("cursor", "pointer");
     }
     document.getElementsByClassName("highcharts-button")[1].dispatchEvent(new Event('click'));
+
+    handleTimeSpan();
 }
 
 // This is a function which gets called twice every second and which hides the ratings
@@ -376,6 +386,7 @@ function setup() {
 
     // Fetching the preferences from the local storage
     browser.storage.local.get("preferences").then(gotPreferences, gotError);
+    browser.storage.local.get("timeSpan").then(gotTimeSpan, gotError);
     // Sending all messages from background/popup-script to gotMessage()
     browser.runtime.onMessage.addListener(gotMessage);
 
