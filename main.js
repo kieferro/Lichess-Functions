@@ -4,6 +4,7 @@ let intervalAddMinutes = null;
 let intervallCallRatingGraph = null;
 
 let pressedButton = false;
+let timeSpan = 1;
 
 let preferences = {"toggles": [false, false, false, false, false, false], "ratings": 1, "signature": true};
 // Default config for MutationObserver
@@ -146,6 +147,18 @@ function pressButton() {
     }
 }
 
+function gotTimeSpan(item) {
+    if (item.timeSpan !== undefined) {
+        if (preferences.toggles[5]) {
+            try {
+                document.getElementsByClassName("highcharts-button")[item.timeSpan].dispatchEvent(new Event('click'));
+            } catch {
+            }
+            timeSpan = item.timeSpan;
+        }
+    }
+}
+
 // This function writes the selected time span in the local storage
 function handleTimeSpan() {
     $(".highcharts-button").click(function () {
@@ -200,7 +213,7 @@ function addRatingGraph() {
             toggleRatingGraph("#chart-toggle" + (i + 1).toString(), links[i]);
         }).css("color", LIGHTBLUE).css("cursor", "pointer");
     }
-    document.getElementsByClassName("highcharts-button")[1].dispatchEvent(new Event('click'));
+    document.getElementsByClassName("highcharts-button")[timeSpan].dispatchEvent(new Event('click'));
 
     handleTimeSpan();
 }
