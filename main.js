@@ -5,6 +5,7 @@ let intervallCallRatingGraph = null;
 
 let pressedButton = false;
 let timeSpan = 1;
+let deactivated = new Set([]);
 
 let preferences = {"toggles": [false, false, false, false, false, false], "ratings": 1, "signature": true};
 // Default config for MutationObserver
@@ -193,13 +194,20 @@ function handleTimeSpan() {
 }
 
 // This function is used to toggle the visibility of the rating graphs
-function toggleRatingGraph(buttonName, graphNumbers) {
+function toggleRatingGraph(buttonId, graphNumbers) {
+    const buttonName = "#chart-toggle" + buttonId.toString();
     // Toggle the color of the button
     document.querySelector(buttonName).style.color = (document.querySelector(buttonName).style.color === LIGHTBLUE) ? WHITE : LIGHTBLUE;
 
     // Toggle the visibility of the graphs
     for (let i = 0; i < graphNumbers.length; i++) {
         $(".highcharts-series-" + graphNumbers[i]).toggle();
+    }
+    // Saving selected toggles in set
+    if (deactivated.has(buttonId)) {
+        deactivated.delete(buttonId);
+    } else {
+        deactivated.add(buttonId);
     }
 }
 
@@ -236,7 +244,7 @@ function addRatingGraph() {
         // Adding an onClick-Event to every button
         // Adding styling for active buttons
         $("#chart-toggle" + (i + 1).toString()).on("click", function () {
-            toggleRatingGraph("#chart-toggle" + (i + 1).toString(), links[i]);
+            toggleRatingGraph(i + 1, links[i]);
         }).css("color", LIGHTBLUE).css("cursor", "pointer");
     }
     document.getElementsByClassName("highcharts-button")[timeSpan].dispatchEvent(new Event('click'));
