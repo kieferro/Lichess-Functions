@@ -147,6 +147,24 @@ function pressButton() {
     }
 }
 
+function onOffSwitch() {
+    let activated = false;
+
+    for (let i = 1; i <= 7; i++) {
+        let element = document.querySelector("#chart-toggle" + i.toString());
+        if (element.style.color === LIGHTBLUE) {
+            element.click();
+            activated = true;
+        }
+    }
+    if (activated) {
+        return;
+    }
+    for (let i = 1; i <= 7; i++) {
+        document.querySelector("#chart-toggle" + i.toString()).click();
+    }
+}
+
 // Reading time span preference from local storage and trying to apply
 function gotTimeSpan(item) {
     if (item.timeSpan !== undefined) {
@@ -195,6 +213,7 @@ function addRatingGraph() {
     clearInterval(intervallCallRatingGraph);
     // Adding the buttons to the DOM
     graph.prepend($('<div style=\"position: absolute;right: 10px;top: 13px;\"><text id="chart-toggle1" data-icon=\"\" style=\"padding-right: 10px;\"></text><text id="chart-toggle2" data-icon=\"\" style=\"padding-right: 10px;\"></text><text id="chart-toggle3" data-icon=\"\" style=\"padding-right: 10px;\"></text><text id="chart-toggle4" data-icon=\"\" style=\"padding-right: 10px;\"></text><text id="chart-toggle5" data-icon=\"" style=\"padding-right: 10px;\"></text></text><text id="chart-toggle6" data-icon=\"" style=\"padding-right: 10px;\"></text><text id="chart-toggle7" data-icon=\"\" style=\"padding-right: 15px;\"></text><text id="chart-toggle-all" data-icon="" style="padding-right: 10px; color: rgb(110, 216, 170); cursor: pointer;"></text></div>'));
+    $("#chart-toggle-all").on("click", onOffSwitch);
     // The rating-graphs are numbered. These are the numbers that correspond to the modes
     const links = [[14], [0], [1], [2], [13], [3], [4, 5, 6, 7, 8, 9, 10, 11, 12]];
 
