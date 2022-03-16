@@ -209,6 +209,7 @@ function toggleRatingGraph(buttonId, graphNumbers) {
     } else {
         deactivated.add(buttonId);
     }
+    browser.storage.local.set({deactivated});
 }
 
 // This function gets called to add the on-off-switches to the rating-graph
@@ -247,6 +248,16 @@ function addRatingGraph() {
             toggleRatingGraph(i + 1, links[i]);
         }).css("color", LIGHTBLUE).css("cursor", "pointer");
     }
+    let deactivated2 = new Set([]);
+    for (let key of deactivated) {
+        document.querySelector("#chart-toggle" + (key).toString()).click();
+        deactivated2.add(key);
+    }
+    deactivated = deactivated2;
+    browser.storage.local.set({deactivated});
+    console.log(deactivated);
+
+    // Clicking previous time span
     document.getElementsByClassName("highcharts-button")[timeSpan].dispatchEvent(new Event('click'));
 
     handleTimeSpan();
@@ -396,6 +407,12 @@ function gotPreferences(item) {
     }
 }
 
+function gotDeactivated(item) {
+    if (item.deactivated !== undefined) {
+        deactivated = item.deactivated;
+    }
+}
+
 // Function which gets called from the popup and from the background-script
 function gotMessage(request, sender, sendResponse) {
     // The different types of messages are indicated by the codes
@@ -434,6 +451,7 @@ function setup() {
     // Fetching the preferences from the local storage
     browser.storage.local.get("preferences").then(gotPreferences, gotError);
     browser.storage.local.get("timeSpan").then(gotTimeSpan, gotError);
+    browser.storage.local.get("deactivated").then(gotDeactivated, gotError);
     // Sending all messages from background/popup-script to gotMessage()
     browser.runtime.onMessage.addListener(gotMessage);
 
