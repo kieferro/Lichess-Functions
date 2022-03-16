@@ -193,6 +193,21 @@ function handleTimeSpan() {
     });
 }
 
+function applyDeactivated() {
+    if (!preferences.toggles[4]) {
+        return;
+    }
+    // Applying the deactivated buttons. To avoid overwriting buttons, the set gets copied and reasigned
+    let deactivated2 = new Set([]);
+    for (let key of deactivated) {
+        document.querySelector("#chart-toggle" + (key).toString()).click();
+        deactivated2.add(key);
+    }
+    // Writing the old set to the local storage
+    deactivated = deactivated2;
+    browser.storage.local.set({deactivated});
+}
+
 // This function is used to toggle the visibility of the rating graphs
 function toggleRatingGraph(buttonId, graphNumbers) {
     const buttonName = "#chart-toggle" + buttonId.toString();
@@ -248,16 +263,7 @@ function addRatingGraph() {
             toggleRatingGraph(i + 1, links[i]);
         }).css("color", LIGHTBLUE).css("cursor", "pointer");
     }
-    // Applying the deactivated buttons. To avoid overwriting buttons, the set gets copied and reasigned
-    let deactivated2 = new Set([]);
-    for (let key of deactivated) {
-        document.querySelector("#chart-toggle" + (key).toString()).click();
-        deactivated2.add(key);
-    }
-    // Writing the old set to the local storage
-    deactivated = deactivated2;
-    browser.storage.local.set({deactivated});
-
+    applyDeactivated();
     // Clicking previous time span
     document.getElementsByClassName("highcharts-button")[timeSpan].dispatchEvent(new Event('click'));
 
