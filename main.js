@@ -13,6 +13,13 @@ const mutationConfig = {attributes: true, childList: true, subtree: true};
 const LIGHTBLUE = "rgb(140, 216, 230)";
 const WHITE = "rgb(180, 180, 180)";
 
+// TODO: all
+const iconToMode = {
+    "": "bullet",
+    "": "blitz",
+    "": "rapd"
+};
+
 // This function creates a user object from the HTML-Text which was fetched from the perf-site
 function createUserObject(htmlText) {
     let htmlElement = document.createElement('html');
@@ -24,11 +31,34 @@ function createUserObject(htmlText) {
     return {rating: parseFloat(rating), deviation: parseFloat(deviation)};
 }
 
+// This function fetches the rating and deviation for a given player and mode
 function fetchUserData(mode, username) {
     return fetch(`https://lichess.org/@/${username}/perf/${mode}`, {
         credentials: 'omit'
     }).then(res => res.text()).then(res => createUserObject(res));
 }
+
+// TODO: explanation
+async function getPlayerData() {
+    let name1 = document.querySelector(".ruser-top").querySelector(".text").lastChild.textContent;
+    let name2 = document.querySelector(".ruser-bottom").querySelector(".text").lastChild.textContent;
+    let mode = iconToMode[document.querySelector(".game__meta__infos").dataset.icon];
+
+    let a = fetchUserData(mode, name1);
+    let b = fetchUserData(mode, name2);
+
+    let result = await Promise.all([a, b]);
+
+    let player1 = result[0];
+    let player2 = result[1];
+
+    console.log(player1);
+    console.log(player2);
+}
+
+// TODO: move to setup();
+setTimeout(getPlayerData, 1000);
+
 
 // Function to add the buttons on the upper right
 function addMenuButtons() {
