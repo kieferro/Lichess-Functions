@@ -13,6 +13,17 @@ const mutationConfig = {attributes: true, childList: true, subtree: true};
 const LIGHTBLUE = "rgb(140, 216, 230)";
 const WHITE = "rgb(180, 180, 180)";
 
+// This function creates a user object from the HTML-Text which was fetched from the perf-site
+function createUserObject(htmlText) {
+    let htmlElement = document.createElement('html');
+    htmlElement.innerHTML = htmlText;
+
+    let rating = htmlElement.querySelector(".glicko").firstChild.querySelector("strong").textContent;
+    let deviation = htmlElement.querySelector(".glicko").lastChild.querySelector("strong").textContent;
+
+    return {rating: parseFloat(rating), deviation: parseFloat(deviation)};
+}
+
 // Function to add the buttons on the upper right
 function addMenuButtons() {
     if (document.querySelector(".site-buttons") === null) {
