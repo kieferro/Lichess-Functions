@@ -66,10 +66,15 @@ async function getPlayerData() {
     if ($(".game__meta").length === 0) {
         return;
     }
-    const name1 = document.querySelector(".ruser-top").querySelector(".text").lastChild.textContent;
-    const name2 = document.querySelector(".ruser-bottom").querySelector(".text").lastChild.textContent;
-    const name_player = document.querySelector(".site-buttons").lastChild.firstChild.textContent;
+    let name1, name2, name_player;
 
+    try {
+        name1 = document.querySelector(".ruser-top").querySelector(".text").lastChild.textContent;
+        name2 = document.querySelector(".ruser-bottom").querySelector(".text").lastChild.textContent;
+        name_player = document.querySelector(".site-buttons").lastChild.firstChild.textContent;
+    } catch {
+        return;
+    }
     if (name_player !== name2) {
         return;
     }
@@ -87,7 +92,10 @@ async function getPlayerData() {
     const draw = Math.floor(calculate_rating_change(player2, player1, 0.5)) - Math.floor(player2.rating);
     const loss = Math.floor(calculate_rating_change(player2, player1, 0)) - Math.floor(player2.rating);
 
-    console.log(win, draw, loss);
+    let wp = (n) => (n < 0 ? "" : "+") + n;
+
+    let text = `Sieg: ${wp(win)}; Remis: ${wp(draw)}; Niederlage: ${wp(loss)}`;
+    $(".mchat__messages").prepend($(`<li class=\"me\"><t>${text}</t></li>`));
 }
 
 
