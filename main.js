@@ -112,6 +112,13 @@ function addRatingChangeButton() {
     $("#rating-change-button").on("click", getPlayerData);
 }
 
+// For the rating-change-button, which should get removed after the game
+function removeRatingButton() {
+    if ($(".game__meta > .status").length > 0) {
+        $("#rating-change-wrapper").remove();
+    }
+}
+
 
 // Function to add the buttons on the upper right
 function addMenuButtons() {
@@ -571,6 +578,7 @@ function setup() {
     intervallCallRatingGraph = setInterval(addRatingGraph, 500);
     setTimeout(setupClaimWinObserver, 5000);
     setInterval(hideRatings, 500);
+    setInterval(removeRatingButton, 1000);
 
     setTimeout(addRatingChangeButton, 1000);
 }
