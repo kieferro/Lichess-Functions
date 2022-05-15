@@ -58,11 +58,22 @@ function fetchUserData(mode, username) {
     }).then(res => res.text()).then(res => createUserObject(res));
 }
 
-// TODO: explanation
+// This function gets all data about the rating change and shows it
 async function getPlayerData() {
-    let name1 = document.querySelector(".ruser-top").querySelector(".text").lastChild.textContent;
-    let name2 = document.querySelector(".ruser-bottom").querySelector(".text").lastChild.textContent;
-    let mode = iconToMode[document.querySelector(".game__meta__infos").dataset.icon];
+    if ($(".game__meta > .status").length > 0) {
+        return;
+    }
+    if ($(".game__meta").length === 0) {
+        return;
+    }
+    const name1 = document.querySelector(".ruser-top").querySelector(".text").lastChild.textContent;
+    const name2 = document.querySelector(".ruser-bottom").querySelector(".text").lastChild.textContent;
+    const name_player = document.querySelector(".site-buttons").lastChild.firstChild.textContent;
+
+    if (name_player !== name2) {
+        return;
+    }
+    const mode = iconToMode[document.querySelector(".game__meta__infos").dataset.icon];
 
     let a = fetchUserData(mode, name1);
     let b = fetchUserData(mode, name2);
@@ -72,15 +83,12 @@ async function getPlayerData() {
     let player1 = result[0];
     let player2 = result[1];
 
-    let win = Math.floor(calculate_rating_change(player2, player1, 1)) - Math.floor(player2.rating);
-    let draw = Math.floor(calculate_rating_change(player2, player1, 0.5)) - Math.floor(player2.rating);
-    let loss = Math.floor(calculate_rating_change(player2, player1, 0)) - Math.floor(player2.rating);
+    const win = Math.floor(calculate_rating_change(player2, player1, 1)) - Math.floor(player2.rating);
+    const draw = Math.floor(calculate_rating_change(player2, player1, 0.5)) - Math.floor(player2.rating);
+    const loss = Math.floor(calculate_rating_change(player2, player1, 0)) - Math.floor(player2.rating);
 
     console.log(win, draw, loss);
 }
-
-// TODO: move to setup();
-setTimeout(getPlayerData, 1000);
 
 
 // Function to add the buttons on the upper right
@@ -541,6 +549,8 @@ function setup() {
     intervallCallRatingGraph = setInterval(addRatingGraph, 500);
     setTimeout(setupClaimWinObserver, 5000);
     setInterval(hideRatings, 500);
+
+    setTimeout(getPlayerData, 1000);
 }
 
 setup();
