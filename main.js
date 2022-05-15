@@ -66,6 +66,8 @@ async function getPlayerData() {
     if ($(".game__meta").length === 0) {
         return;
     }
+    $("#rating-change-wrapper").remove();
+
     let name1, name2, name_player;
 
     try {
@@ -96,6 +98,18 @@ async function getPlayerData() {
 
     let text = `Sieg: ${wp(win)}; Remis: ${wp(draw)}; Niederlage: ${wp(loss)}`;
     $(".mchat__messages").prepend($(`<li class=\"me\"><t>${text}</t></li>`));
+}
+
+// Adds the button to calculate the rating change
+function addRatingChangeButton() {
+    if ($(".game__meta > .status").length > 0) {
+        return;
+    }
+    if ($(".game__meta").length === 0) {
+        return;
+    }
+    $(".mchat__messages").prepend($('<li id="rating-change-wrapper" class="me"><button id="rating-change-button" class="button button-metal config_ai" style="padding: 0.5em 0.5em;">Rating-Änderung berechnen</button> </li>'));
+    $("#rating-change-button").on("click", getPlayerData);
 }
 
 
@@ -558,7 +572,7 @@ function setup() {
     setTimeout(setupClaimWinObserver, 5000);
     setInterval(hideRatings, 500);
 
-    setTimeout(getPlayerData, 1000);
+    setTimeout(addRatingChangeButton, 1000);
 }
 
 setup();
