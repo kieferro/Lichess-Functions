@@ -108,6 +108,19 @@ function addRatingChangeButton() {
     if ($(".game__meta").length === 0) {
         return;
     }
+
+    // Check if you're playing yourself
+    let name2, name_player;
+
+    try {
+        name2 = document.querySelector(".ruser-bottom").querySelector(".text").lastChild.textContent;
+        name_player = document.querySelector(".site-buttons").lastChild.firstChild.textContent;
+    } catch {
+        return;
+    }
+    if (name_player !== name2) {
+        return;
+    }
     $(".mchat__messages").prepend($('<li id="rating-change-wrapper" class="me"><button id="rating-change-button" class="button button-metal config_ai" style="padding: 0.5em 0.5em;">Rating-Änderung berechnen</button> </li>'));
     $("#rating-change-button").on("click", getPlayerData);
 }
