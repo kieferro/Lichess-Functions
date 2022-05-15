@@ -15,6 +15,7 @@
       ],
       "js": [
         "third-party/jquery.js",
+        "third-party/glicko2.js",
         "main.js"
       ]
     }
