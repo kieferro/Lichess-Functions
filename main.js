@@ -24,6 +24,12 @@ function createUserObject(htmlText) {
     return {rating: parseFloat(rating), deviation: parseFloat(deviation)};
 }
 
+function fetchUserData(mode, username) {
+    return fetch(`https://lichess.org/@/${username}/perf/${mode}`, {
+        credentials: 'omit'
+    }).then(res => res.text()).then(res => createUserObject(res));
+}
+
 // Function to add the buttons on the upper right
 function addMenuButtons() {
     if (document.querySelector(".site-buttons") === null) {
