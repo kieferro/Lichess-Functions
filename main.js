@@ -20,6 +20,17 @@ const iconToMode = {
     "": "rapd"
 };
 
+// This function calculates the new rating for two players and a result
+function calculate_rating_change(data1, data2, result) {
+    let glickoSystem = new glicko2.Glicko2({tau: 0.75});
+    let player1 = glickoSystem.makePlayer(data1.rating, data1.deviation, 0.06);
+    let player2 = glickoSystem.makePlayer(data2.rating, data2.deviation, 0.06);
+
+    glickoSystem.updateRatings([[player1, player2, result]]);
+
+    return player1.getRating();
+}
+
 // This function creates a user object from the HTML-Text which was fetched from the perf-site
 function createUserObject(htmlText) {
     let htmlElement = document.createElement('html');
@@ -52,8 +63,11 @@ async function getPlayerData() {
     let player1 = result[0];
     let player2 = result[1];
 
-    console.log(player1);
-    console.log(player2);
+    let win = Math.floor(calculate_rating_change(player2, player1, 1)) - Math.floor(player2.rating);
+    let draw = Math.floor(calculate_rating_change(player2, player1, 0.5)) - Math.floor(player2.rating);
+    let loss = Math.floor(calculate_rating_change(player2, player1, 0)) - Math.floor(player2.rating);
+
+    console.log(win, draw, loss);
 }
 
 // TODO: move to setup();
