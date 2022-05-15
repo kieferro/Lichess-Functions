@@ -13,11 +13,20 @@ const mutationConfig = {attributes: true, childList: true, subtree: true};
 const LIGHTBLUE = "rgb(140, 216, 230)";
 const WHITE = "rgb(180, 180, 180)";
 
-// TODO: all
 const iconToMode = {
     "": "bullet",
     "": "blitz",
-    "": "rapd"
+    "": "rapid",
+    "": "classical",
+    "": "crazyhouse",
+    "": "chess960",
+    "": "kingOfTheHill",
+    "": "threeCheck",
+    "": "antichess",
+    "": "atomic",
+    "": "horde",
+    "": "racingKings",
+    "": "ultraBullet"
 };
 
 // This function calculates the new rating for two players and a result
