@@ -8,7 +8,7 @@ let hideAnalysisInExercices = true;
 let timeSpan = 1;
 let deactivated = new Set([]);
 
-let preferences = {"toggles": [false, false, false, false, false, false, false], "ratings": 1, "signature": true};
+let preferences = {"toggles": [false, false, false, false, false, false], "ratings": 1, "signature": true};
 // Default config for MutationObserver
 const mutationConfig = {attributes: true, childList: true, subtree: true};
 const LIGHTBLUE = "rgb(140, 216, 230)";

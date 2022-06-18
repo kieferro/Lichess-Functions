@@ -1,6 +1,6 @@
 const button_text = ["Deaktiviert", "Beim Spielen", "Immer"];
 const button_color = [["#c25367", "#c4374f"], ["#b9872d", "#b07a17"], ["#439845", "#357c37"]];
-let preferences = {"toggles": [true, true, true, true, true, true, true], "ratings": 1, "signature": true};
+let preferences = {"toggles": [true, true, true, true, true, true], "ratings": 1, "signature": true};
 
 // This function gets called when the user clicks the button to open the analysis
 function open_analysis() {
