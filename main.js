@@ -536,16 +536,17 @@ function hideEvalInformation() {
     $(".ceval > .bar").css("visibility", "hidden");
     $(".engine > .info").hide();
     $("move > eval").hide();
+    setColorAnalysisSymbol();
 }
 
 // All information about the computer-evaluation is shown after the training
 function showEvalInformation() {
-    $("#eval-toggle-ffff").remove();
     $(".eval-gauge").show();
     $(".ceval > pearl").css("visibility", "visible");
     $(".ceval > .bar").css("visibility", "visible");
     $(".engine > .info").show();
     $("move > eval").show();
+    setColorAnalysisSymbol();
 }
 
 // This function checks if the player is currently doing exercices
@@ -565,6 +566,7 @@ function checkTraining() {
         }
     } else {
         showEvalInformation();
+        $("#eval-toggle-ffff").remove();
     }
 }
 
