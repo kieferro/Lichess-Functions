@@ -513,8 +513,17 @@ function addMinutes() {
     }
 }
 
-function toggleAnalysisStatus(){
+function toggleAnalysisStatus() {
     hideAnalysisInExercices = !hideAnalysisInExercices;
+    setColorStatus();
+}
+
+function setColorStatus() {
+    if (hideAnalysisInExercices) {
+        $("#eval-toggle-ffff").css("background-color", "grey");
+    } else {
+        $("#eval-toggle-ffff").css("background-color", "#629924");
+    }
 }
 
 function checkTraining() {
@@ -523,6 +532,8 @@ function checkTraining() {
             let node = $('<button class="fbt" id="eval-toggle-ffff" title="Eval-Toggle" data-icon="" style="margin-right: 5px; width: 40px; color: white; background-color: rgb(98, 153, 36); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;"></button>');
             node.insertAfter($(".engine"));
             $("#eval-toggle-ffff").on("click", toggleAnalysisStatus);
+
+            setColorStatus();
         }
     } else {
         $("#eval-toggle-ffff").remove();
@@ -547,7 +558,7 @@ function setPreferences(pref) {
 // Function which gets called when the preferences were read from local storage
 function gotPreferences(item) {
     if (item.preferences !== undefined) {
-        if (item.preferences.signature){
+        if (item.preferences.signature) {
             hideAnalysisInExercices = item.preferences.toggles[6];
         }
         setPreferences(item.preferences);
