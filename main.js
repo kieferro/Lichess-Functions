@@ -587,7 +587,7 @@ function setPreferences(pref) {
 function gotPreferences(item) {
     if (item.preferences !== undefined) {
         if (item.preferences.signature) {
-            hideAnalysisInExercices = item.preferences.toggles[6];
+            hideAnalysisInExercices = item.preferences.toggles[0];
         }
         setPreferences(item.preferences);
     }
