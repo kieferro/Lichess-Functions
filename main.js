@@ -512,6 +512,17 @@ function addMinutes() {
     }
 }
 
+function checkTraining() {
+    if (document.querySelector(".training-box") !== null) {
+        if (document.querySelector("#eval-toggle-ffff") === null){
+            let node = $('<button class="fbt" id="eval-toggle-ffff" title="Eval-Toggle" data-icon="" style="/*! right: 10px; *//*! position: absolute; *//*! top: 10px; *//*! margin: 10px; *//*! margin-top: 2px; */margin-right: 5px;width: 40px;/*! background-color: green; */"></button>');
+            node.insertAfter($(".engine"));
+        }
+    } else {
+        $("#eval-toggle-ffff").remove();
+    }
+}
+
 
 // Function to set the preferences to a passed parameter
 function setPreferences(pref) {
@@ -590,6 +601,7 @@ function setup() {
     intervalAddMinutes = setInterval(addMinutes, 250);
     intervallCallRatingGraph = setInterval(addRatingGraph, 500);
     setTimeout(setupClaimWinObserver, 5000);
+    setInterval(checkTraining, 500);
     setInterval(hideRatings, 500);
     setInterval(removeRatingButton, 1000);
 
