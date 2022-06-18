@@ -513,11 +513,16 @@ function addMinutes() {
     }
 }
 
+function toggleAnalysisStatus(){
+    hideAnalysisInExercices = !hideAnalysisInExercices;
+}
+
 function checkTraining() {
     if (document.querySelector(".training-box") !== null) {
         if (document.querySelector("#eval-toggle-ffff") === null){
             let node = $('<button class="fbt" id="eval-toggle-ffff" title="Eval-Toggle" data-icon="" style="/*! right: 10px; *//*! position: absolute; *//*! top: 10px; *//*! margin: 10px; *//*! margin-top: 2px; */margin-right: 5px;width: 40px;/*! background-color: green; */"></button>');
             node.insertAfter($(".engine"));
+            $("#eval-toggle-ffff").on("click", toggleAnalysisStatus);
         }
     } else {
         $("#eval-toggle-ffff").remove();
