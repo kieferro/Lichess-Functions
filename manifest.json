@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Lichess-Extension",
-  "version": "0.1",
+  "version": "1.0",
   "description": "This is a extension which adds features to lichess.org",
   "icons": {
     "48": "ressources/icon-48.jpg",
