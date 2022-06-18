@@ -513,13 +513,15 @@ function addMinutes() {
     }
 }
 
-function toggleAnalysisStatus() {
+// This function toggles the variable hideAnalysisInExercices and calls all function to apply this change
+function toggleHideAnalysisInExercices() {
     hideAnalysisInExercices = !hideAnalysisInExercices;
-    setColorStatus();
+    setColorAnalysisSymbol();
     checkTraining();
 }
 
-function setColorStatus() {
+// This function sets the color of the added analysis-symbol
+function setColorAnalysisSymbol() {
     if (hideAnalysisInExercices) {
         $("#eval-toggle-ffff").css("background-color", "grey");
     } else {
@@ -527,6 +529,7 @@ function setColorStatus() {
     }
 }
 
+// All information about the computer-evaluation is hidden during the training
 function hideEvalInformation() {
     $(".eval-gauge").hide();
     $(".ceval > pearl").css("visibility", "hidden");
@@ -535,6 +538,7 @@ function hideEvalInformation() {
     $("move > eval").hide();
 }
 
+// All information about the computer-evaluation is shown after the training
 function showEvalInformation() {
     $("#eval-toggle-ffff").remove();
     $(".eval-gauge").show();
@@ -544,14 +548,15 @@ function showEvalInformation() {
     $("move > eval").show();
 }
 
+// This function checks if the player is currently doing exercices
 function checkTraining() {
     if (document.querySelector(".training-box") !== null) {
         if (document.querySelector("#eval-toggle-ffff") === null) {
-            let node = $('<button class="fbt" id="eval-toggle-ffff" title="Eval-Toggle" data-icon="" style="margin-right: 5px; width: 40px; color: white; background-color: rgb(98, 153, 36); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;"></button>');
-            node.insertAfter($(".engine"));
-            $("#eval-toggle-ffff").on("click", toggleAnalysisStatus);
+            let analysisSymbol = $('<button class="fbt" id="eval-toggle-ffff" title="Eval-Toggle" data-icon="" style="margin-right: 5px; width: 40px; color: white; background-color: rgb(98, 153, 36); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;"></button>');
+            analysisSymbol.insertAfter($(".engine"));
+            $("#eval-toggle-ffff").on("click", toggleHideAnalysisInExercices);
 
-            setColorStatus();
+            setColorAnalysisSymbol();
         }
         if (hideAnalysisInExercices) {
             hideEvalInformation();
