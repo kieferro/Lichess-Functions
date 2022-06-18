@@ -519,8 +519,8 @@ function toggleAnalysisStatus(){
 
 function checkTraining() {
     if (document.querySelector(".training-box") !== null) {
-        if (document.querySelector("#eval-toggle-ffff") === null){
-            let node = $('<button class="fbt" id="eval-toggle-ffff" title="Eval-Toggle" data-icon="" style="/*! right: 10px; *//*! position: absolute; *//*! top: 10px; *//*! margin: 10px; *//*! margin-top: 2px; */margin-right: 5px;width: 40px;/*! background-color: green; */"></button>');
+        if (document.querySelector("#eval-toggle-ffff") === null) {
+            let node = $('<button class="fbt" id="eval-toggle-ffff" title="Eval-Toggle" data-icon="" style="margin-right: 5px; width: 40px; color: white; background-color: rgb(98, 153, 36); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;"></button>');
             node.insertAfter($(".engine"));
             $("#eval-toggle-ffff").on("click", toggleAnalysisStatus);
         }
