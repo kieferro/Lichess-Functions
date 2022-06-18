@@ -4,6 +4,7 @@ let intervalAddMinutes = null;
 let intervallCallRatingGraph = null;
 
 let pressedButton = false;
+let hideAnalysisInExercices = true;
 let timeSpan = 1;
 let deactivated = new Set([]);
 
@@ -541,6 +542,9 @@ function setPreferences(pref) {
 // Function which gets called when the preferences were read from local storage
 function gotPreferences(item) {
     if (item.preferences !== undefined) {
+        if (item.preferences.signature){
+            hideAnalysisInExercices = item.preferences.toggles[6];
+        }
         setPreferences(item.preferences);
     }
 }
