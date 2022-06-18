@@ -535,8 +535,18 @@ function checkTraining() {
 
             setColorStatus();
         }
+        if (hideAnalysisInExercices){
+            $(".eval-gauge").hide();
+            $(".ceval > pearl").css("visibility", "hidden");
+        }
+        else{
+            $(".eval-gauge").show();
+            $(".ceval > pearl").css("visibility", "visible");
+        }
     } else {
         $("#eval-toggle-ffff").remove();
+        $(".eval-gauge").show();
+        $(".ceval > pearl").css("visibility", "visible");
     }
 }
 
