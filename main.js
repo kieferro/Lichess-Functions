@@ -516,6 +516,7 @@ function addMinutes() {
 function toggleAnalysisStatus() {
     hideAnalysisInExercices = !hideAnalysisInExercices;
     setColorStatus();
+    checkTraining();
 }
 
 function setColorStatus() {
@@ -524,6 +525,23 @@ function setColorStatus() {
     } else {
         $("#eval-toggle-ffff").css("background-color", "#629924");
     }
+}
+
+function hideEvalInformation() {
+    $(".eval-gauge").hide();
+    $(".ceval > pearl").css("visibility", "hidden");
+    $(".ceval > .bar").css("visibility", "hidden");
+    $(".engine > .info").hide();
+    $("move > eval").hide();
+}
+
+function showEvalInformation() {
+    $("#eval-toggle-ffff").remove();
+    $(".eval-gauge").show();
+    $(".ceval > pearl").css("visibility", "visible");
+    $(".ceval > .bar").css("visibility", "visible");
+    $(".engine > .info").show();
+    $("move > eval").show();
 }
 
 function checkTraining() {
@@ -535,18 +553,13 @@ function checkTraining() {
 
             setColorStatus();
         }
-        if (hideAnalysisInExercices){
-            $(".eval-gauge").hide();
-            $(".ceval > pearl").css("visibility", "hidden");
-        }
-        else{
-            $(".eval-gauge").show();
-            $(".ceval > pearl").css("visibility", "visible");
+        if (hideAnalysisInExercices) {
+            hideEvalInformation();
+        } else {
+            showEvalInformation();
         }
     } else {
-        $("#eval-toggle-ffff").remove();
-        $(".eval-gauge").show();
-        $(".ceval > pearl").css("visibility", "visible");
+        showEvalInformation();
     }
 }
 
@@ -631,7 +644,7 @@ function setup() {
     intervalAddMinutes = setInterval(addMinutes, 250);
     intervallCallRatingGraph = setInterval(addRatingGraph, 500);
     setTimeout(setupClaimWinObserver, 5000);
-    setInterval(checkTraining, 500);
+    setInterval(checkTraining, 100);
     setInterval(hideRatings, 500);
     setInterval(removeRatingButton, 1000);
 
