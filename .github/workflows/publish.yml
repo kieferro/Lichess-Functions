@@ -1,0 +1,27 @@
+name: "Build & Release"
+on:
+  workflow_dispatch:
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v1
+
+      - name: "web-ext build"
+        id: web-ext-build
+        uses: kewisch/action-web-ext@v1
+        with:
+          cmd: build
+          source: src
+          filename: "ExtensionBuild.xpi"
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@master
+        with:
+          name: ExtensionBuild.xpi
+          path: ${{ steps.web-ext-build.outputs.target }}
