@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Lichess-Extension",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Lichess, but more useful",
   "icons": {
     "48": "ressources/icon-48.jpg",
