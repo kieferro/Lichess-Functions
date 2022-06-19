@@ -5,7 +5,7 @@ on:
     types: [ created ]
 
 jobs:
-  build:
+  sign:
     name: "Build"
     runs-on: ubuntu-latest
     steps:
@@ -18,10 +18,14 @@ jobs:
         with:
           cmd: build
           source: src
-          filename: "ExtensionBuild.xpi"
 
-      - name: "Upload Artifact"
-        uses: actions/upload-artifact@master
+      - name: "web-ext sign"
+        id: web-ext-sign
+        uses: kewisch/action-web-ext@v1
         with:
-          name: ExtensionBuild.xpi
-          path: ${{ steps.web-ext-build.outputs.target }}
+          cmd: sign
+          source: ${{ steps.web-ext-build.outputs.target }}
+          channel: unlisted
+          apiKey: ${{ secrets.AMO_SIGN_KEY }}
+          apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
+          timeout: 900000
