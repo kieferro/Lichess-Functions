@@ -35,10 +35,5 @@
     "tabs",
     "<all_urls>",
     "storage"
-  ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "{4b70cb99-220f-4a8c-9e02-2bc97f0699bd}"
-    }
-  }
+  ]
 }
