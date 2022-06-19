@@ -19,6 +19,11 @@ jobs:
           cmd: build
           source: src
 
+      - name: "Sync time"
+        run: |
+          timedatectl;
+          date;
+
       - name: "web-ext sign"
         id: web-ext-sign
         uses: kewisch/action-web-ext@v1
