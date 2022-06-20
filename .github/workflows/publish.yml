@@ -19,7 +19,7 @@ jobs:
           source: src
 
       - name: "Sync time"
-        run: |
+        run:
           timedatectl;
           date;
           sudo timedatectl set-ntp off
@@ -38,7 +38,14 @@ jobs:
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
           timeout: 900000
 
+      - name: "Rename binary"
+        run:
+          mv *.xpi Extension-Build.xpi
+          ls
+
       - name: "Add binaries to the release"
-        run: |
-          sudo apt-get install tree;
-          tree;
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'Extension-Build.xpi'
