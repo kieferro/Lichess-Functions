@@ -40,7 +40,7 @@ jobs:
 
       - name: "Rename binary"
         run: |
-          mv *.xpi Extension-Build.xpi
+          mv web-ext-artifacts/*.xpi Extension-Build.xpi
           ls
 
       - name: "Upload binaries to release"
