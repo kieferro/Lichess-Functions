@@ -1,6 +1,5 @@
 name: "Build & Release"
 on:
-  workflow_dispatch:
   release:
     types: [ created ]
 
@@ -38,3 +37,7 @@ jobs:
           apiKey: ${{ secrets.AMO_SIGN_KEY }}
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
           timeout: 900000
+
+      - name: "Add binaries to the release"
+        run: |
+          ls;
