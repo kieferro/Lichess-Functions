@@ -19,7 +19,7 @@ jobs:
           source: src
 
       - name: "Sync time"
-        run:
+        run: |
           timedatectl;
           date;
           sudo timedatectl set-ntp off
@@ -39,13 +39,14 @@ jobs:
           timeout: 900000
 
       - name: "Rename binary"
-        run:
+        run: |
           mv *.xpi Extension-Build.xpi
           ls
 
-      - name: "Add binaries to the release"
-        uses: skx/github-action-publish-binaries@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Upload binaries to release"
+        uses: svenstaro/upload-release-action@v2
         with:
-          args: 'Extension-Build.xpi'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: Extensions-Build.xpi
+          tag: ${{ github.ref }}
+          overwrite: true
