@@ -40,4 +40,5 @@ jobs:
 
       - name: "Add binaries to the release"
         run: |
-          ls;
+          sudo apt-get install tree;
+          tree;
