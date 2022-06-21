@@ -50,3 +50,4 @@ jobs:
           file: Extension-Build.xpi
           tag: ${{ github.ref }}
           overwrite: true
+          prerelease: false
