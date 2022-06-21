@@ -11,4 +11,4 @@ Currently only Firefox is supported.
 
 ## Download newest version
 
-[![Lint](https://img.shields.io/github/v/release/kieferro/lichess-functions.svg)](https://github.com/kieferro/Lichess-Functions/releases/latest/download/Extension-Build.xpi)
+[![Release](https://img.shields.io/github/v/release/kieferro/lichess-functions.svg)](https://github.com/kieferro/Lichess-Functions/releases/latest/download/Extension-Build.xpi)
