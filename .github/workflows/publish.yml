@@ -13,7 +13,7 @@ jobs:
 
       - name: "web-ext build"
         id: web-ext-build
-        uses: kewisch/action-web-ext@v1
+        uses: kewisch/action-web-ext@a28b4ba2f491cc36c67a714a716ca54218440056
         with:
           cmd: build
           source: src
@@ -29,7 +29,7 @@ jobs:
 
       - name: "web-ext sign"
         id: web-ext-sign
-        uses: kewisch/action-web-ext@v1
+        uses: kewisch/action-web-ext@a28b4ba2f491cc36c67a714a716ca54218440056
         with:
           cmd: sign
           source: ${{ steps.web-ext-build.outputs.target }}
@@ -44,7 +44,7 @@ jobs:
           ls
 
       - name: "Upload binaries to release"
-        uses: svenstaro/upload-release-action@v2
+        uses: svenstaro/upload-release-action@133984371c30d34e38222a64855679a414cb7575
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: Extension-Build.xpi
@@ -52,7 +52,7 @@ jobs:
           overwrite: true
 
       - name: "Remove the pre-release tag"
-        uses: tubone24/update_release@v1.0
+        uses: tubone24/update_release@6b5e0283cae1ce14b411f0f027c24d24d90c1477
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
