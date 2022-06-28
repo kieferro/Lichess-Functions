@@ -2,21 +2,6 @@ const button_text = ["Disabled", "When playing", "Always"];
 const button_color = [["#c25367", "#c4374f"], ["#b9872d", "#b07a17"], ["#439845", "#357c37"]];
 let preferences = {"toggles": [true, true, true, true, true, true], "ratings": 1, "signature": true};
 
-// This function gets called when the user clicks the button to open the analysis
-function open_analysis() {
-    // TODO: Request PGN from content script
-    // PGN found:
-    if (false) {
-        $("#error-text").hide();
-        $("#warning-sign").hide();
-
-        browser.runtime.sendMessage({code: 0});
-    } else {
-        $("#error-text").show();
-        $("#warning-sign").show();
-    }
-}
-
 // This function gets called when the loading of the preferences reports an error
 function gotError(_) {
     $("body").html("<text style='color: red'>Fehler:</text><text>Aufgetreten beim Laden der Einstellungen</text>");
@@ -95,10 +80,6 @@ function setup() {
         rating_button_clicked();
         savePreferences();
     });
-    $("#open-analysis").on("click", open_analysis);
-
-    $("#error-text").hide();
-    $("#warning-sign").hide();
 }
 
 // Adding EventListener for opening of the popup
