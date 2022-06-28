@@ -4,8 +4,8 @@
   "version": "1.0.9",
   "description": "Lichess, but more useful",
   "icons": {
-    "48": "ressources/icon-48.jpg",
-    "96": "ressources/icon-96.jpg"
+    "48": "resources/icon-48.jpg",
+    "96": "resources/icon-96.jpg"
   },
   "content_scripts": [
     {
@@ -21,7 +21,7 @@
     }
   ],
   "browser_action": {
-    "default_icon": "ressources/lichess-icon.jpg",
+    "default_icon": "resources/lichess-icon.jpg",
     "default_title": "Lichess+",
     "default_popup": "popup.html"
   },
