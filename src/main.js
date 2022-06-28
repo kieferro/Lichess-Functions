@@ -97,7 +97,7 @@ async function getPlayerData() {
 
     let wp = (n) => (n < 0 ? "" : "+") + n;
 
-    let text = `Sieg: ${wp(win)}; Remis: ${wp(draw)}; Niederlage: ${wp(loss)}`;
+    let text = `Win: ${wp(win)}; Draw: ${wp(draw)}; Loss: ${wp(loss)}`;
     $(".mchat__messages").prepend($(`<li class=\"me\"><t>${text}</t></li>`));
 }
 
@@ -161,7 +161,7 @@ function hoverOverProfile(_, __) {
     if (document.querySelector("#reportButton") !== null) {
         return;
     }
-    let reportButton = $('<a data-icon="" class="btn-rack__btn" id="reportButton" title="Benutzer melden" style="padding-left: 0"></a>');
+    let reportButton = $('<a data-icon="" class="btn-rack__btn" id="reportButton" title="Report user" style="padding-left: 0"></a>');
     // Fetching username from the card
     let username = document.querySelector(".upt__info__top").firstChild.firstChild.textContent;
     reportButton.attr("href", "https://lichess.org/report?username=" + username);
@@ -182,7 +182,7 @@ function addTv(node, _) {
         return;
     }
 
-    let new_node = $('<a title="Partien ansehen"  class="btn-rack__btn" data-icon=""></a>');
+    let new_node = $('<a title="Watch"  class="btn-rack__btn" data-icon=""></a>');
     new_node.attr("href", "https://lichess.org/@/" + username + "/tv");
 
     new_node.insertBefore(node.lastChild.firstChild.firstChild);
@@ -501,7 +501,7 @@ function addMinutes() {
     let minutes = $("#minutes");
 
     if (moretime.length && !minutes.length) {
-        let new_node = $('<input spellcheck="false" autocomplete="off" aria-label="Minutes" placeholder="Minuten" id="minutes"' +
+        let new_node = $('<input spellcheck="false" autocomplete="off" aria-label="Minutes" placeholder="Minutes" id="minutes"' +
             ' style="width: 30%;height: 50%;position: absolute;right: 50px;top: 25%;bottom: 25%;margin: auto;">');
 
         new_node.insertBefore(moretime);
@@ -611,7 +611,7 @@ function gotMessage(request, sender, sendResponse) {
 }
 
 function gotError(_) {
-    console.log("Es ist beim Laden der Einstellungen ein Fehler aufgetreten.");
+    console.log("Error");
 }
 
 function setup() {

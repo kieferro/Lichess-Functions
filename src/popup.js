@@ -4,7 +4,7 @@ let preferences = {"toggles": [true, true, true, true, true, true], "ratings": 1
 
 // This function gets called when the loading of the preferences reports an error
 function gotError(_) {
-    $("body").html("<text style='color: red'>Fehler:</text><text>Aufgetreten beim Laden der Einstellungen</text>");
+    $("body").html("<text style='color: red'>Error</text>");
 }
 
 // This function gets called when the preferences were loaded and sends them as item
